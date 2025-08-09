@@ -13,6 +13,7 @@ import ContentTab from "./SidebarTabs/ContentTab";
 import ImagesTab from "./SidebarTabs/ImagesTab";
 import SellerbotTab from "./SidebarTabs/SellerbotTab";
 import SEOTab from "./SidebarTabs/SEOTab";
+import LayoutTab from "./SidebarTabs/LayoutTab";
 import { BusinessContent } from "@/services/contentGenerator";
 import { landingPageBuilder } from "@/services/landingPageBuilder";
 import { 
@@ -110,6 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
     { id: "sellerbot", label: "Sellerbot", icon: Bot },
     { id: "seo", label: "SEO", icon: Settings },
     { id: "design", label: "Design", icon: Palette },
+    { id: "layout", label: "Layouts", icon: Layout },
     { id: "images", label: "Imagens", icon: Image },
   ];
 
@@ -418,6 +420,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
               />
             </div>
           </div>
+        )}
+
+        {activeTab === "layout" && (
+          <LayoutTab 
+            businessData={businessData}
+            onLandingPageGenerated={handleLandingPageGeneratedInternal}
+          />
         )}
 
         {activeTab === "seo" && (

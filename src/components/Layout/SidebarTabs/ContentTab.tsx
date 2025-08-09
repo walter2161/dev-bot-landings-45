@@ -227,7 +227,28 @@ const ContentTab = ({ businessData, onContentUpdate, onLandingPageGenerated }: C
         </Card>
       ))}
 
-      <Button variant="outline" className="w-full">
+      <Button 
+        variant="outline" 
+        className="w-full"
+        onClick={() => {
+          if (businessData) {
+            const newSection = {
+              id: `custom-${Date.now()}`,
+              type: 'investment' as const,
+              title: 'Nova Seção',
+              content: 'Conteúdo da nova seção. Clique em editar para personalizar.',
+              order: businessData.sections.length + 1
+            };
+            
+            const updatedBusinessData = {
+              ...businessData,
+              sections: [...businessData.sections, newSection]
+            };
+            
+            onContentUpdate?.(updatedBusinessData);
+          }
+        }}
+      >
         <Plus className="w-4 h-4 mr-2" />
         Adicionar Seção
       </Button>

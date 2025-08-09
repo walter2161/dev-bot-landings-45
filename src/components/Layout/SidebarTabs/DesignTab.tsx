@@ -189,6 +189,76 @@ const DesignTab = ({ businessData, onLandingPageGenerated }: DesignTabProps) => 
         </div>
       </Card>
 
+      {/* Section Font Colors */}
+      <Card className="p-4 bg-gradient-card">
+        <h4 className="font-medium text-sm mb-3 text-foreground">Cores de Fonte por Seção</h4>
+        <div className="space-y-3">
+          <div>
+            <Label className="text-xs">Cabeçalho</Label>
+            <div className="flex gap-2 items-center">
+              <Input
+                type="color"
+                defaultValue="#ffffff"
+                className="w-12 h-8 p-0 border-0"
+              />
+              <Input
+                defaultValue="#ffffff"
+                className="flex-1 text-xs"
+                placeholder="#ffffff"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <Label className="text-xs">Títulos das Seções</Label>
+            <div className="flex gap-2 items-center">
+              <Input
+                type="color"
+                defaultValue="#1a1a1a"
+                className="w-12 h-8 p-0 border-0"
+              />
+              <Input
+                defaultValue="#1a1a1a"
+                className="flex-1 text-xs"
+                placeholder="#1a1a1a"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <Label className="text-xs">Texto Corpo</Label>
+            <div className="flex gap-2 items-center">
+              <Input
+                type="color"
+                defaultValue="#666666"
+                className="w-12 h-8 p-0 border-0"
+              />
+              <Input
+                defaultValue="#666666"
+                className="flex-1 text-xs"
+                placeholder="#666666"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <Label className="text-xs">Rodapé</Label>
+            <div className="flex gap-2 items-center">
+              <Input
+                type="color"
+                defaultValue="#ffffff"
+                className="w-12 h-8 p-0 border-0"
+              />
+              <Input
+                defaultValue="#ffffff"
+                className="flex-1 text-xs"
+                placeholder="#ffffff"
+              />
+            </div>
+          </div>
+        </div>
+      </Card>
+
       {/* Layout Settings */}
       <Card className="p-4 bg-gradient-card">
         <h4 className="font-medium text-sm mb-3 text-foreground">Layout</h4>
