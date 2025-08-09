@@ -268,7 +268,10 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
     "Academia de musculação",
     "Salão de beleza feminino",
     "Loja de roupas jovens",
-    "Clínica veterinária"
+    "Clínica veterinária",
+    "Corretor de imóveis especialista em apartamentos",
+    "Lançamento imobiliário - apartamentos de luxo",
+    "Loja de roupas femininas - moda jovem"
   ];
 
   if (isIntegrated) {

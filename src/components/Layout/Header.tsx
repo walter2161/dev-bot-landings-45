@@ -38,17 +38,18 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center gap-3">
+          <div className="text-xs text-muted-foreground hidden sm:block">
+            ChatDev AI - Powered by Mistral
+          </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowDocumentation(true)}
-            className="h-8 w-8 p-0 rounded-full"
+            className="h-8 w-8 p-0 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+            title="Documentação"
           >
-            <Info className="w-4 h-4" />
+            <Info className="w-4 h-4 text-primary" />
           </Button>
-          <div className="text-xs text-muted-foreground">
-            ChatDev AI - Powered by Mistral
-          </div>
         </div>
       </div>
     </header>
