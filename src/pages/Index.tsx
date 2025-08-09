@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import Header from "@/components/Layout/Header";
 import Sidebar from "@/components/Layout/Sidebar";
 import PreviewFrame from "@/components/LandingPageBuilder/PreviewFrame";
 import ImageDebugger from "@/components/Debug/ImageDebugger";
@@ -17,7 +18,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="flex h-screen">
+      <Header />
+      <div className="flex h-[calc(100vh-4rem)]">
         <Sidebar onLandingPageGenerated={handleLandingPageGenerated} businessData={businessData} />
         <PreviewFrame 
           generatedHTML={generatedHTML} 

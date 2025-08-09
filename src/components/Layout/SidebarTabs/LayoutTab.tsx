@@ -89,12 +89,22 @@ const LayoutTab = ({ businessData, onLandingPageGenerated }: LayoutTabProps) => 
       try {
         const updatedBusinessData = {
           ...businessData,
-          layouts: layouts
+          layouts: layouts.reduce((acc, layout) => {
+            acc[layout.id] = {
+              columns: layout.columns,
+              alignment: layout.alignment,
+              contentPosition: layout.contentPosition,
+              gridLayout: layout.gridLayout
+            };
+            return acc;
+          }, {} as any)
         };
         
         const { landingPageBuilder } = await import("@/services/landingPageBuilder");
         const updatedHTML = await landingPageBuilder.generateHTML(updatedBusinessData);
         onLandingPageGenerated(updatedHTML, updatedBusinessData);
+        
+        console.log('Layouts aplicados:', layouts);
       } catch (error) {
         console.error('Erro ao aplicar layouts:', error);
       }

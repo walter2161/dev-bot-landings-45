@@ -302,19 +302,19 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
                 <Upload className="h-3 w-3" />
                 Importar HTML
               </Button>
-              <div className="grid grid-cols-1 gap-1">
-                {quickPrompts.slice(0, 3).map((prompt, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setInputMessage(prompt)}
-                    className="text-xs h-auto py-1 px-2 text-left justify-start hover:bg-primary/5 border-primary/30"
-                  >
-                    {prompt}
-                  </Button>
-                ))}
-              </div>
+               <div className="grid grid-cols-1 gap-1">
+                 {quickPrompts.slice(0, 6).map((prompt, index) => (
+                   <Button
+                     key={index}
+                     variant="outline"
+                     size="sm"
+                     onClick={() => setInputMessage(prompt)}
+                     className="text-xs h-auto py-1 px-2 text-left justify-start hover:bg-primary/5 border-primary/30"
+                   >
+                     {prompt}
+                   </Button>
+                 ))}
+               </div>
             </div>
           )}
 
