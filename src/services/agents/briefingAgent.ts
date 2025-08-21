@@ -22,7 +22,6 @@ export interface ProcessedBriefing {
     accent: string;
   };
   briefingPrompt: string;
-  template?: string;
 }
 
 export class BriefingAgent {
@@ -69,7 +68,6 @@ export class BriefingAgent {
       const specialOffersMatch = rawBriefing.match(/Ofertas Especiais:\s*([^\n]+)/);
       const logoMatch = rawBriefing.match(/IMPORTANTE:.*?logo personalizado\s*\(([^)]+)\)/);
       const paletteMatch = rawBriefing.match(/PALETA DE CORES OBRIGATÓRIA:.*?Primária:\s*(#[A-Fa-f0-9]{6}).*?Secundária:\s*(#[A-Fa-f0-9]{6}).*?Destaque:\s*(#[A-Fa-f0-9]{6})/);
-      const templateMatch = rawBriefing.match(/TEMPLATE OBRIGATÓRIO:.*?"([^"]+)"\s*\(([^)]+)\)/);
 
       // Função para limpar marcações das instruções
       const cleanText = (text: string) => {
@@ -96,7 +94,6 @@ export class BriefingAgent {
         specialOffers: cleanText(specialOffersMatch?.[1]) || "",
         hasCustomLogo: logoMatch !== null,
         logoFileName: logoMatch?.[1]?.trim(),
-        template: templateMatch?.[2]?.trim() || 'moderno-visual',
         colorPalette: paletteMatch ? {
           primary: paletteMatch[1],
           secondary: paletteMatch[2],
@@ -130,7 +127,6 @@ export class BriefingAgent {
         },
         specialOffers: "",
         hasCustomLogo: false,
-        template: 'moderno-visual',
         colorPalette: {
           primary: "#2563eb",
           secondary: "#1e40af",
@@ -151,7 +147,6 @@ OBJETIVO: ${briefing.mainGoal}
 SERVIÇOS: ${briefing.keyServices}
 CONTATO: WhatsApp ${briefing.contactInfo.whatsapp}, Endereço: ${briefing.contactInfo.address}
 OFERTAS: ${briefing.specialOffers}
-TEMPLATE: ${briefing.template || 'moderno-visual'}
 `;
 
       const logoInfo = briefing.hasCustomLogo 
@@ -173,8 +168,7 @@ DIRETRIZES PARA CONTEÚDO:
 - Contato: ${briefing.contactInfo.whatsapp}, ${briefing.contactInfo.address}
 - Objetivo: ${briefing.mainGoal}
 - Serviços: ${briefing.keyServices}
-- Público: ${briefing.targetAudience}
-- Template: ${briefing.template || 'moderno-visual'}`;
+- Público: ${briefing.targetAudience}`;
 
       case 'design':
         return `${baseInfo}
@@ -184,8 +178,7 @@ ${colorInfo}
 INSTRUÇÕES PARA DESIGN:
 - Aplicar cores: ${briefing.colorPalette.primary}, ${briefing.colorPalette.secondary}, ${briefing.colorPalette.accent}
 - ${briefing.hasCustomLogo ? 'Usar logo personalizado fornecido' : 'Criar logo apropriado'}
-- Design para tipo de negócio: ${briefing.businessType}
-- Template: ${briefing.template || 'moderno-visual'}`;
+- Design para tipo de negócio: ${briefing.businessType}`;
 
       case 'image':
         return `${baseInfo}
@@ -196,8 +189,7 @@ INSTRUÇÕES PARA IMAGENS:
 - ${briefing.hasCustomLogo ? `Logo: Logo personalizado da empresa ${briefing.businessName} (fornecido pelo cliente)` : `Logo: Logo profissional moderno para ${briefing.businessName}`}
 - Todas as imagens devem ser relacionadas ao tipo de negócio: ${briefing.businessType}
 - Refletir o público-alvo: ${briefing.targetAudience}
-- Mostrar os serviços/produtos: ${briefing.keyServices}
-- Template: ${briefing.template || 'moderno-visual'}`;
+- Mostrar os serviços/produtos: ${briefing.keyServices}`;
 
       case 'seo':
         return `${baseInfo}

@@ -7,10 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { BusinessContent } from "@/services/contentGenerator";
-import { Upload, Palette, Check, Sparkles, Layout } from "lucide-react";
+import { Upload, Palette, Check, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { agentOrchestrator } from "@/services/agents/orchestrator";
-import TemplateSelector from "../TemplateSelector";
 
 interface BriefingTabProps {
   onLandingPageGenerated: (html: string, data: BusinessContent) => void;
@@ -18,7 +17,6 @@ interface BriefingTabProps {
 
 const BriefingTab = ({ onLandingPageGenerated }: BriefingTabProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [briefingData, setBriefingData] = useState({
     businessName: "",
     businessType: "",
@@ -31,33 +29,8 @@ const BriefingTab = ({ onLandingPageGenerated }: BriefingTabProps) => {
     address: "",
     specialOffers: "",
     customLogo: null as File | null,
-    colorPalette: "",
-    template: ""
+    colorPalette: ""
   });
-
-  const templates = [
-    {
-      id: "moderno-visual",
-      name: "Moderno & Visual",
-      description: "Cabeçalho escuro, seção 5W2H em cards, galeria grid 3x3",
-      nichos: ["Restaurantes", "Cafeterias", "Hotéis", "Pousadas", "Imobiliárias", "Construtoras", "Arquitetura", "Decoração", "Eventos", "Turismo"],
-      colors: { header: "#2c3e50", accent: "#3498db", whatsapp: "#25D366" }
-    },
-    {
-      id: "minimalista-clean",
-      name: "Minimalista & Clean",
-      description: "Fundo branco, acordeão vertical, carrossel horizontal",
-      nichos: ["Consultórios médicos", "Clínicas", "Advogados", "Contabilidade", "Escritórios", "Serviços profissionais", "Educação", "Cursos", "Terapias", "Coaching"],
-      colors: { header: "#ffffff", accent: "#e74c3c", whatsapp: "#25D366" }
-    },
-    {
-      id: "interativo-dinamico",
-      name: "Interativo & Dinâmico",
-      description: "Logo centralizado, timeline horizontal, grid assimétrico",
-      nichos: ["Moda", "Beleza", "Estética", "Academia", "Petshop", "Design", "Fotografia", "Arte", "Artesanato", "Produtos criativos"],
-      colors: { header: "gradiente", accent: "#2980b9", whatsapp: "#25D366" }
-    }
-  ];
 
   const colorPalettes = [
     { id: "azul-confianca", label: "Azul Confiança", colors: ["#0066CC", "#004C99", "#FFB700"], preview: "linear-gradient(135deg, #0066CC, #004C99)" },
@@ -92,13 +65,11 @@ const BriefingTab = ({ onLandingPageGenerated }: BriefingTabProps) => {
   };
 
   const getBriefingPrompt = () => {
-    const { businessName, businessType, description, targetAudience, mainGoal, keyServices, contactInfo, whatsapp, address, specialOffers, customLogo, colorPalette, template } = briefingData;
+    const { businessName, businessType, description, targetAudience, mainGoal, keyServices, contactInfo, whatsapp, address, specialOffers, customLogo, colorPalette } = briefingData;
     
     const selectedPalette = colorPalettes.find(p => p.id === colorPalette);
-    const selectedTemplate = templates.find(t => t.id === template);
     const logoInfo = customLogo ? `IMPORTANTE: O cliente enviou um logo personalizado (${customLogo.name}). Use EXATAMENTE o nome da empresa "${businessName}" e incorpore o logo enviado pelo cliente na landing page. NÃO gere uma imagem genérica no lugar do logo.` : '';
     const paletteInfo = selectedPalette ? `PALETA DE CORES OBRIGATÓRIA: Use exatamente estas cores - Primária: ${selectedPalette.colors[0]}, Secundária: ${selectedPalette.colors[1]}, Destaque: ${selectedPalette.colors[2]}. NÃO use outras cores.` : '';
-    const templateInfo = selectedTemplate ? `TEMPLATE OBRIGATÓRIO: Use o template "${selectedTemplate.name}" (${selectedTemplate.id}) - ${selectedTemplate.description}` : '';
     
     return `BRIEFING DETALHADO - SIGA EXATAMENTE ESTAS INFORMAÇÕES:
 
@@ -106,10 +77,8 @@ ${logoInfo}
 
 ${paletteInfo}
 
-${templateInfo}
-
 INFORMAÇÕES DO NEGÓCIO:
-- Nome da Empresa: ${businessName}
+- Nome da Empresa: ${businessName} (USE EXATAMENTE ESTE NOME)
 - Tipo de Negócio: ${businessType}
 - Descrição: ${description}
 - Público-Alvo: ${targetAudience}
@@ -126,10 +95,9 @@ INSTRUÇÕES CRÍTICAS:
 1. Use EXATAMENTE o nome "${businessName}" em toda a landing page
 2. ${logoInfo ? 'USAR O LOGO ENVIADO PELO CLIENTE, não gerar imagens genéricas' : 'Criar logo apropriado para a empresa'}
 3. ${paletteInfo ? 'APLICAR A PALETA DE CORES SELECIONADA OBRIGATORIAMENTE' : 'Escolher cores apropriadas para o negócio'}
-4. ${templateInfo ? 'APLICAR O TEMPLATE SELECIONADO OBRIGATORIAMENTE' : 'Escolher template baseado no tipo de negócio'}
-5. Personalizar todo conteúdo baseado nas informações fornecidas
-6. Incluir as ofertas especiais destacadamente se fornecidas
-7. Usar as informações de contato exatas fornecidas
+4. Personalizar todo conteúdo baseado nas informações fornecidas
+5. Incluir as ofertas especiais destacadamente se fornecidas
+6. Usar as informações de contato exatas fornecidas
 
 Crie uma landing page profissional e personalizada seguindo exatamente essas especificações.`;
   };
@@ -138,24 +106,6 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
     if (!briefingData.businessName || !briefingData.businessType) {
       toast.error("Preencha pelo menos o nome da empresa e tipo de negócio");
       return;
-    }
-
-    // Auto-selecionar template baseado no tipo de negócio se não selecionado
-    if (!briefingData.template) {
-      const businessTypeLower = briefingData.businessType.toLowerCase();
-      let autoTemplate = templates[0].id; // padrão
-
-      for (const template of templates) {
-        if (template.nichos.some(nicho => 
-          businessTypeLower.includes(nicho.toLowerCase()) || 
-          nicho.toLowerCase().includes(businessTypeLower)
-        )) {
-          autoTemplate = template.id;
-          break;
-        }
-      }
-
-      setBriefingData(prev => ({ ...prev, template: autoTemplate }));
     }
 
     setIsGenerating(true);
@@ -191,9 +141,8 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
         }
       }
       
-      // Garantir que o nome da empresa e template estão corretos
+      // Garantir que o nome da empresa está correto
       businessData.title = briefingData.businessName;
-      businessData.template = briefingData.template || templates[0].id;
 
       onLandingPageGenerated(html, businessData);
       
@@ -215,36 +164,6 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
           Personalizado
         </Badge>
       </div>
-
-      {/* Seleção de Template */}
-      <Card className="p-4 bg-gradient-card">
-        <h4 className="font-medium text-sm mb-3 text-foreground flex items-center gap-2">
-          <Layout className="w-4 h-4" />
-          Template Selecionado
-        </h4>
-        
-        <div className="space-y-3">
-          <Button
-            variant="outline"
-            onClick={() => setShowTemplateSelector(true)}
-            className="w-full justify-between text-left"
-          >
-            <span>
-              {briefingData.template 
-                ? templates.find(t => t.id === briefingData.template)?.name || "Selecionar Template"
-                : "Clique para escolher um template"
-              }
-            </span>
-            <Layout className="w-4 h-4" />
-          </Button>
-          
-          {briefingData.template && (
-            <div className="text-xs text-muted-foreground">
-              {templates.find(t => t.id === briefingData.template)?.description}
-            </div>
-          )}
-        </div>
-      </Card>
 
       {/* Informações Básicas */}
       <Card className="p-4 bg-gradient-card">
@@ -457,17 +376,6 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
           </>
         )}
       </Button>
-
-      {/* Template Selector Modal */}
-      <TemplateSelector
-        isOpen={showTemplateSelector}
-        onClose={() => setShowTemplateSelector(false)}
-        onSelect={(templateId) => {
-          handleBriefingChange("template", templateId);
-          setShowTemplateSelector(false);
-        }}
-        selectedTemplate={briefingData.template}
-      />
     </div>
   );
 };

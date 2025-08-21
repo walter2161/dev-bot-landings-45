@@ -14,7 +14,6 @@ export interface BusinessContent {
   sellerbot: SellerbotConfig;
   contact: ContactInfo;
   seo?: SEOData;
-  template?: string;
 }
 
 export interface SEOData {
