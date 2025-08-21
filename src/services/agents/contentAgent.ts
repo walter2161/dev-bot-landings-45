@@ -88,23 +88,24 @@ export class ContentAgent {
     const whatsapp = whatsappMatch?.[1] || "(11) 99999-9999";
     const address = addressMatch?.[1]?.trim() || "São Paulo, SP";
 
-    const prompt = `Baseando-se nas instruções processadas: "${businessInstructions}"
+    const prompt = `Crie conteúdo profissional para uma landing page com as seguintes informações:
 
-INFORMAÇÕES EXTRAÍDAS:
-- Nome da Empresa: ${businessName} (USE EXATAMENTE ESTE NOME)
-- Tipo de Negócio: ${businessType}
+INFORMAÇÕES DA EMPRESA:
+- Nome: ${businessName}
+- Tipo: ${businessType}
 - Descrição: ${description}
 - Público-Alvo: ${targetAudience}
 - Objetivo: ${mainGoal}
 - Serviços: ${services}
 - Ofertas: ${offers}
-- Contato: ${contactInfo}
+- WhatsApp: ${whatsapp}
+- Endereço: ${address}
 
-INSTRUÇÕES CRÍTICAS:
-1. Use EXATAMENTE o nome "${businessName}" em todos os textos
-2. Não use termos genéricos como "Seu Negócio" ou similares
-3. Personalize todo conteúdo baseado nas informações fornecidas
-4. Inclua as ofertas especiais se disponíveis
+INSTRUÇÕES:
+- Use o nome da empresa de forma natural nos textos
+- Crie conteúdo personalizado e profissional
+- Inclua ofertas especiais se disponíveis
+- Use informações de contato reais
 
 Retorne APENAS JSON válido estruturado com:
 - title: nome exato da empresa

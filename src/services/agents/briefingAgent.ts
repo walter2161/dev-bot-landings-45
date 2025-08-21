@@ -139,11 +139,11 @@ CONTATO: WhatsApp ${briefing.contactInfo.whatsapp}, Endereço: ${briefing.contac
 OFERTAS: ${briefing.specialOffers}
 `;
 
-    const logoInfo = briefing.hasCustomLogo 
-      ? `LOGO: Use EXATAMENTE o logo personalizado fornecido pelo cliente (${briefing.logoFileName}). NÃO gere imagem genérica.`
-      : `LOGO: Criar logo profissional para ${briefing.businessName}`;
+      const logoInfo = briefing.hasCustomLogo 
+        ? `LOGO: Logo personalizado fornecido (${briefing.logoFileName})`
+        : `LOGO: Criar logo profissional para ${briefing.businessName}`;
 
-    const colorInfo = `CORES OBRIGATÓRIAS: Primary: ${briefing.colorPalette.primary}, Secondary: ${briefing.colorPalette.secondary}, Accent: ${briefing.colorPalette.accent}`;
+      const colorInfo = `CORES: Primary: ${briefing.colorPalette.primary}, Secondary: ${briefing.colorPalette.secondary}, Accent: ${briefing.colorPalette.accent}`;
 
     switch (agentType) {
       case 'content':
@@ -152,11 +152,11 @@ ${logoInfo}
 ${colorInfo}
 
 INSTRUÇÕES PARA CONTEÚDO:
-- Use EXATAMENTE o nome "${briefing.businessName}" em todos os textos
-- Crie conteúdo personalizado baseado nas informações do briefing
-- Inclua as ofertas especiais de forma destacada
-- Use as informações de contato exatas fornecidas
-- Personalize todo conteúdo para o tipo de negócio específico`;
+- Nome da empresa: ${briefing.businessName}
+- Criar conteúdo personalizado baseado no briefing
+- Incluir ofertas especiais se disponíveis
+- Usar informações de contato fornecidas
+- Personalizar para o tipo de negócio específico`;
 
       case 'design':
         return `${baseInfo}
@@ -164,9 +164,9 @@ ${logoInfo}
 ${colorInfo}
 
 INSTRUÇÕES PARA DESIGN:
-- APLICAR EXATAMENTE as cores especificadas: ${briefing.colorPalette.primary}, ${briefing.colorPalette.secondary}, ${briefing.colorPalette.accent}
-- ${briefing.hasCustomLogo ? 'Usar o logo personalizado fornecido' : 'Criar logo apropriado'}
-- Design deve refletir o tipo de negócio: ${briefing.businessType}`;
+- Aplicar cores: ${briefing.colorPalette.primary}, ${briefing.colorPalette.secondary}, ${briefing.colorPalette.accent}
+- ${briefing.hasCustomLogo ? 'Usar logo personalizado fornecido' : 'Criar logo apropriado'}
+- Design para tipo de negócio: ${briefing.businessType}`;
 
       case 'image':
         return `${baseInfo}
