@@ -69,19 +69,29 @@ export class BriefingAgent {
       const logoMatch = rawBriefing.match(/IMPORTANTE:.*?logo personalizado\s*\(([^)]+)\)/);
       const paletteMatch = rawBriefing.match(/PALETA DE CORES OBRIGATÓRIA:.*?Primária:\s*(#[A-Fa-f0-9]{6}).*?Secundária:\s*(#[A-Fa-f0-9]{6}).*?Destaque:\s*(#[A-Fa-f0-9]{6})/);
 
+      // Função para limpar marcações das instruções
+      const cleanText = (text: string) => {
+        if (!text) return text;
+        return text
+          .replace(/\(USE EXATAMENTE.*?\)/gi, '')
+          .replace(/\(OBRIGATÓRIO.*?\)/gi, '')
+          .replace(/\(IMPORTANTE.*?\)/gi, '')
+          .trim();
+      };
+
       const processedBriefing: ProcessedBriefing = {
-        businessName: businessNameMatch?.[1]?.trim() || "Empresa",
-        businessType: businessTypeMatch?.[1]?.trim() || "Negócio",
-        description: descriptionMatch?.[1]?.trim() || "",
-        targetAudience: targetAudienceMatch?.[1]?.trim() || "",
-        mainGoal: mainGoalMatch?.[1]?.trim() || "",
-        keyServices: keyServicesMatch?.[1]?.trim() || "",
+        businessName: cleanText(businessNameMatch?.[1]) || "Empresa",
+        businessType: cleanText(businessTypeMatch?.[1]) || "Negócio",
+        description: cleanText(descriptionMatch?.[1]) || "",
+        targetAudience: cleanText(targetAudienceMatch?.[1]) || "",
+        mainGoal: cleanText(mainGoalMatch?.[1]) || "",
+        keyServices: cleanText(keyServicesMatch?.[1]) || "",
         contactInfo: {
-          whatsapp: whatsappMatch?.[1]?.trim() || "",
-          address: addressMatch?.[1]?.trim() || "",
-          other: otherContactMatch?.[1]?.trim() || ""
+          whatsapp: cleanText(whatsappMatch?.[1]) || "",
+          address: cleanText(addressMatch?.[1]) || "",
+          other: cleanText(otherContactMatch?.[1]) || ""
         },
-        specialOffers: specialOffersMatch?.[1]?.trim() || "",
+        specialOffers: cleanText(specialOffersMatch?.[1]) || "",
         hasCustomLogo: logoMatch !== null,
         logoFileName: logoMatch?.[1]?.trim(),
         colorPalette: paletteMatch ? {

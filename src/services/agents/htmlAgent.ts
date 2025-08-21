@@ -14,8 +14,11 @@ export class HtmlAgent {
     
     const logoPrompt = images.logo || `Logo da empresa ${images.hero || 'negócio profissional'}`;
     
+    // Priorizar logos personalizados do usuário
+    const hasCustomLogo = customImages?.logo && !customImages.logo.includes('pollinations.ai');
+    
     const imageUrls = {
-      logo: customImages?.logo || `${baseUrl}${encodeURIComponent(logoPrompt)}${imageParams}`,
+      logo: hasCustomLogo ? customImages.logo : `${baseUrl}${encodeURIComponent(logoPrompt)}${imageParams}`,
       hero: customImages?.hero || `${baseUrl}${encodeURIComponent(images.hero)}${imageParams}`,
       motivation: customImages?.motivation || `${baseUrl}${encodeURIComponent(images.motivation)}${imageParams}`,
       target: customImages?.target || `${baseUrl}${encodeURIComponent(images.target)}${imageParams}`,

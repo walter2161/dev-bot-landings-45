@@ -100,12 +100,13 @@ INFORMAÇÕES PARA APLICAR NO CONTEÚDO:
 - WhatsApp: ${whatsapp}
 - Endereço: ${address}
 
-IMPORTANTE: 
-- Crie textos naturais e profissionais usando essas informações
-- NÃO copie as informações literalmente
-- NÃO inclua instruções no conteúdo final
-- Use o nome "${businessName}" de forma natural nos textos
-- Integre as ofertas especiais no conteúdo quando relevante
+REGRAS OBRIGATÓRIAS: 
+- Crie textos completamente naturais e profissionais
+- JAMAIS inclua marcações como "(USE EXATAMENTE ESTE NOME)" ou "(OBRIGATÓRIO)" no conteúdo final
+- JAMAIS copie instruções literalmente - apenas USE as informações para criar conteúdo natural
+- Use o nome "${businessName}" naturalmente nos textos sem nenhuma marcação
+- Integre ofertas especiais de forma persuasiva no conteúdo
+- Remova qualquer parêntese com instruções do resultado final
 
 Retorne APENAS JSON válido com esta estrutura:
 - title: nome exato da empresa
