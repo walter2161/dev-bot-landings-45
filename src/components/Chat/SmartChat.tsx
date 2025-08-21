@@ -263,15 +263,15 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
   };
 
   const quickPrompts = [
-    "Petshop com promoção de banho e tosa",
+    "Petshop com promoção banho e tosa",
     "Restaurante de comida caseira",
     "Academia de musculação",
     "Salão de beleza feminino",
     "Loja de roupas jovens",
     "Clínica veterinária",
-    "Corretor de imóveis especialista em apartamentos",
-    "Lançamento imobiliário - apartamentos de luxo",
-    "Loja de roupas femininas - moda jovem"
+    "Corretor de imóveis especialista",
+    "Lançamento imobiliário - luxo",
+    "Loja de roupas femininas jovem"
   ];
 
   if (isIntegrated) {
