@@ -2,11 +2,9 @@ import { BusinessContent, SEOData } from './contentGenerator';
 
 export class LandingPageBuilder {
   async generateHTML(businessData: BusinessContent): Promise<string> {
-    // Garantir que todos os campos necessários existem
-    const safeBusinessData = this.ensureDataIntegrity(businessData);
-    const images = await this.generateImageUrls(safeBusinessData.images, safeBusinessData.customImages);
-    
-    return this.buildHTMLTemplate(safeBusinessData, images);
+    // Usar o agente especializado em HTML
+    const { htmlAgent } = await import('./agents/htmlAgent');
+    return await htmlAgent.generateHTML(businessData);
   }
 
   private generateSEOTags(businessData: BusinessContent, seo?: SEOData): string {
