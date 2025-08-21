@@ -224,6 +224,16 @@ export class HtmlAgent {
                 <p>${businessData.contact.address}</p>
             </div>
         </div>
+    </footer>
+    
+    <!-- PageJet Signature Footer -->
+    <footer style="background: #000000; color: white; padding: 1rem 0; border-top: 2px solid #ff6600;">
+        <div class="container">
+            <div style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span style="font-size: 0.9rem;">By:</span>
+                <img src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" alt="PageJet" style="height: 20px; object-fit: contain;">
+            </div>
+        </div>
     </footer>`;
   }
 

@@ -359,7 +359,7 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
                 <img 
                   src="/lovable-uploads/20c03a1d-3bd4-4860-896d-4babff95c2f8.png" 
                   alt="Enviar" 
-                  className="h-3 w-3"
+                  className="h-3 w-3 object-contain"
                 />
               )}
             </Button>
@@ -481,7 +481,7 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
               <img 
                 src="/lovable-uploads/20c03a1d-3bd4-4860-896d-4babff95c2f8.png" 
                 alt="Enviar" 
-                className="h-4 w-4"
+                className="h-4 w-4 object-contain"
               />
             )}
           </Button>
