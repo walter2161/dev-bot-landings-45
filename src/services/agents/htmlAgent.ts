@@ -3,12 +3,12 @@ import { BusinessContent } from '../contentGenerator';
 
 export class HtmlAgent {
   async generateHTML(businessData: BusinessContent): Promise<string> {
-    const images = await this.generateImageUrls(businessData.images, businessData.customImages);
+    const images = await this.generateImageUrls(businessData.images, businessData.customImages, businessData);
     
     return this.buildHTMLTemplate(businessData, images);
   }
 
-  private async generateImageUrls(images: any, customImages?: { [key: string]: string }): Promise<any> {
+  private async generateImageUrls(images: any, customImages?: { [key: string]: string }, businessData?: BusinessContent): Promise<any> {
     const baseUrl = 'https://image.pollinations.ai/prompt/';
     const imageParams = '?width=720&height=480&enhance=true&nologo=true';
     
@@ -23,8 +23,8 @@ export class HtmlAgent {
       results: customImages?.results || `${baseUrl}${encodeURIComponent(images.results)}${imageParams}`,
       access: customImages?.access || `${baseUrl}${encodeURIComponent(images.access)}${imageParams}`,
       investment: customImages?.investment || `${baseUrl}${encodeURIComponent(images.investment)}${imageParams}`,
-      gallery: images.gallery ? Array.from({length: 6}, (_, i) => 
-        customImages?.[`gallery_${i}`] || `${baseUrl}${encodeURIComponent(images.gallery + ` image ${i+1}`)}${imageParams}`
+      gallery: businessData.galleryImages ? businessData.galleryImages.map((prompt: string, i: number) => 
+        customImages?.[`gallery_${i}`] || `${baseUrl}${encodeURIComponent(prompt)}${imageParams}`
       ) : []
     };
 

@@ -10,6 +10,7 @@ export interface BusinessContent {
   colors: ColorScheme;
   images: ImageDescriptions;
   customImages?: { [key: string]: string };
+  galleryImages?: string[];
   sellerbot: SellerbotConfig;
   contact: ContactInfo;
   seo?: SEOData;

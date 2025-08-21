@@ -76,6 +76,15 @@ export class AgentOrchestrator {
           investment: imagePrompts.investment,
           gallery: imagePrompts.gallery
         },
+        // Criar array de imagens da galeria (6 imagens)
+        galleryImages: [
+          `${userRequest} - ambiente interno profissional e bem iluminado`,
+          `${userRequest} - cliente satisfeito utilizando o serviço de qualidade`,
+          `${userRequest} - equipe profissional trabalhando com dedicação`,
+          `${userRequest} - detalhes do produto ou serviço sendo executado`,
+          `${userRequest} - ambiente de atendimento ao cliente acolhedor`,
+          `${userRequest} - resultado final do trabalho realizado com excelência`
+        ],
         sellerbot,
         seo: {
           title: seoData.title,
