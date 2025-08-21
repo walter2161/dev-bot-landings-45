@@ -7,7 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SmartChat from "@/components/Chat/SmartChat";
-import pagejetLogo from "@/assets/pagejet-logo-white.png";
 
 import DesignTab from "./SidebarTabs/DesignTab";
 import ContentTab from "./SidebarTabs/ContentTab";
@@ -147,9 +146,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-center mb-4">
           <img 
-            src={pagejetLogo} 
+            src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" 
             alt="PageJet" 
-            className="h-12 object-contain"
+            className="h-8 object-contain"
           />
         </div>
         
