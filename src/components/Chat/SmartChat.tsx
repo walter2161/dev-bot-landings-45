@@ -356,7 +356,11 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
               {isGenerating ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
               ) : (
-                '→'
+                <img 
+                  src="/lovable-uploads/20c03a1d-3bd4-4860-896d-4babff95c2f8.png" 
+                  alt="Enviar" 
+                  className="h-3 w-3"
+                />
               )}
             </Button>
           </div>
@@ -474,7 +478,11 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
             {isGenerating ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              '→'
+              <img 
+                src="/lovable-uploads/20c03a1d-3bd4-4860-896d-4babff95c2f8.png" 
+                alt="Enviar" 
+                className="h-4 w-4"
+              />
             )}
           </Button>
         </div>
