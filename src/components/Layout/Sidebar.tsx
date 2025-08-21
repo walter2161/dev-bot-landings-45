@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SmartChat from "@/components/Chat/SmartChat";
+import pagejetLogo from "@/assets/pagejet-logo.png";
 
 import DesignTab from "./SidebarTabs/DesignTab";
 import ContentTab from "./SidebarTabs/ContentTab";
@@ -144,30 +145,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
   return (
     <aside className="w-80 border-r border-border bg-card/50 backdrop-blur">
       <div className="p-4 border-b border-border">
-        <div className="flex items-center gap-3 mb-4">
-          {businessData?.images?.logo ? (
-            <img 
-              src={businessData.images.logo} 
-              alt="Logo" 
-              className="w-8 h-8 rounded-lg object-cover"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                const nextEl = e.currentTarget.nextElementSibling as HTMLElement;
-                if (nextEl) nextEl.style.display = 'flex';
-              }}
-            />
-          ) : null}
-          <div className={`w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center ${businessData?.images?.logo ? 'hidden' : 'flex'}`}>
-            <Bot className="w-5 h-5 text-foreground" />
-          </div>
-          <div>
-            <h2 className="font-semibold text-foreground">
-              {businessData?.title || 'ChatDev'}
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              {businessData?.subtitle || 'Landing Page Generator'}
-            </p>
-          </div>
+        <div className="flex items-center justify-center mb-4">
+          <img 
+            src={pagejetLogo} 
+            alt="PageJet" 
+            className="h-12 object-contain"
+          />
         </div>
         
         <div className="flex gap-0.5 bg-muted p-1 rounded-lg">
@@ -372,7 +355,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   }
                 }}
               >
-                Atualizar ChatDev
+                Atualizar PageJet
               </Button>
             </Card>
           </div>
@@ -409,7 +392,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
 
         {activeTab === "chatbot" && (
           <div className="space-y-4">
-            <h3 className="font-medium text-foreground">ChatDev IA - Gerador de Landing Page</h3>
+            <h3 className="font-medium text-foreground">PageJet IA - Gerador de Landing Page</h3>
             
             <div className="h-[400px] bg-gradient-card rounded-lg border border-border/50">
               <SmartChat 

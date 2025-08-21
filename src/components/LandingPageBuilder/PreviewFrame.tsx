@@ -48,7 +48,7 @@ const PreviewFrame = ({ generatedHTML, businessData }: PreviewFrameProps) => {
       <div style="text-align: center; color: #64748b;">
         <div style="font-size: 4rem; margin-bottom: 1rem;">🎨</div>
         <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #334155;">Aguardando Landing Page</h2>
-        <p style="font-size: 1rem;">Use o ChatDev para gerar sua landing page personalizada</p>
+        <p style="font-size: 1rem;">Use o PageJet para gerar sua landing page personalizada</p>
       </div>
     </div>
   `;
