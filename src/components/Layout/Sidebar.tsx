@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SmartChat from "@/components/Chat/SmartChat";
-import pagejetLogo from "@/assets/pagejet-logo.png";
+import pagejetLogo from "@/assets/pagejet-logo-white.png";
 
 import DesignTab from "./SidebarTabs/DesignTab";
 import ContentTab from "./SidebarTabs/ContentTab";
