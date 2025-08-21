@@ -222,7 +222,6 @@ export class HtmlAgent {
         }
         
         .first-section-bg {
-            background-image: url('${businessData.images?.hero}');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -344,7 +343,7 @@ export class HtmlAgent {
     const firstSection = businessData.sections[1];
     if (!firstSection) return '';
     
-    return `<section id="${firstSection.id}" class="section first-section-bg">
+    return `<section id="${firstSection.id}" class="section first-section-bg" style="background-image: url('${images.hero}');">
         <div class="container">
             <div class="two-columns">
                 <div>
