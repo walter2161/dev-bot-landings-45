@@ -61,13 +61,13 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
     return (
       <div className="h-screen bg-background flex flex-col">
         {/* Mobile Preview Header */}
-        <div className="bg-card border-b border-border p-4 flex items-center justify-between">
+        <div className="bg-card/90 backdrop-blur border-b border-border/50 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
-              variant="ghost"
+              variant="mobile"
               size="sm"
               onClick={() => setShowPreview(false)}
-              className="p-2 h-8 w-8"
+              className="p-2 h-10 w-10 text-foreground hover:text-white"
             >
               ←
             </Button>
@@ -76,12 +76,12 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
               alt="PageJet" 
               className="h-6 object-contain"
             />
-            <span className="text-sm font-medium">Preview</span>
+            <span className="text-base font-semibold text-foreground">Preview</span>
           </div>
           
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="text-xs">
-              <Download className="w-3 h-3 mr-1" />
+            <Button variant="hero" size="sm" className="text-sm font-medium">
+              <Download className="w-4 h-4 mr-2" />
               Baixar
             </Button>
           </div>
@@ -95,26 +95,26 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
           />
         </div>
 
-      {/* Mobile Navigation */}
-      <div className="bg-card border-t border-border p-2">
-        <div className="flex justify-around">
-          {mobileNavItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Button
-                key={item.id}
-                variant={item.id === "preview" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => handleTabChange(item.id)}
-                className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-foreground hover:text-foreground hover:bg-accent/50"
-              >
-                <Icon className="w-4 h-4" />
-                <span className="text-xs">{item.label}</span>
-              </Button>
-            );
-          })}
+        {/* Mobile Navigation */}
+        <div className="bg-card/90 backdrop-blur border-t border-border/50 p-3 mobile-safe-area">
+          <div className="flex justify-around">
+            {mobileNavItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Button
+                  key={item.id}
+                  variant={item.id === "preview" ? "hero" : "mobile"}
+                  size="sm"
+                  onClick={() => handleTabChange(item.id)}
+                  className="flex flex-col items-center gap-1 h-auto py-3 px-4 min-h-[56px] min-w-[56px] text-foreground hover:text-white"
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="text-xs font-medium">{item.label}</span>
+                </Button>
+              );
+            })}
+          </div>
         </div>
-      </div>
       </div>
     );
   }
@@ -122,7 +122,7 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
   return (
     <div className="h-screen bg-background flex flex-col">
       {/* Mobile Header */}
-      <div className="bg-card border-b border-border p-4 flex items-center justify-between">
+      <div className="bg-card/90 backdrop-blur border-b border-border/50 p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img 
             src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" 
@@ -130,28 +130,28 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
             className="h-6 object-contain"
           />
           <div>
-            <h1 className="text-lg font-bold text-foreground">PageJet</h1>
-            <p className="text-xs text-muted-foreground">Mobile Creator</p>
+            <h1 className="text-xl font-bold text-foreground">PageJet</h1>
+            <p className="text-sm text-muted-foreground">Mobile Creator</p>
           </div>
         </div>
         
         <Button
-          variant="ghost"
+          variant="mobile"
           size="sm"
           onClick={() => {
             AuthService.logout();
             onLogout();
           }}
-          className="p-2 h-8 w-8"
+          className="p-2 h-10 w-10 text-foreground hover:text-white"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-5 h-5" />
         </Button>
       </div>
 
       {/* Mobile Content */}
       <div className="flex-1 relative">
         <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-          <SheetContent side="bottom" className="h-[85vh] p-0">
+          <SheetContent side="bottom" className="h-[85vh] p-0 mobile-sheet">
             <div className="h-full">
               <Sidebar 
                 onLandingPageGenerated={handleLandingPageGenerated}
@@ -166,12 +166,12 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
         </Sheet>
 
         {/* Welcome Screen */}
-        <div className="p-6 text-center space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-foreground">
+        <div className="p-6 text-center space-y-8">
+          <div className="space-y-3">
+            <h2 className="text-3xl font-bold text-foreground">
               Crie sua Landing Page
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-lg text-muted-foreground">
               Use nossa IA para criar páginas profissionais em minutos
             </p>
           </div>
@@ -179,40 +179,40 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
           <div className="space-y-4">
             <Button 
               variant="hero" 
-              size="lg" 
-              className="w-full py-4"
+              size="xl" 
+              className="w-full py-6 text-lg font-semibold"
               onClick={() => {
                 setActiveTab("chat");
                 setIsSidebarOpen(true);
               }}
             >
-              <MessageCircle className="w-5 h-5 mr-2" />
+              <MessageCircle className="w-6 h-6 mr-3" />
               Começar com Chat IA
             </Button>
 
             <Button 
               variant="outline" 
-              size="lg" 
-              className="w-full py-4"
+              size="xl" 
+              className="w-full py-6 text-lg font-semibold bg-background/50 backdrop-blur border-2 border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent/50"
               onClick={() => {
                 setActiveTab("briefing");
                 setIsSidebarOpen(true);
               }}
             >
-              <FileText className="w-5 h-5 mr-2" />
+              <FileText className="w-6 h-6 mr-3" />
               Preencher Formulário
             </Button>
           </div>
 
           {generatedHTML && (
-            <div className="pt-4 border-t border-border">
+            <div className="pt-6 border-t border-border/30">
               <Button 
-                variant="secondary" 
-                size="lg" 
-                className="w-full py-4"
+                variant="hero" 
+                size="xl" 
+                className="w-full py-6 text-lg font-semibold"
                 onClick={() => setShowPreview(true)}
               >
-                <Eye className="w-5 h-5 mr-2" />
+                <Eye className="w-6 h-6 mr-3" />
                 Ver Prévia
               </Button>
             </div>
@@ -235,33 +235,33 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="bg-card border-t border-border p-2">
+      <div className="bg-card/90 backdrop-blur border-t border-border/50 p-3 mobile-safe-area">
         <div className="flex justify-around">
           {mobileNavItems.slice(0, 4).map((item) => {
             const Icon = item.icon;
             return (
               <Button
                 key={item.id}
-                variant="ghost"
+                variant="mobile"
                 size="sm"
                 onClick={() => handleTabChange(item.id)}
-                className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-foreground hover:text-foreground hover:bg-accent/50"
+                className="flex flex-col items-center gap-1 h-auto py-3 px-4 min-h-[56px] min-w-[56px] text-foreground hover:text-white"
               >
-                <Icon className="w-4 h-4" />
-                <span className="text-xs">{item.label}</span>
+                <Icon className="w-5 h-5" />
+                <span className="text-xs font-medium">{item.label}</span>
               </Button>
             );
           })}
           
           <Button
-            variant={generatedHTML ? "default" : "ghost"}
+            variant={generatedHTML ? "hero" : "mobile"}
             size="sm"
             onClick={() => setShowPreview(true)}
             disabled={!generatedHTML}
-            className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-foreground hover:text-foreground hover:bg-accent/50 disabled:text-muted-foreground"
+            className="flex flex-col items-center gap-1 h-auto py-3 px-4 min-h-[56px] min-w-[56px] text-foreground hover:text-white disabled:text-muted-foreground disabled:hover:text-muted-foreground"
           >
-            <Eye className="w-4 h-4" />
-            <span className="text-xs">Preview</span>
+            <Eye className="w-5 h-5" />
+            <span className="text-xs font-medium">Preview</span>
           </Button>
         </div>
       </div>

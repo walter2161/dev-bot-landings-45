@@ -30,18 +30,18 @@ const MobileFAB = ({ onChatOpen, onBriefingOpen, disabled = false }: MobileFABPr
             Chat IA
           </Button>
           
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => {
-              onBriefingOpen();
-              setIsExpanded(false);
-            }}
-            className="shadow-lg hover:shadow-xl transition-all duration-300 w-full justify-start bg-background/90 backdrop-blur"
-          >
-            <Sparkles className="w-5 h-5 mr-2" />
-            Briefing
-          </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                onBriefingOpen();
+                setIsExpanded(false);
+              }}
+              className="shadow-lg hover:shadow-xl transition-all duration-300 w-full justify-start bg-background/80 backdrop-blur border-2 border-accent/30 text-foreground hover:bg-accent/10 hover:border-accent/50"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Briefing
+            </Button>
         </div>
       )}
       

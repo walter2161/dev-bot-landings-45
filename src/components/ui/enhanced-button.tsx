@@ -8,15 +8,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        default: "bg-primary text-white shadow hover:bg-primary/90",
+        destructive: "bg-destructive text-white shadow-sm hover:bg-destructive/90",
+        outline: "border border-input bg-background/50 backdrop-blur text-foreground shadow-sm hover:bg-accent/20 hover:text-foreground",
+        secondary: "bg-secondary text-white shadow-sm hover:bg-secondary/80",
+        ghost: "text-foreground hover:bg-accent/20 hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-primary text-primary-foreground shadow-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300",
-        accent: "bg-gradient-accent text-accent-foreground shadow-accent hover:shadow-glow transform hover:scale-105",
-        pagejet: "bg-gradient-hero text-foreground shadow-glow hover:shadow-primary transform hover:scale-105 font-semibold",
+        hero: "bg-gradient-primary text-white shadow-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-semibold",
+        accent: "bg-gradient-accent text-white shadow-accent hover:shadow-glow transform hover:scale-105",
+        pagejet: "bg-gradient-hero text-white shadow-glow hover:shadow-primary transform hover:scale-105 font-semibold",
+        mobile: "bg-accent/10 backdrop-blur border border-accent/20 text-foreground hover:bg-accent/20 hover:text-foreground shadow-sm",
       },
       size: {
         default: "h-9 px-4 py-2",
