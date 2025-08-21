@@ -123,6 +123,10 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
           ...businessData.customImages,
           logo: logoUrl
         };
+        businessData.images = {
+          ...businessData.images,
+          logo: `Logo personalizado da empresa ${briefingData.businessName} (${briefingData.customLogo.name})`
+        };
       }
 
       // Se há paleta selecionada, aplicar as cores
@@ -136,6 +140,9 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
           };
         }
       }
+      
+      // Garantir que o nome da empresa está correto
+      businessData.title = briefingData.businessName;
 
       onLandingPageGenerated(html, businessData);
       

@@ -62,13 +62,11 @@ export class DesignAgent {
     }
   }
 
-  async generateDesign(businessType: string, title: string): Promise<DesignStructure> {
+  async generateDesign(businessInstructions: string, businessName: string): Promise<DesignStructure> {
     // Extrair informações da paleta de cores do briefing
-    const paletteMatch = businessType.match(/PALETA DE CORES OBRIGATÓRIA:.*?Primária:\s*(#[A-Fa-f0-9]{6}).*?Secundária:\s*(#[A-Fa-f0-9]{6}).*?Destaque:\s*(#[A-Fa-f0-9]{6})/);
-    const businessNameMatch = businessType.match(/Nome da Empresa:\s*([^\n]+)/);
-    const logoMatch = businessType.match(/IMPORTANTE:.*?logo personalizado/);
+    const paletteMatch = businessInstructions.match(/CORES OBRIGATÓRIAS:.*?Primary:\s*(#[A-Fa-f0-9]{6}).*?Secondary:\s*(#[A-Fa-f0-9]{6}).*?Accent:\s*(#[A-Fa-f0-9]{6})/);
+    const logoMatch = businessInstructions.match(/LOGO:.*?logo personalizado/);
     
-    const businessName = businessNameMatch?.[1]?.trim() || title;
     const hasCustomLogo = logoMatch !== null;
     
     let paletteInfo = "";
@@ -76,7 +74,7 @@ export class DesignAgent {
       paletteInfo = `USE EXATAMENTE estas cores: Primária: ${paletteMatch[1]}, Secundária: ${paletteMatch[2]}, Destaque: ${paletteMatch[3]}`;
     }
 
-    const prompt = `Crie design personalizado para o briefing: "${businessType} - ${title}"
+    const prompt = `Baseando-se nas instruções: "${businessInstructions}"
 
 ${paletteInfo ? `OBRIGATÓRIO - ${paletteInfo}` : 'Escolha cores apropriadas para o tipo de negócio'}
 
@@ -89,12 +87,12 @@ Retorne APENAS JSON:
   },
   "images": {
     "logo": "${hasCustomLogo ? `Logo personalizado da empresa ${businessName} (fornecido pelo cliente)` : `Logo profissional moderno para ${businessName}`}",
-    "hero": "Foto profissional de alta qualidade mostrando ${businessType} em ação, ambiente real, pessoas trabalhando",
-    "motivation": "Imagem inspiradora dos benefícios e resultados alcançados com ${businessType}",
-    "target": "Foto do público-alvo específico de ${businessType}, pessoas reais em contexto apropriado",
-    "method": "Imagem detalhada do processo de trabalho de ${businessType}, mostrando profissionalismo",
-    "results": "Foto de resultados concretos e positivos de ${businessType}, antes e depois ou clientes satisfeitos",
-    "access": "Imagem de localização, escritório ou espaço físico de ${businessType}",
+    "hero": "Foto profissional de alta qualidade relacionada ao negócio, ambiente real, pessoas trabalhando",
+    "motivation": "Imagem inspiradora dos benefícios e resultados alcançados",
+    "target": "Foto do público-alvo específico, pessoas reais em contexto apropriado",
+    "method": "Imagem detalhada do processo de trabalho, mostrando profissionalismo",
+    "results": "Foto de resultados concretos e positivos, antes e depois ou clientes satisfeitos",
+    "access": "Imagem de localização, escritório ou espaço físico",
     "investment": "Imagem relacionada a valor justo e transparência de preços"
   },
   "fonts": {
@@ -117,11 +115,11 @@ Retorne APENAS JSON:
       console.error("Erro ao gerar design:", error);
       
       // Fallback: retornar design padrão
-      return this.generateFallbackDesign(businessType, title);
+      return this.generateFallbackDesign(businessInstructions, businessName);
     }
   }
 
-  private generateFallbackDesign(businessType: string, title: string): DesignStructure {
+  private generateFallbackDesign(businessInstructions: string, businessName: string): DesignStructure {
     return {
       colors: {
         primary: "#2563eb",
@@ -129,8 +127,8 @@ Retorne APENAS JSON:
         accent: "#f59e0b"
       },
       images: {
-        logo: `Logo profissional para ${title}`,
-        hero: `Imagem de destaque para ${businessType}`,
+        logo: `Logo profissional para ${businessName}`,
+        hero: `Imagem de destaque para o negócio`,
         motivation: "Imagem representando qualidade e confiança",
         target: "Imagem do público-alvo",
         method: "Imagem do processo de trabalho",

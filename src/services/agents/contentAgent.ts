@@ -61,66 +61,58 @@ export class ContentAgent {
     }
   }
 
-  async generateContent(userRequest: string): Promise<ContentStructure> {
-    // Extrair informações específicas do briefing
-    const businessNameMatch = userRequest.match(/Nome da Empresa:\s*([^\n]+)/);
-    const businessTypeMatch = userRequest.match(/Tipo de Negócio:\s*([^\n]+)/);
-    const descriptionMatch = userRequest.match(/Descrição:\s*([^\n]+)/);
-    const targetAudienceMatch = userRequest.match(/Público-Alvo:\s*([^\n]+)/);
-    const mainGoalMatch = userRequest.match(/Objetivo Principal:\s*([^\n]+)/);
-    const servicesMatch = userRequest.match(/Serviços\/Produtos:\s*([^\n]+)/);
-    const whatsappMatch = userRequest.match(/WhatsApp:\s*([^\n]+)/);
-    const addressMatch = userRequest.match(/Endereço:\s*([^\n]+)/);
-    const contactMatch = userRequest.match(/Outras Informações:\s*([^\n]+)/);
-    const offersMatch = userRequest.match(/Ofertas Especiais:\s*([^\n]+)/);
+  async generateContent(businessInstructions: string): Promise<ContentStructure> {
+    // Extrair informações específicas das instruções processadas
+    const businessNameMatch = businessInstructions.match(/EMPRESA:\s*([^\n]+)/);
+    const businessTypeMatch = businessInstructions.match(/TIPO:\s*([^\n]+)/);
+    const descriptionMatch = businessInstructions.match(/DESCRIÇÃO:\s*([^\n]+)/);
+    const targetAudienceMatch = businessInstructions.match(/PÚBLICO-ALVO:\s*([^\n]+)/);
+    const mainGoalMatch = businessInstructions.match(/OBJETIVO:\s*([^\n]+)/);
+    const servicesMatch = businessInstructions.match(/SERVIÇOS:\s*([^\n]+)/);
+    const contactMatch = businessInstructions.match(/CONTATO:\s*([^\n]+)/);
+    const offersMatch = businessInstructions.match(/OFERTAS:\s*([^\n]+)/);
 
-    const businessName = businessNameMatch?.[1]?.trim() || "Seu Negócio";
-    const businessType = businessTypeMatch?.[1]?.trim() || "nosso negócio";
+    const businessName = businessNameMatch?.[1]?.trim() || "Empresa";  
+    const businessType = businessTypeMatch?.[1]?.trim() || "negócio";
     const description = descriptionMatch?.[1]?.trim() || "";
     const targetAudience = targetAudienceMatch?.[1]?.trim() || "";
     const mainGoal = mainGoalMatch?.[1]?.trim() || "";
     const services = servicesMatch?.[1]?.trim() || "";
-    const whatsapp = whatsappMatch?.[1]?.trim() || "(11) 99999-9999";
-    const address = addressMatch?.[1]?.trim() || "São Paulo, SP";
     const contactInfo = contactMatch?.[1]?.trim() || "";
     const offers = offersMatch?.[1]?.trim() || "";
 
-    const prompt = `Crie conteúdo ESPECÍFICO e PERSONALIZADO para o briefing: "${userRequest}"
+    // Extrair informações de contato
+    const whatsappMatch = contactInfo.match(/WhatsApp\s*([^\s,]+)/);
+    const addressMatch = contactInfo.match(/Endereço:\s*([^,\n]+)/);
+    
+    const whatsapp = whatsappMatch?.[1] || "(11) 99999-9999";
+    const address = addressMatch?.[1]?.trim() || "São Paulo, SP";
+
+    const prompt = `Baseando-se nas instruções processadas: "${businessInstructions}"
+
+INFORMAÇÕES EXTRAÍDAS:
+- Nome da Empresa: ${businessName} (USE EXATAMENTE ESTE NOME)
+- Tipo de Negócio: ${businessType}
+- Descrição: ${description}
+- Público-Alvo: ${targetAudience}
+- Objetivo: ${mainGoal}
+- Serviços: ${services}
+- Ofertas: ${offers}
+- Contato: ${contactInfo}
 
 INSTRUÇÕES CRÍTICAS:
-- Use EXATAMENTE o nome "${businessName}" (não "Seu Negócio" ou genéricos)
-- Personalize TODO o conteúdo baseado nas informações fornecidas
-- Use as informações de contato EXATAS fornecidas
-- Incorpore as ofertas especiais se fornecidas
-- Adapte linguagem ao público-alvo informado
-- Foque no objetivo principal mencionado
+1. Use EXATAMENTE o nome "${businessName}" em todos os textos
+2. Não use termos genéricos como "Seu Negócio" ou similares
+3. Personalize todo conteúdo baseado nas informações fornecidas
+4. Inclua as ofertas especiais se disponíveis
 
-Retorne APENAS um JSON com esta estrutura:
-{
-  "title": "${businessName}",
-  "subtitle": "Descrição específica baseada em: ${description}",
-  "heroText": "Chamada atrativa personalizada para ${businessType}",
-  "ctaText": "CTA específico baseado no objetivo: ${mainGoal}",
-  "sections": [
-    {"id": "intro", "title": "Sobre a ${businessName}", "content": "Apresentação personalizada baseada na descrição fornecida", "type": "intro"},
-    {"id": "motivation", "title": "Por que escolher a ${businessName}", "content": "Diferenciais específicos do negócio", "type": "motivation"},
-    {"id": "target", "title": "Para quem é ideal", "content": "Baseado no público-alvo: ${targetAudience}", "type": "target"},
-    {"id": "method", "title": "Como trabalhamos", "content": "Processo específico do tipo de negócio", "type": "method"},
-    {"id": "results", "title": "Resultados", "content": "Benefícios específicos dos serviços oferecidos", "type": "results"},
-    {"id": "access", "title": "Como nos encontrar", "content": "Informações de localização e acesso", "type": "access"},
-    {"id": "investment", "title": "Nossos Preços", "content": "Informações sobre preços ${offers ? 'incluindo ofertas especiais: ' + offers : ''}", "type": "investment"}
-  ],
-  "contact": {
-    "email": "${contactInfo.includes('@') ? contactInfo.split(' ')[0] : 'contato@' + businessName.toLowerCase().replace(/\s+/g, '') + '.com'}",
-    "phone": "${contactInfo.includes('(') ? contactInfo.match(/\([0-9]{2}\)\s?[0-9-]+/)?.[0] || '(11) 3333-3333' : '(11) 3333-3333'}",
-    "address": "${address}",
-    "socialMedia": {
-      "whatsapp": "${whatsapp}",
-      "instagram": "@${businessName.toLowerCase().replace(/\s+/g, '')}",
-      "facebook": "facebook.com/${businessName.toLowerCase().replace(/\s+/g, '')}"
-    }
-  }
-}`;
+Retorne APENAS JSON válido estruturado com:
+- title: nome exato da empresa
+- subtitle: descrição específica
+- heroText: chamada atrativa personalizada
+- ctaText: CTA baseado no objetivo
+- sections: array com 7 seções (intro, motivation, target, method, results, access, investment)
+- contact: informações de contato estruturadas`;
 
     try {
       const response = await this.makeRequest(prompt);
@@ -134,13 +126,14 @@ Retorne APENAS um JSON com esta estrutura:
     } catch (error) {
       console.error("Erro ao gerar conteúdo:", error);
       
-      // Fallback: retornar conteúdo padrão baseado na solicitação
-      return this.generateFallbackContent(userRequest);
+      // Fallback: retornar conteúdo padrão baseado nas instruções
+      return this.generateFallbackContent(businessInstructions);
     }
   }
 
-  private generateFallbackContent(userRequest: string): ContentStructure {
-    const businessName = userRequest.length > 50 ? "Seu Negócio" : userRequest;
+  private generateFallbackContent(businessInstructions: string): ContentStructure {
+    const businessNameMatch = businessInstructions.match(/EMPRESA:\s*([^\n]+)/);
+    const businessName = businessNameMatch?.[1]?.trim() || "Empresa";
     
     return {
       title: businessName,
