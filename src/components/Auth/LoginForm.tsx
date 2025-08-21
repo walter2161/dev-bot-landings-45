@@ -68,7 +68,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             <div>
               <Input
                 type="text"
-                placeholder="Ex: 9Z8K7A"
+                placeholder="••••••"
                 value={accessKey}
                 onChange={handleInputChange}
                 className="text-center text-lg font-mono tracking-widest"

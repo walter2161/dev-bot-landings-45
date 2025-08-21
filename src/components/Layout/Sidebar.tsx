@@ -32,9 +32,13 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { LogOut } from "lucide-react";
+import { AuthService } from "@/services/authService";
+
 interface SidebarProps {
   onLandingPageGenerated: (html: string, data: BusinessContent) => void;
   businessData?: BusinessContent | null;
+  onLogout: () => void;
 }
 
 const businessThemes = [
@@ -60,7 +64,7 @@ const businessThemes = [
   { value: "marketplace", label: "Marketplace / Plataforma" }
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData: externalBusinessData }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData: externalBusinessData, onLogout }) => {
   const [activeTab, setActiveTab] = useState("chatbot");
   const [businessData, setBusinessData] = useState<BusinessContent | undefined>();
   const [briefingData, setBriefingData] = useState({
@@ -144,12 +148,23 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
   return (
     <aside className="w-80 border-r border-border bg-card/50 backdrop-blur">
       <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-center mb-4">
+        <div className="flex items-center justify-between mb-4">
           <img 
             src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" 
             alt="PageJet" 
             className="h-8 object-contain"
           />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              AuthService.logout();
+              onLogout();
+            }}
+            className="p-2 h-8 w-8"
+          >
+            <LogOut className="w-4 h-4" />
+          </Button>
         </div>
         
         <div className="flex gap-0.5 bg-muted p-1 rounded-lg">

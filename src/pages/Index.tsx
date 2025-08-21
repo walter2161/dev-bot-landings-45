@@ -6,7 +6,11 @@ import PreviewFrame from "@/components/LandingPageBuilder/PreviewFrame";
 import ImageDebugger from "@/components/Debug/ImageDebugger";
 import { BusinessContent } from "@/services/contentGenerator";
 
-const Index = () => {
+interface IndexProps {
+  onLogout: () => void;
+}
+
+const Index = ({ onLogout }: IndexProps) => {
   const [generatedHTML, setGeneratedHTML] = useState<string>();
   const [businessData, setBusinessData] = useState<BusinessContent>();
   const [isDebuggerVisible, setIsDebuggerVisible] = useState(false);
@@ -18,8 +22,8 @@ const Index = () => {
 
   return (
     <div className="bg-background">
-      <div className="flex" style={{ height: 'calc(100vh - 60px)' }}>
-        <Sidebar onLandingPageGenerated={handleLandingPageGenerated} businessData={businessData} />
+      <div className="flex h-screen">
+        <Sidebar onLandingPageGenerated={handleLandingPageGenerated} businessData={businessData} onLogout={onLogout} />
         <PreviewFrame 
           generatedHTML={generatedHTML} 
           businessData={businessData} 
