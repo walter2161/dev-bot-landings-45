@@ -39,6 +39,9 @@ interface SidebarProps {
   onLandingPageGenerated: (html: string, data: BusinessContent) => void;
   businessData?: BusinessContent | null;
   onLogout: () => void;
+  activeTab?: string;
+  setActiveTab?: (tab: string) => void;
+  isMobile?: boolean;
 }
 
 const businessThemes = [
@@ -64,8 +67,18 @@ const businessThemes = [
   { value: "marketplace", label: "Marketplace / Plataforma" }
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData: externalBusinessData, onLogout }) => {
-  const [activeTab, setActiveTab] = useState("chatbot");
+const Sidebar: React.FC<SidebarProps> = ({ 
+  onLandingPageGenerated, 
+  businessData: externalBusinessData, 
+  onLogout,
+  activeTab: externalActiveTab,
+  setActiveTab: externalSetActiveTab,
+  isMobile = false
+}) => {
+  const [internalActiveTab, setInternalActiveTab] = useState("chatbot");
+  
+  const activeTab = externalActiveTab || internalActiveTab;
+  const setActiveTab = externalSetActiveTab || setInternalActiveTab;
   const [businessData, setBusinessData] = useState<BusinessContent | undefined>();
   const [briefingData, setBriefingData] = useState({
     businessTheme: "",
@@ -146,48 +159,68 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
 
 
   return (
-    <aside className="w-80 border-r border-border bg-card/50 backdrop-blur">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between mb-4">
-          <img 
-            src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" 
-            alt="PageJet" 
-            className="h-8 object-contain"
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              AuthService.logout();
-              onLogout();
-            }}
-            className="p-2 h-8 w-8"
-          >
-            <LogOut className="w-4 h-4" />
-          </Button>
+    <aside className={`${isMobile ? 'w-full' : 'w-80'} ${!isMobile && 'border-r'} border-border bg-card/50 backdrop-blur`}>
+      {!isMobile && (
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center justify-between mb-4">
+            <img 
+              src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" 
+              alt="PageJet" 
+              className="h-8 object-contain"
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                AuthService.logout();
+                onLogout();
+              }}
+              className="p-2 h-8 w-8"
+            >
+              <LogOut className="w-4 h-4" />
+            </Button>
+          </div>
+          
+          <div className="flex gap-0.5 bg-muted p-1 rounded-lg">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center px-1.5 py-2 rounded-md text-sm transition-all ${
+                    activeTab === tab.id
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                </button>
+              );
+            })}
+          </div>
         </div>
-        
-        <div className="flex gap-0.5 bg-muted p-1 rounded-lg">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center px-1.5 py-2 rounded-md text-sm transition-all ${
-                  activeTab === tab.id
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      )}
 
-      <div className="p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+      {isMobile && (
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center gap-3 mb-4">
+            <img 
+              src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" 
+              alt="PageJet" 
+              className="h-6 object-contain"
+            />
+            <div>
+              <h2 className="text-lg font-bold text-foreground">
+                {tabs.find(t => t.id === activeTab)?.label || 'PageJet'}
+              </h2>
+              <p className="text-xs text-muted-foreground">Criador de Landing Pages</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className={`p-4 space-y-4 ${isMobile ? 'max-h-[calc(85vh-120px)] mobile-scroll' : 'max-h-[calc(100vh-200px)]'} overflow-y-auto`}>
         {activeTab === "briefing" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -222,7 +255,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.businessName}
                   onChange={(e) => handleBriefingChange("businessName", e.target.value)}
                   placeholder="Ex: Petshop Happy Dogs"
-                  className="bg-background/50 border-border"
+                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
                 />
               </div>
 
@@ -256,7 +289,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.businessType}
                   onChange={(e) => handleBriefingChange("businessType", e.target.value)}
                   placeholder="Ex: Petshop, Restaurante, Academia"
-                  className="bg-background/50 border-border"
+                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
                 />
               </div>
 
@@ -267,7 +300,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.description}
                   onChange={(e) => handleBriefingChange("description", e.target.value)}
                   placeholder="Descreva brevemente seu negócio..."
-                  className="bg-background/50 border-border resize-none"
+                  className={`bg-background/50 border-border resize-none ${isMobile ? 'mobile-form-input' : ''}`}
                   rows={3}
                 />
               </div>
@@ -279,7 +312,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.targetAudience}
                   onChange={(e) => handleBriefingChange("targetAudience", e.target.value)}
                   placeholder="Ex: Donos de pets, Famílias"
-                  className="bg-background/50 border-border"
+                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
                 />
               </div>
 
@@ -290,7 +323,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.mainGoal}
                   onChange={(e) => handleBriefingChange("mainGoal", e.target.value)}
                   placeholder="Ex: Aumentar agendamentos"
-                  className="bg-background/50 border-border"
+                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
                 />
               </div>
 
@@ -301,7 +334,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.keyServices}
                   onChange={(e) => handleBriefingChange("keyServices", e.target.value)}
                   placeholder="Liste os principais serviços..."
-                  className="bg-background/50 border-border resize-none"
+                  className={`bg-background/50 border-border resize-none ${isMobile ? 'mobile-form-input' : ''}`}
                   rows={2}
                 />
               </div>
@@ -313,7 +346,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.whatsapp}
                   onChange={(e) => handleBriefingChange("whatsapp", e.target.value)}
                   placeholder="Ex: (11) 99999-9999"
-                  className="bg-background/50 border-border"
+                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
                 />
               </div>
 
@@ -324,7 +357,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.address}
                   onChange={(e) => handleBriefingChange("address", e.target.value)}
                   placeholder="Rua, cidade, estado..."
-                  className="bg-background/50 border-border"
+                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
                 />
               </div>
 
@@ -335,7 +368,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.contactInfo}
                   onChange={(e) => handleBriefingChange("contactInfo", e.target.value)}
                   placeholder="Email, telefone comercial..."
-                  className="bg-background/50 border-border"
+                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
                 />
               </div>
 
@@ -346,7 +379,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
                   value={briefingData.specialOffers}
                   onChange={(e) => handleBriefingChange("specialOffers", e.target.value)}
                   placeholder="Promoções, descontos, pacotes..."
-                  className="bg-background/50 border-border resize-none"
+                  className={`bg-background/50 border-border resize-none ${isMobile ? 'mobile-form-input' : ''}`}
                   rows={2}
                 />
               </div>
@@ -408,7 +441,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLandingPageGenerated, businessData:
           <div className="space-y-4">
             <h3 className="font-medium text-foreground">PageJet IA - Gerador de Landing Page</h3>
             
-            <div className="h-[400px] bg-gradient-card rounded-lg border border-border/50">
+            <div className={`${isMobile ? 'h-[50vh] mobile-chat' : 'h-[400px]'} bg-gradient-card rounded-lg border border-border/50`}>
               <SmartChat 
                 onLandingPageGenerated={handleLandingPageGeneratedInternal}
                 briefingPrompt={getBriefingPrompt()}

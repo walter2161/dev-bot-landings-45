@@ -117,12 +117,84 @@ All colors MUST be HSL.
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
+/* Mobile-specific styles */
+@layer utilities {
+  .mobile-safe-area {
+    padding-bottom: env(safe-area-inset-bottom);
   }
-
-  body {
-    @apply bg-background text-foreground;
+  
+  .mobile-header {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  /* Mobile chat optimization */
+  .mobile-chat {
+    height: calc(100vh - 200px);
+  }
+  
+  /* Mobile form styles */
+  .mobile-form-input {
+    @apply text-base; /* Prevents zoom on iOS */
+  }
+  
+  /* Mobile button styles */
+  .mobile-nav-button {
+    @apply min-h-[48px] min-w-[48px]; /* Touch target size */
+  }
+  
+  /* Mobile sheet content */
+  .mobile-sheet {
+    border-radius: 1rem 1rem 0 0;
+  }
+  
+  /* Mobile scroll optimization */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Mobile animations */
+  .mobile-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Mobile-specific gradients */
+  .mobile-gradient-hero {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--primary-glow)) 100%);
+  }
+  
+  /* Mobile preview optimization */
+  .mobile-preview-frame {
+    transform: scale(0.8);
+    transform-origin: top left;
+    width: 125%;
+    height: 125%;
+  }
+  
+  @media (max-width: 768px) {
+    .mobile-preview-frame {
+      transform: scale(0.6);
+      width: 166.67%;
+      height: 166.67%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .mobile-preview-frame {
+      transform: scale(0.5);
+      width: 200%;
+      height: 200%;
+    }
   }
 }
