@@ -29,18 +29,107 @@ const PreviewFrame = ({ generatedHTML, businessData }: PreviewFrameProps) => {
     { id: "mobile", icon: Smartphone, label: "Mobile", width: "375px" },
   ];
 
-  const downloadHTML = () => {
+  const downloadHTML = async () => {
     if (!generatedHTML) return;
     
-    const blob = new Blob([generatedHTML], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${businessData?.title || 'landing-page'}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      // Converter todas as imagens para base64
+      const processedHTML = await convertImagesToBase64(generatedHTML);
+      
+      const blob = new Blob([processedHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${businessData?.title || 'landing-page'}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Erro ao baixar HTML:', error);
+      // Fallback para download normal se falhar
+      const blob = new Blob([generatedHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${businessData?.title || 'landing-page'}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const convertImagesToBase64 = async (html: string): Promise<string> => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const images = Array.from(doc.querySelectorAll('img')) as HTMLImageElement[];
+    
+    const imagePromises = images.map(async (img: HTMLImageElement) => {
+      const src = img.getAttribute('src');
+      if (src && src.startsWith('http')) {
+        try {
+          const response = await fetch(src);
+          const blob = await response.blob();
+          
+          // Otimizar imagem se necessário
+          const optimizedBlob = await optimizeImage(blob);
+          
+          const base64 = await new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(optimizedBlob);
+          });
+          
+          img.setAttribute('src', base64);
+        } catch (error) {
+          console.warn('Não foi possível converter imagem:', src, error);
+        }
+      }
+    });
+    
+    await Promise.all(imagePromises);
+    return doc.documentElement.outerHTML;
+  };
+
+  const optimizeImage = async (blob: Blob): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Redimensionar se muito grande
+        const maxWidth = 1200;
+        const maxHeight = 800;
+        let { width, height } = img;
+        
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          } else {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob(
+          (optimizedBlob) => {
+            resolve(optimizedBlob || blob);
+          },
+          'image/jpeg',
+          0.8 // Qualidade 80%
+        );
+      };
+      
+      img.onerror = () => resolve(blob);
+      img.src = URL.createObjectURL(blob);
+    });
   };
 
   const emptyPreview = `

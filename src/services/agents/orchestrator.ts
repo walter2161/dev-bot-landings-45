@@ -23,7 +23,19 @@ export class AgentOrchestrator {
       
       // Etapa 3: Gerar sellerbot
       console.log('🤖 Agente de Sellerbot trabalhando...');
-      const sellerbot = await sellerbotAgent.generateSellerbot(userRequest, content.title);
+      
+      // Preparar dados do negócio para o sellerbot
+      const businessDataForSellerbot = {
+        contact: {
+          address: "A definir",
+          phone: "A definir", 
+          email: "contato@empresa.com",
+          socialMedia: { whatsapp: "A definir" }
+        },
+        sections: content.sections
+      };
+      
+      const sellerbot = await sellerbotAgent.generateSellerbot(userRequest, content.title, businessDataForSellerbot);
       
       // Etapa 4: Gerar SEO
       console.log('🔍 Agente de SEO trabalhando...');

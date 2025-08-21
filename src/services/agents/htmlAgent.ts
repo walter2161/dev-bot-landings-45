@@ -314,7 +314,7 @@ export class HtmlAgent {
             <div style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                 <span style="font-size: 0.9rem;">By:</span>
                 <a href="https://pagejet.app" target="_blank" style="text-decoration: none; display: flex; align-items: center;">
-                    <img src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" alt="PageJet" style="height: 20px; object-fit: contain;">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAAXVBMVEUAAAD/Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//ZwBqeUQmAAAAHnRSTlMABAgQFBggJCgsMDg8QERIUFhcYGRobHB0eHyAgIhJGnQgAAABiklEQVRYw+2X2RKCMBAFR9k3BRFFRdz+/yNNJhMSE1GxrOctejqZnmRyA/w/YTgdEkIQSk7xfMskBCEUn+IhJfB+HyEIpecETwmBrz8JQSjJiXhKCLz/SQhCKT5FQkrg/U9CEEpOyVOC4P1PQhBK8SkYUgLvfxKCUHKKnhIE738SglCKT4GQEnj/kxCEklPwlCB4/5MQhFJ8CoKUwPufhCCUnIKnBMH7n4QglOJTEKQE3v8kBKHkFDwlCN7/JAShFJ8CISWA/GCY8VcbIxTqm/mQlEIUolCfKESha1Gog3+hDOmPKMzgA4Uo9CcKNfBBFGrggygknC/UIZVwvlCHVM9AiUJPp6TiY8Y1C5QorEvKqW58iFJCCqMShVdLebU7hTLdKZTpTqFMdwplulMo051Cme4UynSnUKY7hTLdKZTpTqFMdwplulMo051Cme4UynSnUKY7hTLdKZTpTqFMdwplulMo051Cme4UynSnUKY7hTLdKZTpTqFMdwplulMo051Cme4UyjjYB6B4TBHGnAy7AAAAAElFTkSuQmCC" alt="PageJet" style="height: 20px; object-fit: contain;">
                 </a>
             </div>
         </div>

@@ -46,23 +46,43 @@ export class SellerbotAgent {
     }
   }
 
-  async generateSellerbot(businessType: string, title: string): Promise<SellerbotConfig> {
-    const prompt = `Crie assistente para: "${businessType} - ${title}"
+  async generateSellerbot(businessType: string, title: string, businessData?: any): Promise<SellerbotConfig> {
+    const locationInfo = businessData?.contact ? `
+    Localização: ${businessData.contact.address}
+    Telefone: ${businessData.contact.phone}
+    Email: ${businessData.contact.email}
+    WhatsApp: ${businessData.contact.socialMedia?.whatsapp || 'Não informado'}` : '';
+
+    const servicesInfo = businessData?.sections ? `
+    Serviços/Produtos principais: ${businessData.sections.map(s => s.title).join(', ')}` : '';
+
+    const prompt = `Crie um assistente virtual inteligente para: "${businessType} - ${title}"
+
+INFORMAÇÕES DO NEGÓCIO:${locationInfo}${servicesInfo}
+
+O assistente deve ser programado para:
+1. Fornecer informações de contato e localização quando perguntado
+2. Explicar produtos/serviços baseado nas seções da landing page
+3. Orientar sobre valores e formas de pagamento
+4. Agendar consultas ou reuniões
+5. Responder dúvidas específicas sobre o negócio
 
 Retorne APENAS JSON:
 {
-  "name": "Nome do assistente apropriado para ${businessType}",
-  "personality": "Personalidade profissional adequada",
+  "name": "Nome profissional do assistente para ${businessType}",
+  "personality": "Personalidade consultiva, profissional e orientada a resultados. Sempre menciona informações de contato quando relevante.",
   "knowledge": [
-    "Conhecimento específico sobre ${businessType}",
-    "Produtos/serviços oferecidos",
-    "Processo de atendimento"
+    "Especialista em ${businessType} com conhecimento detalhado dos serviços",
+    "Informações completas de contato e localização da empresa",
+    "Processos de atendimento, agendamento e formas de pagamento",
+    "Orientações sobre como iniciar o relacionamento comercial"
   ],
+  "prohibitions": "Não inventar preços ou promoções. Sempre direcionar para contato direto para orçamentos. Não fazer promessas que não pode cumprir.",
   "responses": {
-    "greeting": "Saudação específica do ${businessType}",
-    "services": "Apresentação dos produtos/serviços",
-    "pricing": "Informações sobre preços",
-    "appointment": "Resposta sobre agendamento/compra"
+    "greeting": "Saudação calorosa mencionando ${title} e oferecendo ajuda específica",
+    "services": "Apresentação detalhada dos produtos/serviços com benefícios claros",
+    "pricing": "Orientação sobre consulta de preços com informações de contato",
+    "appointment": "Processo claro de agendamento com WhatsApp ou telefone"
   }
 }`;
 
@@ -102,24 +122,43 @@ Retorne APENAS JSON:
   }
 
   async generateChatResponse(message: string, businessData: any): Promise<string> {
-    const prompt = `Você é ${businessData.sellerbot.name}, assistente de ${businessData.title}.
+    const servicesInfo = businessData.sections?.slice(1).map(s => `${s.title}: ${s.content}`).join('\n') || '';
+    const prohibitions = businessData.sellerbot.prohibitions || '';
 
-Personalidade: ${businessData.sellerbot.personality}
-Conhecimentos: ${businessData.sellerbot.knowledge.join(", ")}
+    const prompt = `Você é ${businessData.sellerbot.name}, assistente especializado de ${businessData.title}.
 
-INFORMAÇÕES:
+PERSONALIDADE: ${businessData.sellerbot.personality}
+
+CONHECIMENTOS ESPECÍFICOS:
+${businessData.sellerbot.knowledge.join('\n- ')}
+
+INFORMAÇÕES DE CONTATO (use quando apropriado):
 - Endereço: ${businessData.contact.address}
-- Telefone: ${businessData.contact.phone}
+- Telefone: ${businessData.contact.phone}  
 - Email: ${businessData.contact.email}
-- WhatsApp: ${businessData.contact.socialMedia.whatsapp || 'Não informado'}
+- WhatsApp: ${businessData.contact.socialMedia?.whatsapp || 'Não informado'}
+
+SERVIÇOS/PRODUTOS:
+${servicesInfo}
+
+PROIBIÇÕES: ${prohibitions}
+
+DIRETRIZES INTELIGENTES:
+- Para perguntas sobre localização/endereço: forneça o endereço completo
+- Para perguntas sobre contato: mencione WhatsApp e telefone
+- Para perguntas sobre preços: oriente para contato direto
+- Para perguntas sobre agendamento: use as informações de contato
+- Para dúvidas sobre serviços: use as informações das seções da landing page
+- Seja consultivo e sempre ofereça próximos passos claros
 
 INSTRUÇÕES:
 - Responda APENAS sobre ${businessData.title}
-- Use informações de contato quando relevante
-- Seja natural e profissional
-- Máximo 200 caracteres
+- Use informações específicas do negócio
+- Seja natural, consultivo e orientado a resultados
+- Máximo 250 caracteres
+- Sempre termine com uma pergunta ou próximo passo
 
-Mensagem: "${message}"`;
+Mensagem do cliente: "${message}"`;
 
     try {
       return await this.makeRequest(prompt);
