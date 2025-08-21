@@ -48,7 +48,9 @@ export class ContentAgent {
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`API error ${response.status}:`, errorText);
+        throw new Error(`API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
@@ -97,11 +99,78 @@ Retorne APENAS um JSON com esta estrutura:
         return JSON.parse(jsonMatch[0]);
       }
       
-      throw new Error("Resposta inválida");
+      throw new Error("Resposta inválida da API");
     } catch (error) {
       console.error("Erro ao gerar conteúdo:", error);
-      throw error;
+      
+      // Fallback: retornar conteúdo padrão baseado na solicitação
+      return this.generateFallbackContent(userRequest);
     }
+  }
+
+  private generateFallbackContent(userRequest: string): ContentStructure {
+    const businessName = userRequest.length > 50 ? "Seu Negócio" : userRequest;
+    
+    return {
+      title: businessName,
+      subtitle: `Soluções profissionais em ${businessName.toLowerCase()}`,
+      heroText: `Descubra como ${businessName} pode transformar seus resultados`,
+      ctaText: "Saiba mais",
+      sections: [
+        {
+          id: "intro",
+          title: "Sobre nosso trabalho",
+          content: `Somos especialistas em ${businessName.toLowerCase()} e oferecemos soluções personalizadas para suas necessidades.`,
+          type: "intro"
+        },
+        {
+          id: "motivation",
+          title: "Por que nos escolher",
+          content: "Nossa experiência e dedicação garantem resultados excepcionais para nossos clientes.",
+          type: "motivation"
+        },
+        {
+          id: "target",
+          title: "Para quem é ideal",
+          content: "Atendemos pessoas e empresas que buscam qualidade e profissionalismo.",
+          type: "target"
+        },
+        {
+          id: "method",
+          title: "Como trabalhamos",
+          content: "Processo personalizado, atendimento próximo e resultados garantidos.",
+          type: "method"
+        },
+        {
+          id: "results",
+          title: "Resultados comprovados",
+          content: "Clientes satisfeitos e resultados que superam expectativas.",
+          type: "results"
+        },
+        {
+          id: "access",
+          title: "Como nos encontrar",
+          content: "Entre em contato conosco através dos canais disponíveis abaixo.",
+          type: "access"
+        },
+        {
+          id: "investment",
+          title: "Investimento",
+          content: "Valores justos e condições especiais para você.",
+          type: "investment"
+        }
+      ],
+      contact: {
+        email: "contato@seunegocio.com",
+        phone: "(11) 99999-9999",
+        address: "São Paulo, SP",
+        socialMedia: {
+          whatsapp: "(11) 99999-9999",
+          instagram: "@seunegocio",
+          facebook: "facebook.com/seunegocio"
+        }
+      }
+    };
   }
 }
 

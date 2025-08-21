@@ -49,13 +49,15 @@ export class DesignAgent {
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`Design API error ${response.status}:`, errorText);
+        throw new Error(`API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       return data.choices[0].message.content;
     } catch (error) {
-      console.error("Erro na API:", error);
+      console.error("Erro na API de Design:", error);
       throw error;
     }
   }
@@ -95,11 +97,38 @@ Retorne APENAS JSON:
         return JSON.parse(jsonMatch[0]);
       }
       
-      throw new Error("Resposta inválida");
+      throw new Error("Resposta inválida da API de Design");
     } catch (error) {
       console.error("Erro ao gerar design:", error);
-      throw error;
+      
+      // Fallback: retornar design padrão
+      return this.generateFallbackDesign(businessType, title);
     }
+  }
+
+  private generateFallbackDesign(businessType: string, title: string): DesignStructure {
+    return {
+      colors: {
+        primary: "#2563eb",
+        secondary: "#1e40af", 
+        accent: "#f59e0b"
+      },
+      images: {
+        logo: `Logo profissional para ${title}`,
+        hero: `Imagem de destaque para ${businessType}`,
+        motivation: "Imagem representando qualidade e confiança",
+        target: "Imagem do público-alvo",
+        method: "Imagem do processo de trabalho",
+        results: "Imagem de resultados positivos",
+        access: "Imagem de localização ou contato",
+        investment: "Imagem relacionada a preços justos"
+      },
+      fonts: {
+        heading: "Inter",
+        body: "Inter",
+        accent: "Inter"
+      }
+    };
   }
 }
 

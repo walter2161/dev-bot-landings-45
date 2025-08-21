@@ -33,13 +33,15 @@ export class SellerbotAgent {
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`Sellerbot API error ${response.status}:`, errorText);
+        throw new Error(`API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       return data.choices[0].message.content;
     } catch (error) {
-      console.error("Erro na API:", error);
+      console.error("Erro na API de Sellerbot:", error);
       throw error;
     }
   }
@@ -72,11 +74,31 @@ Retorne APENAS JSON:
         return JSON.parse(jsonMatch[0]);
       }
       
-      throw new Error("Resposta inválida");
+      throw new Error("Resposta inválida da API de Sellerbot");
     } catch (error) {
       console.error("Erro ao gerar sellerbot:", error);
-      throw error;
+      
+      // Fallback: retornar sellerbot padrão
+      return this.generateFallbackSellerbot(businessType, title);
     }
+  }
+
+  private generateFallbackSellerbot(businessType: string, title: string): SellerbotConfig {
+    return {
+      name: "Assistente Virtual",
+      personality: "Profissional, prestativo e focado em ajudar os clientes",
+      knowledge: [
+        `Especialista em ${businessType}`,
+        "Produtos e serviços de qualidade",
+        "Atendimento personalizado"
+      ],
+      responses: {
+        greeting: `Olá! Sou o assistente virtual do ${title}. Como posso ajudá-lo hoje?`,
+        services: `Oferecemos os melhores serviços em ${businessType}. Gostaria de saber mais detalhes?`,
+        pricing: "Temos opções que cabem no seu orçamento. Que tal conversarmos sobre suas necessidades?",
+        appointment: "Ficarei feliz em conectá-lo com nossa equipe. Vamos agendar um contato?"
+      }
+    };
   }
 
   async generateChatResponse(message: string, businessData: any): Promise<string> {
