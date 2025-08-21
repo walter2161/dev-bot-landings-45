@@ -43,10 +43,31 @@ export class CopyAgent {
     }
   }
 
-  async generateCopy(businessType: string, title: string, basicContent: any): Promise<CopyStructure> {
-    const prompt = `Crie copy persuasivo e vendedor para: "${businessType} - ${title}"
+  async generateCopy(businessInstructions: string, businessName: string, basicContent: any): Promise<CopyStructure> {
+    // Extrair informações do briefing
+    const businessTypeMatch = businessInstructions.match(/TIPO:\s*([^\n]+)/);
+    const offersMatch = businessInstructions.match(/OFERTAS:\s*([^\n]+)/);
+    const servicesMatch = businessInstructions.match(/SERVIÇOS:\s*([^\n]+)/);
+    const targetMatch = businessInstructions.match(/PÚBLICO:\s*([^\n]+)/);
+    
+    const businessType = businessTypeMatch?.[1]?.trim() || "negócio";
+    const offers = offersMatch?.[1]?.trim() || "";
+    const services = servicesMatch?.[1]?.trim() || "";
+    const target = targetMatch?.[1]?.trim() || "";
 
-Crie textos longos, persuasivos e focados em vendas para cada seção:
+    const prompt = `Você é um copywriter especialista. Crie copy persuasivo e vendedor para a empresa "${businessName}" que atua em ${businessType}.
+
+INFORMAÇÕES PARA INTEGRAR NO COPY:
+- Nome da Empresa: ${businessName}
+- Ofertas Especiais: ${offers}
+- Serviços/Produtos: ${services}  
+- Público-Alvo: ${target}
+
+IMPORTANTE:
+- Use o nome "${businessName}" naturalmente nos textos
+- Integre as ofertas especiais de forma persuasiva
+- NÃO copie informações literalmente
+- Crie textos longos, persuasivos e focados em vendas para cada seção:
 
 Retorne APENAS JSON:
 {
@@ -112,23 +133,23 @@ Princípios do copy:
     } catch (error) {
       console.error("Erro ao gerar copy:", error);
       
-      // Fallback: retornar copy básico
-      return this.generateFallbackCopy(businessType, title);
+        // Fallback: retornar copy básico
+        return this.generateFallbackCopy(businessName, businessType);
     }
   }
 
-  private generateFallbackCopy(businessType: string, title: string): CopyStructure {
+  private generateFallbackCopy(businessName: string, businessType: string): CopyStructure {
     return {
-      heroText: `Transforme seus resultados com ${title}. Somos especialistas em ${businessType.toLowerCase()} e oferecemos soluções que realmente funcionam. Descubra como podemos ajudar você a alcançar seus objetivos de forma rápida e eficiente.`,
+      heroText: `Transforme seus resultados com ${businessName}. Somos especialistas em ${businessType.toLowerCase()} e oferecemos soluções que realmente funcionam. Descubra como podemos ajudar você a alcançar seus objetivos de forma rápida e eficiente.`,
       sections: {
         intro: {
-          title: `Conheça ${title}`,
-          content: `Há anos no mercado, ${title} se tornou referência em ${businessType.toLowerCase()}. Nossa missão é simples: entregar resultados excepcionais que superem suas expectativas. Trabalhamos com dedicação total, pois sabemos que seu sucesso é também o nosso sucesso. Cada projeto é tratado com atenção aos detalhes e foco em resultados mensuráveis. Nossa equipe experiente está pronta para atender suas necessidades específicas e criar soluções personalizadas que realmente funcionam. Quando você escolhe ${title}, está escolhendo qualidade, confiança e resultados garantidos.`,
+          title: `Conheça ${businessName}`,
+          content: `Há anos no mercado, ${businessName} se tornou referência em ${businessType.toLowerCase()}. Nossa missão é simples: entregar resultados excepcionais que superem suas expectativas. Trabalhamos com dedicação total, pois sabemos que seu sucesso é também o nosso sucesso. Cada projeto é tratado com atenção aos detalhes e foco em resultados mensuráveis. Nossa equipe experiente está pronta para atender suas necessidades específicas e criar soluções personalizadas que realmente funcionam. Quando você escolhe ${businessName}, está escolhendo qualidade, confiança e resultados garantidos.`,
           cta: "Conheça Nossa História"
         },
         motivation: {
           title: "Por Que Somos Diferentes",
-          content: `No mercado saturado de hoje, encontrar um parceiro confiável é fundamental. ${title} se destaca pela combinação única de experiência, inovação e atendimento personalizado. Enquanto outros oferecem soluções genéricas, nós entendemos que cada cliente é único e merece uma abordagem específica. Nossa metodologia comprovada já ajudou centenas de clientes a alcançarem seus objetivos. Não trabalhamos apenas para entregar um serviço, mas para construir relacionamentos duradouros baseados em confiança e resultados. Escolher ${title} significa escolher a tranquilidade de saber que seu projeto está em mãos experientes e dedicadas.`,
+          content: `No mercado saturado de hoje, encontrar um parceiro confiável é fundamental. ${businessName} se destaca pela combinação única de experiência, inovação e atendimento personalizado. Enquanto outros oferecem soluções genéricas, nós entendemos que cada cliente é único e merece uma abordagem específica. Nossa metodologia comprovada já ajudou centenas de clientes a alcançarem seus objetivos. Não trabalhamos apenas para entregar um serviço, mas para construir relacionamentos duradouros baseados em confiança e resultados. Escolher ${businessName} significa escolher a tranquilidade de saber que seu projeto está em mãos experientes e dedicadas.`,
           cta: "Veja Nossos Diferenciais"
         },
         target: {
@@ -143,7 +164,7 @@ Princípios do copy:
         },
         results: {
           title: "Resultados Que Transformam",
-          content: `Os resultados falam por si só. Nossos clientes experimentam transformações reais em seus negócios e projetos. Não prometemos milagres, mas entregamos resultados consistentes e mensuráveis. Através da nossa abordagem especializada, você verá melhorias significativas em áreas críticas do seu negócio. Nosso histórico comprova nossa capacidade de entregar o que prometemos. Cada projeto concluído é uma prova do nosso comprometimento com a excelência. Quando você investe em ${title}, está investindo em resultados que realmente importam. Prepare-se para ver a diferença que um parceiro verdadeiramente comprometido pode fazer.`,
+          content: `Os resultados falam por si só. Nossos clientes experimentam transformações reais em seus negócios e projetos. Não prometemos milagres, mas entregamos resultados consistentes e mensuráveis. Através da nossa abordagem especializada, você verá melhorias significativas em áreas críticas do seu negócio. Nosso histórico comprova nossa capacidade de entregar o que prometemos. Cada projeto concluído é uma prova do nosso comprometimento com a excelência. Quando você investe em ${businessName}, está investindo em resultados que realmente importam. Prepare-se para ver a diferença que um parceiro verdadeiramente comprometido pode fazer.`,
           cta: "Ver Casos de Sucesso"
         },
         access: {
@@ -153,7 +174,7 @@ Princípios do copy:
         },
         investment: {
           title: "Investimento Que Vale a Pena",
-          content: `Sabemos que o investimento é uma consideração importante na sua decisão. Por isso, trabalhamos com valores justos e transparentes, sempre focados no retorno que você obterá. Nossos preços refletem a qualidade do serviço e os resultados que entregamos. Quando você investe em ${title}, está investindo em qualidade, experiência e resultados garantidos. Oferecemos diferentes opções de pagamento para facilitar sua decisão. Além disso, trabalhamos com total transparência - sem custos ocultos ou surpresas. O valor que você investe hoje se transformará em resultados que superarão suas expectativas. Não é um gasto, é um investimento no seu sucesso.`,
+          content: `Sabemos que o investimento é uma consideração importante na sua decisão. Por isso, trabalhamos com valores justos e transparentes, sempre focados no retorno que você obterá. Nossos preços refletem a qualidade do serviço e os resultados que entregamos. Quando você investe em ${businessName}, está investindo em qualidade, experiência e resultados garantidos. Oferecemos diferentes opções de pagamento para facilitar sua decisão. Além disso, trabalhamos com total transparência - sem custos ocultos ou surpresas. O valor que você investe hoje se transformará em resultados que superarão suas expectativas. Não é um gasto, é um investimento no seu sucesso.`,
           cta: "Solicitar Orçamento"
         }
       }

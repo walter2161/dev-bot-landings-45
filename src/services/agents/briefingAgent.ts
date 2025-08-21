@@ -151,12 +151,14 @@ OFERTAS: ${briefing.specialOffers}
 ${logoInfo}
 ${colorInfo}
 
-INSTRUÇÕES PARA CONTEÚDO:
-- Nome da empresa: ${briefing.businessName}
-- Criar conteúdo personalizado baseado no briefing
-- Incluir ofertas especiais se disponíveis
-- Usar informações de contato fornecidas
-- Personalizar para o tipo de negócio específico`;
+DIRETRIZES PARA CONTEÚDO:
+- Empresa: ${briefing.businessName}
+- Tipo: ${briefing.businessType}
+- Ofertas: ${briefing.specialOffers}
+- Contato: ${briefing.contactInfo.whatsapp}, ${briefing.contactInfo.address}
+- Objetivo: ${briefing.mainGoal}
+- Serviços: ${briefing.keyServices}
+- Público: ${briefing.targetAudience}`;
 
       case 'design':
         return `${baseInfo}

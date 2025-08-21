@@ -88,26 +88,26 @@ export class ContentAgent {
     const whatsapp = whatsappMatch?.[1] || "(11) 99999-9999";
     const address = addressMatch?.[1]?.trim() || "São Paulo, SP";
 
-    const prompt = `Crie conteúdo profissional para uma landing page com as seguintes informações:
+    const prompt = `Você é um especialista em criar conteúdo para landing pages. Crie conteúdo profissional e persuasivo para uma empresa chamada "${businessName}".
 
-INFORMAÇÕES DA EMPRESA:
-- Nome: ${businessName}
-- Tipo: ${businessType}
+INFORMAÇÕES PARA APLICAR NO CONTEÚDO:
+- Empresa: ${businessName} (${businessType})
 - Descrição: ${description}
 - Público-Alvo: ${targetAudience}
-- Objetivo: ${mainGoal}
-- Serviços: ${services}
-- Ofertas: ${offers}
+- Objetivo Principal: ${mainGoal}
+- Serviços/Produtos: ${services}
+- Ofertas Especiais: ${offers}
 - WhatsApp: ${whatsapp}
 - Endereço: ${address}
 
-INSTRUÇÕES:
-- Use o nome da empresa de forma natural nos textos
-- Crie conteúdo personalizado e profissional
-- Inclua ofertas especiais se disponíveis
-- Use informações de contato reais
+IMPORTANTE: 
+- Crie textos naturais e profissionais usando essas informações
+- NÃO copie as informações literalmente
+- NÃO inclua instruções no conteúdo final
+- Use o nome "${businessName}" de forma natural nos textos
+- Integre as ofertas especiais no conteúdo quando relevante
 
-Retorne APENAS JSON válido estruturado com:
+Retorne APENAS JSON válido com esta estrutura:
 - title: nome exato da empresa
 - subtitle: descrição específica
 - heroText: chamada atrativa personalizada
