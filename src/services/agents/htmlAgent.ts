@@ -10,7 +10,7 @@ export class HtmlAgent {
 
   private async generateImageUrls(images: any, customImages?: { [key: string]: string }): Promise<any> {
     const baseUrl = 'https://image.pollinations.ai/prompt/';
-    const imageParams = '?width=1200&height=800&enhance=true&nologo=true';
+    const imageParams = '?width=720&height=480&enhance=true&nologo=true';
     
     const logoPrompt = images.logo || `Logo da empresa ${images.hero || 'negócio profissional'}`;
     
@@ -22,7 +22,10 @@ export class HtmlAgent {
       method: customImages?.method || `${baseUrl}${encodeURIComponent(images.method)}${imageParams}`,
       results: customImages?.results || `${baseUrl}${encodeURIComponent(images.results)}${imageParams}`,
       access: customImages?.access || `${baseUrl}${encodeURIComponent(images.access)}${imageParams}`,
-      investment: customImages?.investment || `${baseUrl}${encodeURIComponent(images.investment)}${imageParams}`
+      investment: customImages?.investment || `${baseUrl}${encodeURIComponent(images.investment)}${imageParams}`,
+      gallery: images.gallery ? Array.from({length: 6}, (_, i) => 
+        customImages?.[`gallery_${i}`] || `${baseUrl}${encodeURIComponent(images.gallery + ` image ${i+1}`)}${imageParams}`
+      ) : []
     };
 
     return imageUrls;
@@ -41,7 +44,9 @@ export class HtmlAgent {
 <body>
     ${this.generateNavigation(businessData, images)}
     ${this.generateHeroSection(businessData, images)}
+    ${this.generateFirstSectionWithBackground(businessData, images)}
     ${this.generateContentSections(businessData, images)}
+    ${this.generateGallerySection(businessData, images)}
     ${this.generateFooter(businessData, images)}
     ${this.generateChatWidget(businessData)}
     ${this.generateJavaScript(businessData)}
@@ -216,6 +221,56 @@ export class HtmlAgent {
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
         
+        .first-section-bg {
+            background-image: url('${businessData.images?.hero}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+        
+        .first-section-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+        
+        .first-section-bg .container {
+            position: relative;
+            z-index: 2;
+            color: white;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .gallery-item {
+            aspect-ratio: 4/3;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         @media (max-width: 768px) {
             .two-columns {
                 grid-template-columns: 1fr;
@@ -223,6 +278,16 @@ export class HtmlAgent {
             
             .hero h1 {
                 font-size: 2.5rem;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .gallery {
+                grid-template-columns: 1fr;
             }
         }
     </style>`;
@@ -243,7 +308,7 @@ export class HtmlAgent {
 
     const menuItems = businessData.sections.map(section => 
       `<li><a href="#${section.id}">${getMenuLabel(section.type)}</a></li>`
-    ).join('');
+    ).join('') + '<li><a href="#galeria">Galeria</a></li>';
     
     return `<nav class="navbar">
         <div class="container">
@@ -275,8 +340,25 @@ export class HtmlAgent {
     </section>`;
   }
 
+  private generateFirstSectionWithBackground(businessData: BusinessContent, images: any): string {
+    const firstSection = businessData.sections[1];
+    if (!firstSection) return '';
+    
+    return `<section id="${firstSection.id}" class="section first-section-bg">
+        <div class="container">
+            <div class="two-columns">
+                <div>
+                    <h2 class="section-title">${firstSection.title}</h2>
+                    <p>${firstSection.content}</p>
+                </div>
+                <div></div>
+            </div>
+        </div>
+    </section>`;
+  }
+
   private generateContentSections(businessData: BusinessContent, images: any): string {
-    return businessData.sections.slice(1).map((section, index) => {
+    return businessData.sections.slice(2).map((section, index) => {
       const isReverse = index % 2 === 1;
       const imageKey = section.type as keyof typeof images;
       
@@ -294,6 +376,23 @@ export class HtmlAgent {
           </div>
       </section>`;
     }).join('');
+  }
+
+  private generateGallerySection(businessData: BusinessContent, images: any): string {
+    if (!images.gallery || !Array.isArray(images.gallery)) return '';
+    
+    return `<section id="galeria" class="section">
+        <div class="container">
+            <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">Galeria</h2>
+            <div class="gallery">
+                ${images.gallery.map((imageUrl: string, index: number) => `
+                    <div class="gallery-item">
+                        <img src="${imageUrl}" alt="Galeria ${index + 1}" loading="lazy">
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>`;
   }
 
   private generateFooter(businessData: BusinessContent, images: any): string {

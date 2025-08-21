@@ -186,7 +186,8 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
       method: 'Imagem do método/processo',
       results: 'Imagem dos resultados',
       access: 'Imagem de acesso/contato',
-      investment: 'Imagem de investimento/preços'
+      investment: 'Imagem de investimento/preços',
+      gallery: 'Imagens da galeria de fotos'
     };
     
     // Extrair informações de contato

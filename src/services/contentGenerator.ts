@@ -56,6 +56,7 @@ export interface ImageDescriptions {
   results: string;
   access: string;
   investment: string;
+  gallery: string;
 }
 
 export interface ContactInfo {

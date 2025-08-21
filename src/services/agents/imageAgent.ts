@@ -10,6 +10,7 @@ export interface ImagePrompts {
   results: string;
   access: string;
   investment: string;
+  gallery: string;
 }
 
 export class ImageAgent {
@@ -59,7 +60,8 @@ Return ONLY JSON:
   "method": "image showing the actual process/methodology specific to ${businessType} industry",
   "results": "image showing real results/benefits specific to ${businessType}, not handshakes",
   "access": "image of actual business location or service delivery for ${businessType}",
-  "investment": "positive investment image relevant to ${businessType} industry, avoid generic handshakes"
+  "investment": "positive investment image relevant to ${businessType} industry, avoid generic handshakes",
+  "gallery": "6 images showing different aspects of ${businessType} business - products, services, environment, customers - for photo gallery, industry-specific content"
 }
 
 CRITICAL GUIDELINES:
@@ -71,6 +73,7 @@ CRITICAL GUIDELINES:
 - Focus on the actual products/services of the business
 - Show real customers and environments for that industry
 - Use vibrant, appealing colors suitable for the business type
+- MAXIMUM IMAGE SIZE: 720px x 480px at 72dpi
 - Example: Pet shop = "cute dogs and cats in a modern pet store, professional photography, bright colorful environment"
 - Example: Clothing store = "fashionable clothes displayed in modern boutique, professional photography, stylish lighting"`;
 
@@ -117,7 +120,8 @@ CRITICAL GUIDELINES:
       method: `${industryElements} in action, professional process, organized workflow, industry-specific methodology, high quality photography`,
       results: `satisfied customers with ${industryElements}, successful outcomes, positive results, authentic joy, quality service delivery`,
       access: `welcoming ${businessType} location, professional storefront, easy access, industry-appropriate environment, inviting atmosphere`,
-      investment: `value proposition for ${businessType} services, quality investment concept, customer satisfaction, positive ROI visualization, avoid handshakes`
+      investment: `value proposition for ${businessType} services, quality investment concept, customer satisfaction, positive ROI visualization, avoid handshakes`,
+      gallery: `6 different images showing ${industryElements}, business environment, products, services, customers enjoying ${businessType} services, maximum size 720x480px at 72dpi`
     };
   }
 }

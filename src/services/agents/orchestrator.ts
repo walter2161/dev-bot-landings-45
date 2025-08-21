@@ -73,7 +73,8 @@ export class AgentOrchestrator {
           method: imagePrompts.method,
           results: imagePrompts.results,
           access: imagePrompts.access,
-          investment: imagePrompts.investment
+          investment: imagePrompts.investment,
+          gallery: imagePrompts.gallery
         },
         sellerbot,
         seo: {
