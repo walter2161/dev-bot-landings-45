@@ -19,16 +19,23 @@ const AuthWrapper = () => {
 
   useEffect(() => {
     const checkAuth = () => {
-      // Primeiro verifica se há um token hex na URL
+      // Primeiro verifica se há um token hex na URL (pathname ou hash)
       const pathParam = location.pathname.slice(1); // Remove a barra inicial
+      const hashParam = location.hash.slice(1); // Remove o # inicial
       
-      if (pathParam && pathParam.length > 10 && !pathParam.includes('/')) {
+      const hexToken = pathParam || hashParam;
+      
+      if (hexToken && hexToken.length > 10 && !hexToken.includes('/')) {
         // Tenta autenticar com hex
-        if (AuthService.loginWithHex(pathParam)) {
+        if (AuthService.loginWithHex(hexToken)) {
           setIsAuthenticated(true);
           setIsLoading(false);
-          // Redireciona para a home após autenticação
+          // Redireciona para a home após autenticação e limpa a URL
           navigate('/', { replace: true });
+          // Limpa o hash se foi usado
+          if (hashParam) {
+            window.location.hash = '';
+          }
           return;
         }
       }
@@ -48,7 +55,7 @@ const AuthWrapper = () => {
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [location.pathname, navigate]);
+  }, [location.pathname, location.hash, navigate]);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
