@@ -102,6 +102,64 @@ export class HtmlAgent {
             border-radius: 50%;
         }
         
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            color: ${businessData.colors.primary};
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #333;
+            transition: 0.3s;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s;
+            }
+            
+            .nav-menu.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+        }
+        
         .section {
             min-height: 100vh;
             display: flex;
@@ -171,12 +229,24 @@ export class HtmlAgent {
   }
 
   private generateNavigation(businessData: BusinessContent, images: any): string {
+    const menuItems = businessData.sections.map(section => 
+      `<li><a href="#${section.id}">${section.title}</a></li>`
+    ).join('');
+    
     return `<nav class="navbar">
         <div class="container">
             <div class="nav-content">
                 <div class="logo">
                     <img src="${images.logo}" alt="Logo" class="logo-image">
                     <span>${businessData.title}</span>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    ${menuItems}
+                </ul>
+                <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
         </div>
@@ -231,7 +301,9 @@ export class HtmlAgent {
         <div class="container">
             <div style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                 <span style="font-size: 0.9rem;">By:</span>
-                <img src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" alt="PageJet" style="height: 20px; object-fit: contain;">
+                <a href="https://pagejet.app" target="_blank" style="text-decoration: none; display: flex; align-items: center;">
+                    <img src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" alt="PageJet" style="height: 20px; object-fit: contain;">
+                </a>
             </div>
         </div>
     </footer>`;
@@ -270,6 +342,11 @@ export class HtmlAgent {
     return `<script>
         let chatOpen = false;
         
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+        
         function toggleChat() {
             const chatBox = document.getElementById('chatBox');
             chatOpen = !chatOpen;
@@ -305,6 +382,22 @@ export class HtmlAgent {
                     }, 1000);
                 }
             }
+        });
+        
+        // Smooth scroll para navegação
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Fechar menu mobile após clique
+                    document.getElementById('navMenu').classList.remove('active');
+                }
+            });
         });
     </script>`;
   }
