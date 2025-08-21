@@ -229,8 +229,20 @@ export class HtmlAgent {
   }
 
   private generateNavigation(businessData: BusinessContent, images: any): string {
+    const getMenuLabel = (sectionType: string): string => {
+      const menuLabels: { [key: string]: string } = {
+        'motivation': 'Sobre',
+        'target': 'Para Quem',
+        'method': 'Como Funciona',
+        'results': 'Resultados',
+        'access': 'Acesso',
+        'investment': 'Contato'
+      };
+      return menuLabels[sectionType] || 'Início';
+    };
+
     const menuItems = businessData.sections.map(section => 
-      `<li><a href="#${section.id}">${section.title}</a></li>`
+      `<li><a href="#${section.id}">${getMenuLabel(section.type)}</a></li>`
     ).join('');
     
     return `<nav class="navbar">
