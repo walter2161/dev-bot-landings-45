@@ -346,7 +346,7 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
               onKeyPress={handleKeyPress}
               placeholder="Descreva seu negócio..."
               disabled={isGenerating}
-              className="flex-1 text-xs bg-background/50 border-border/30 focus:border-primary"
+              className="flex-1 text-xs bg-muted/30 text-foreground placeholder:text-muted-foreground border-border/30 focus:border-primary"
             />
             <Button
               onClick={() => handleSendMessage()}
@@ -469,7 +469,7 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
             onKeyPress={handleKeyPress}
             placeholder="Ex: Petshop com promoção..."
             disabled={isGenerating}
-            className="flex-1 bg-chatdev/50 text-white placeholder:text-white/70 border-primary/30 focus:border-primary"
+            className="flex-1 bg-muted/30 text-foreground placeholder:text-muted-foreground border-primary/30 focus:border-primary focus:text-foreground"
           />
           <Button
             onClick={() => handleSendMessage()}
