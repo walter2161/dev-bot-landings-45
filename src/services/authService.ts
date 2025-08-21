@@ -80,4 +80,62 @@ export class AuthService {
     
     return `${hours}h ${minutes}min`;
   }
+
+  // Métodos para autenticação via URL com hex
+  static encodeHexToken(date: string, key: string): string {
+    const text = `${date}$${key.toUpperCase()}`;
+    return Array.from(new TextEncoder().encode(text))
+      .map(byte => byte.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  static decodeHexToken(hex: string): { date: string; key: string } | null {
+    try {
+      const bytes = [];
+      for (let i = 0; i < hex.length; i += 2) {
+        bytes.push(parseInt(hex.substring(i, i + 2), 16));
+      }
+      const text = new TextDecoder().decode(new Uint8Array(bytes));
+      const parts = text.split('$');
+      if (parts.length !== 2) return null;
+      
+      return { date: parts[0], key: parts[1] };
+    } catch {
+      return null;
+    }
+  }
+
+  static validateHexAuth(hex: string): boolean {
+    const decoded = this.decodeHexToken(hex);
+    if (!decoded) return false;
+
+    // Verifica se a chave é válida
+    if (!this.VALID_KEYS.includes(decoded.key)) return false;
+
+    // Verifica se a data é hoje
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const currentDate = `${day}_${month}_${year}`;
+
+    return decoded.date === currentDate;
+  }
+
+  static loginWithHex(hex: string): boolean {
+    if (this.validateHexAuth(hex)) {
+      const decoded = this.decodeHexToken(hex);
+      if (decoded) {
+        const session = {
+          key: decoded.key,
+          loginTime: Date.now(),
+          expiresAt: Date.now() + this.SESSION_DURATION
+        };
+        
+        localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
+        return true;
+      }
+    }
+    return false;
+  }
 }

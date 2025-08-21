@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { LoginForm } from "@/components/Auth/LoginForm";
@@ -11,13 +11,29 @@ import { AuthService } from "@/services/authService";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const AuthWrapper = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Verifica se há uma sessão válida ao carregar o app
     const checkAuth = () => {
+      // Primeiro verifica se há um token hex na URL
+      const pathParam = location.pathname.slice(1); // Remove a barra inicial
+      
+      if (pathParam && pathParam.length > 10 && !pathParam.includes('/')) {
+        // Tenta autenticar com hex
+        if (AuthService.loginWithHex(pathParam)) {
+          setIsAuthenticated(true);
+          setIsLoading(false);
+          // Redireciona para a home após autenticação
+          navigate('/', { replace: true });
+          return;
+        }
+      }
+
+      // Verifica autenticação normal
       const authenticated = AuthService.isAuthenticated();
       setIsAuthenticated(authenticated);
       setIsLoading(false);
@@ -26,10 +42,13 @@ const App = () => {
     checkAuth();
 
     // Verifica a autenticação periodicamente
-    const interval = setInterval(checkAuth, 60000); // A cada minuto
+    const interval = setInterval(() => {
+      const authenticated = AuthService.isAuthenticated();
+      setIsAuthenticated(authenticated);
+    }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [location.pathname, navigate]);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -55,31 +74,29 @@ const App = () => {
   }
 
   if (!isAuthenticated) {
-    return (
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <LoginForm onLogin={handleLogin} />
-        </TooltipProvider>
-      </QueryClientProvider>
-    );
+    return <LoginForm onLogin={handleLogin} />;
   }
 
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Routes>
+        <Route path="/" element={<Index onLogout={handleLogout} />} />
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
+  );
+};
+
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <div className="min-h-screen bg-gray-50">
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index onLogout={handleLogout} />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </div>
+        <BrowserRouter>
+          <AuthWrapper />
+        </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
