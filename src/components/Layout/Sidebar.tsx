@@ -14,6 +14,7 @@ import ImagesTab from "./SidebarTabs/ImagesTab";
 import SellerbotTab from "./SidebarTabs/SellerbotTab";
 import SEOTab from "./SidebarTabs/SEOTab";
 import LayoutTab from "./SidebarTabs/LayoutTab";
+import BriefingTab from "./SidebarTabs/BriefingTab";
 import { BusinessContent } from "@/services/contentGenerator";
 import { landingPageBuilder } from "@/services/landingPageBuilder";
 import { 
@@ -222,190 +223,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <div className={`p-4 space-y-4 ${isMobile ? 'max-h-[calc(85vh-120px)] mobile-scroll' : 'max-h-[calc(100vh-200px)]'} overflow-y-auto`}>
         {activeTab === "briefing" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-foreground">Briefing da Landing Page</h3>
-              <Badge variant="secondary" className="text-xs">Formulário</Badge>
-            </div>
-            
-            <Card className="p-4 bg-gradient-card space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="businessTheme" className="text-sm font-medium text-foreground">Tema do Negócio</Label>
-                <Select
-                  value={briefingData.businessTheme}
-                  onValueChange={(value) => handleBriefingChange("businessTheme", value)}
-                >
-                  <SelectTrigger className="bg-background/50 border-border">
-                    <SelectValue placeholder="Escolha um tema para seu negócio" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60 bg-background border-border">
-                    {businessThemes.map((theme) => (
-                      <SelectItem key={theme.value} value={theme.value}>
-                        {theme.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="businessName" className="text-sm font-medium text-foreground">Nome do Negócio</Label>
-                <Input
-                  id="businessName"
-                  value={briefingData.businessName}
-                  onChange={(e) => handleBriefingChange("businessName", e.target.value)}
-                  placeholder="Ex: Petshop Happy Dogs"
-                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="customLogo" className="text-sm font-medium text-foreground">Logo da Empresa (Opcional)</Label>
-                <div className="space-y-2">
-                  <Input
-                    id="customLogo"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    className="bg-background/50 border-border file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
-                  />
-                  {briefingData.customLogo && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Badge variant="outline" className="text-xs">
-                        {briefingData.customLogo.name}
-                      </Badge>
-                    </div>
-                  )}
-                  <p className="text-xs text-muted-foreground">
-                    Envie seu logo em formato PNG, JPG ou SVG para personalizar sua landing page
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="businessType" className="text-sm font-medium text-foreground">Tipo de Negócio</Label>
-                <Input
-                  id="businessType"
-                  value={briefingData.businessType}
-                  onChange={(e) => handleBriefingChange("businessType", e.target.value)}
-                  placeholder="Ex: Petshop, Restaurante, Academia"
-                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-medium text-foreground">Descrição do Negócio</Label>
-                <Textarea
-                  id="description"
-                  value={briefingData.description}
-                  onChange={(e) => handleBriefingChange("description", e.target.value)}
-                  placeholder="Descreva brevemente seu negócio..."
-                  className={`bg-background/50 border-border resize-none ${isMobile ? 'mobile-form-input' : ''}`}
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="targetAudience" className="text-sm font-medium text-foreground">Público-Alvo</Label>
-                <Input
-                  id="targetAudience"
-                  value={briefingData.targetAudience}
-                  onChange={(e) => handleBriefingChange("targetAudience", e.target.value)}
-                  placeholder="Ex: Donos de pets, Famílias"
-                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="mainGoal" className="text-sm font-medium text-foreground">Objetivo Principal</Label>
-                <Input
-                  id="mainGoal"
-                  value={briefingData.mainGoal}
-                  onChange={(e) => handleBriefingChange("mainGoal", e.target.value)}
-                  placeholder="Ex: Aumentar agendamentos"
-                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="keyServices" className="text-sm font-medium text-foreground">Serviços Principais</Label>
-                <Textarea
-                  id="keyServices"
-                  value={briefingData.keyServices}
-                  onChange={(e) => handleBriefingChange("keyServices", e.target.value)}
-                  placeholder="Liste os principais serviços..."
-                  className={`bg-background/50 border-border resize-none ${isMobile ? 'mobile-form-input' : ''}`}
-                  rows={2}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="whatsapp" className="text-sm font-medium text-foreground">WhatsApp</Label>
-                <Input
-                  id="whatsapp"
-                  value={briefingData.whatsapp}
-                  onChange={(e) => handleBriefingChange("whatsapp", e.target.value)}
-                  placeholder="Ex: (11) 99999-9999"
-                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address" className="text-sm font-medium text-foreground">Endereço</Label>
-                <Input
-                  id="address"
-                  value={briefingData.address}
-                  onChange={(e) => handleBriefingChange("address", e.target.value)}
-                  placeholder="Rua, cidade, estado..."
-                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="contactInfo" className="text-sm font-medium text-foreground">Outras Informações de Contato</Label>
-                <Input
-                  id="contactInfo"
-                  value={briefingData.contactInfo}
-                  onChange={(e) => handleBriefingChange("contactInfo", e.target.value)}
-                  placeholder="Email, telefone comercial..."
-                  className={`bg-background/50 border-border ${isMobile ? 'mobile-form-input' : ''}`}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="specialOffers" className="text-sm font-medium text-foreground">Ofertas Especiais</Label>
-                <Textarea
-                  id="specialOffers"
-                  value={briefingData.specialOffers}
-                  onChange={(e) => handleBriefingChange("specialOffers", e.target.value)}
-                  placeholder="Promoções, descontos, pacotes..."
-                  className={`bg-background/50 border-border resize-none ${isMobile ? 'mobile-form-input' : ''}`}
-                  rows={2}
-                />
-              </div>
-              
-              <Button 
-                variant="hero" 
-                className="w-full"
-                onClick={() => {
-                  setActiveTab("chatbot");
-                  // Trigger automatic generation with briefing data
-                  const briefingPrompt = getBriefingPrompt();
-                  if (briefingData.businessName && briefingData.businessType) {
-                    // Send briefing data to chat automatically
-                    setTimeout(() => {
-                      const event = new CustomEvent('auto-generate-landing-page', {
-                        detail: { prompt: briefingPrompt }
-                      });
-                      window.dispatchEvent(event);
-                    }, 100);
-                  }
-                }}
-              >
-                Atualizar PageJet
-              </Button>
-            </Card>
-          </div>
+          <BriefingTab onLandingPageGenerated={onLandingPageGenerated} />
         )}
 
         {activeTab === "design" && (
@@ -444,9 +262,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div className={`${isMobile ? 'h-[50vh] mobile-chat' : 'h-[400px]'} bg-gradient-card rounded-lg border border-border/50`}>
               <SmartChat 
                 onLandingPageGenerated={handleLandingPageGeneratedInternal}
-                briefingPrompt={getBriefingPrompt()}
-                isIntegrated={true}
-                onNavigateToBriefing={() => setActiveTab("briefing")}
+        briefingPrompt={businessData ? `Negócio gerado: ${businessData.title}` : undefined}
+        isIntegrated={true}
+        onNavigateToBriefing={() => setActiveTab("briefing")}
               />
             </div>
           </div>

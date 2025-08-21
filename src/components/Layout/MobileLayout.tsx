@@ -21,6 +21,7 @@ import Sidebar from "./Sidebar";
 import PreviewFrame from "@/components/LandingPageBuilder/PreviewFrame";
 import { AuthService } from "@/services/authService";
 import MobileFAB from "@/components/Mobile/MobileFAB";
+import BriefingTab from "./SidebarTabs/BriefingTab";
 
 interface MobileLayoutProps {
   onLogout: () => void;
@@ -148,11 +149,18 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
         </Button>
       </div>
 
-      {/* Mobile Content */}
-      <div className="flex-1 relative">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col relative overflow-hidden">
         <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-          <SheetContent side="bottom" className="h-[85vh] p-0 mobile-sheet">
-            <div className="h-full">
+          <SheetContent 
+            side="bottom" 
+            className="bg-background/95 backdrop-blur border-t border-border/50 p-0 h-[85vh] rounded-t-2xl"
+          >
+            {activeTab === "briefing" ? (
+              <div className="p-4 h-full overflow-y-auto">
+                <BriefingTab onLandingPageGenerated={handleLandingPageGenerated} />
+              </div>
+            ) : (
               <Sidebar 
                 onLandingPageGenerated={handleLandingPageGenerated}
                 businessData={businessData}
@@ -161,7 +169,7 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
                 setActiveTab={setActiveTab}
                 isMobile={true}
               />
-            </div>
+            )}
           </SheetContent>
         </Sheet>
 

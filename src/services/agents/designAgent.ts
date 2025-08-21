@@ -63,29 +63,44 @@ export class DesignAgent {
   }
 
   async generateDesign(businessType: string, title: string): Promise<DesignStructure> {
-    const prompt = `Crie design para: "${businessType} - ${title}"
+    // Extrair informações da paleta de cores do briefing
+    const paletteMatch = businessType.match(/PALETA DE CORES OBRIGATÓRIA:.*?Primária:\s*(#[A-Fa-f0-9]{6}).*?Secundária:\s*(#[A-Fa-f0-9]{6}).*?Destaque:\s*(#[A-Fa-f0-9]{6})/);
+    const businessNameMatch = businessType.match(/Nome da Empresa:\s*([^\n]+)/);
+    const logoMatch = businessType.match(/IMPORTANTE:.*?logo personalizado/);
+    
+    const businessName = businessNameMatch?.[1]?.trim() || title;
+    const hasCustomLogo = logoMatch !== null;
+    
+    let paletteInfo = "";
+    if (paletteMatch) {
+      paletteInfo = `USE EXATAMENTE estas cores: Primária: ${paletteMatch[1]}, Secundária: ${paletteMatch[2]}, Destaque: ${paletteMatch[3]}`;
+    }
+
+    const prompt = `Crie design personalizado para o briefing: "${businessType} - ${title}"
+
+${paletteInfo ? `OBRIGATÓRIO - ${paletteInfo}` : 'Escolha cores apropriadas para o tipo de negócio'}
 
 Retorne APENAS JSON:
 {
   "colors": {
-    "primary": "#cor_hex_principal",
-    "secondary": "#cor_hex_secundaria", 
-    "accent": "#cor_hex_destaque"
+    "primary": "${paletteMatch ? paletteMatch[1] : '#cor_hex_principal_apropriada'}",
+    "secondary": "${paletteMatch ? paletteMatch[2] : '#cor_hex_secundaria_apropriada'}", 
+    "accent": "${paletteMatch ? paletteMatch[3] : '#cor_hex_destaque_apropriada'}"
   },
   "images": {
-    "logo": "logotipo moderno da empresa ${title}",
-    "hero": "foto profissional de ${businessType}",
-    "motivation": "imagem dos benefícios de ${businessType}",
-    "target": "foto do público-alvo de ${businessType}",
-    "method": "imagem do processo de ${businessType}",
-    "results": "foto dos resultados de ${businessType}",
-    "access": "imagem de localização/contato",
-    "investment": "imagem relacionada a preços"
+    "logo": "${hasCustomLogo ? `Logo personalizado da empresa ${businessName} (fornecido pelo cliente)` : `Logo profissional moderno para ${businessName}`}",
+    "hero": "Foto profissional de alta qualidade mostrando ${businessType} em ação, ambiente real, pessoas trabalhando",
+    "motivation": "Imagem inspiradora dos benefícios e resultados alcançados com ${businessType}",
+    "target": "Foto do público-alvo específico de ${businessType}, pessoas reais em contexto apropriado",
+    "method": "Imagem detalhada do processo de trabalho de ${businessType}, mostrando profissionalismo",
+    "results": "Foto de resultados concretos e positivos de ${businessType}, antes e depois ou clientes satisfeitos",
+    "access": "Imagem de localização, escritório ou espaço físico de ${businessType}",
+    "investment": "Imagem relacionada a valor justo e transparência de preços"
   },
   "fonts": {
-    "heading": "fonte para títulos",
-    "body": "fonte para texto corpo",
-    "accent": "fonte para destaques"
+    "heading": "Inter",
+    "body": "Inter",
+    "accent": "Inter"
   }
 }`;
 

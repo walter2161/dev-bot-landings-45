@@ -62,31 +62,62 @@ export class ContentAgent {
   }
 
   async generateContent(userRequest: string): Promise<ContentStructure> {
-    const prompt = `Crie conteúdo específico para: "${userRequest}"
+    // Extrair informações específicas do briefing
+    const businessNameMatch = userRequest.match(/Nome da Empresa:\s*([^\n]+)/);
+    const businessTypeMatch = userRequest.match(/Tipo de Negócio:\s*([^\n]+)/);
+    const descriptionMatch = userRequest.match(/Descrição:\s*([^\n]+)/);
+    const targetAudienceMatch = userRequest.match(/Público-Alvo:\s*([^\n]+)/);
+    const mainGoalMatch = userRequest.match(/Objetivo Principal:\s*([^\n]+)/);
+    const servicesMatch = userRequest.match(/Serviços\/Produtos:\s*([^\n]+)/);
+    const whatsappMatch = userRequest.match(/WhatsApp:\s*([^\n]+)/);
+    const addressMatch = userRequest.match(/Endereço:\s*([^\n]+)/);
+    const contactMatch = userRequest.match(/Outras Informações:\s*([^\n]+)/);
+    const offersMatch = userRequest.match(/Ofertas Especiais:\s*([^\n]+)/);
+
+    const businessName = businessNameMatch?.[1]?.trim() || "Seu Negócio";
+    const businessType = businessTypeMatch?.[1]?.trim() || "nosso negócio";
+    const description = descriptionMatch?.[1]?.trim() || "";
+    const targetAudience = targetAudienceMatch?.[1]?.trim() || "";
+    const mainGoal = mainGoalMatch?.[1]?.trim() || "";
+    const services = servicesMatch?.[1]?.trim() || "";
+    const whatsapp = whatsappMatch?.[1]?.trim() || "(11) 99999-9999";
+    const address = addressMatch?.[1]?.trim() || "São Paulo, SP";
+    const contactInfo = contactMatch?.[1]?.trim() || "";
+    const offers = offersMatch?.[1]?.trim() || "";
+
+    const prompt = `Crie conteúdo ESPECÍFICO e PERSONALIZADO para o briefing: "${userRequest}"
+
+INSTRUÇÕES CRÍTICAS:
+- Use EXATAMENTE o nome "${businessName}" (não "Seu Negócio" ou genéricos)
+- Personalize TODO o conteúdo baseado nas informações fornecidas
+- Use as informações de contato EXATAS fornecidas
+- Incorpore as ofertas especiais se fornecidas
+- Adapte linguagem ao público-alvo informado
+- Foque no objetivo principal mencionado
 
 Retorne APENAS um JSON com esta estrutura:
 {
-  "title": "Nome específico do negócio",
-  "subtitle": "Descrição do que oferece",
-  "heroText": "Chamada principal atrativa",
-  "ctaText": "Ação específica (Comprar, Agendar, etc.)",
+  "title": "${businessName}",
+  "subtitle": "Descrição específica baseada em: ${description}",
+  "heroText": "Chamada atrativa personalizada para ${businessType}",
+  "ctaText": "CTA específico baseado no objetivo: ${mainGoal}",
   "sections": [
-    {"id": "intro", "title": "Apresentação", "content": "Texto introdutório", "type": "intro"},
-    {"id": "motivation", "title": "Por que escolher", "content": "Diferenciais", "type": "motivation"},
-    {"id": "target", "title": "Para quem", "content": "Público-alvo", "type": "target"},
-    {"id": "method", "title": "Como funciona", "content": "Processo", "type": "method"},
-    {"id": "results", "title": "Resultados", "content": "Benefícios", "type": "results"},
-    {"id": "access", "title": "Como encontrar", "content": "Localização/acesso", "type": "access"},
-    {"id": "investment", "title": "Preços", "content": "Investimento", "type": "investment"}
+    {"id": "intro", "title": "Sobre a ${businessName}", "content": "Apresentação personalizada baseada na descrição fornecida", "type": "intro"},
+    {"id": "motivation", "title": "Por que escolher a ${businessName}", "content": "Diferenciais específicos do negócio", "type": "motivation"},
+    {"id": "target", "title": "Para quem é ideal", "content": "Baseado no público-alvo: ${targetAudience}", "type": "target"},
+    {"id": "method", "title": "Como trabalhamos", "content": "Processo específico do tipo de negócio", "type": "method"},
+    {"id": "results", "title": "Resultados", "content": "Benefícios específicos dos serviços oferecidos", "type": "results"},
+    {"id": "access", "title": "Como nos encontrar", "content": "Informações de localização e acesso", "type": "access"},
+    {"id": "investment", "title": "Nossos Preços", "content": "Informações sobre preços ${offers ? 'incluindo ofertas especiais: ' + offers : ''}", "type": "investment"}
   ],
   "contact": {
-    "email": "email@negocio.com",
-    "phone": "(XX) XXXXX-XXXX",
-    "address": "Endereço completo",
+    "email": "${contactInfo.includes('@') ? contactInfo.split(' ')[0] : 'contato@' + businessName.toLowerCase().replace(/\s+/g, '') + '.com'}",
+    "phone": "${contactInfo.includes('(') ? contactInfo.match(/\([0-9]{2}\)\s?[0-9-]+/)?.[0] || '(11) 3333-3333' : '(11) 3333-3333'}",
+    "address": "${address}",
     "socialMedia": {
-      "whatsapp": "(XX) 9XXXX-XXXX",
-      "instagram": "@perfil",
-      "facebook": "facebook.com/pagina"
+      "whatsapp": "${whatsapp}",
+      "instagram": "@${businessName.toLowerCase().replace(/\s+/g, '')}",
+      "facebook": "facebook.com/${businessName.toLowerCase().replace(/\s+/g, '')}"
     }
   }
 }`;
