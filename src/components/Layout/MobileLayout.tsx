@@ -95,26 +95,26 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
           />
         </div>
 
-        {/* Mobile Navigation */}
-        <div className="bg-card border-t border-border p-2">
-          <div className="flex justify-around">
-            {mobileNavItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Button
-                  key={item.id}
-                  variant={item.id === "preview" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => handleTabChange(item.id)}
-                  className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-xs">{item.label}</span>
-                </Button>
-              );
-            })}
-          </div>
+      {/* Mobile Navigation */}
+      <div className="bg-card border-t border-border p-2">
+        <div className="flex justify-around">
+          {mobileNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Button
+                key={item.id}
+                variant={item.id === "preview" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleTabChange(item.id)}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-foreground hover:text-foreground hover:bg-accent/50"
+              >
+                <Icon className="w-4 h-4" />
+                <span className="text-xs">{item.label}</span>
+              </Button>
+            );
+          })}
         </div>
+      </div>
       </div>
     );
   }
@@ -245,7 +245,7 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleTabChange(item.id)}
-                className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-foreground hover:text-foreground hover:bg-accent/50"
               >
                 <Icon className="w-4 h-4" />
                 <span className="text-xs">{item.label}</span>
@@ -258,7 +258,7 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
             size="sm"
             onClick={() => setShowPreview(true)}
             disabled={!generatedHTML}
-            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-foreground hover:text-foreground hover:bg-accent/50 disabled:text-muted-foreground"
           >
             <Eye className="w-4 h-4" />
             <span className="text-xs">Preview</span>
