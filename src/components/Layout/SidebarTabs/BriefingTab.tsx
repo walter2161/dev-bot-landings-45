@@ -10,6 +10,7 @@ import { BusinessContent } from "@/services/contentGenerator";
 import { Upload, Palette, Check, Sparkles, Layout } from "lucide-react";
 import { toast } from "sonner";
 import { agentOrchestrator } from "@/services/agents/orchestrator";
+import TemplateSelector from "../TemplateSelector";
 
 interface BriefingTabProps {
   onLandingPageGenerated: (html: string, data: BusinessContent) => void;
@@ -17,6 +18,7 @@ interface BriefingTabProps {
 
 const BriefingTab = ({ onLandingPageGenerated }: BriefingTabProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [briefingData, setBriefingData] = useState({
     businessName: "",
     businessType: "",
@@ -218,41 +220,29 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
       <Card className="p-4 bg-gradient-card">
         <h4 className="font-medium text-sm mb-3 text-foreground flex items-center gap-2">
           <Layout className="w-4 h-4" />
-          Escolha o Template
+          Template Selecionado
         </h4>
         
         <div className="space-y-3">
-          {templates.map((template) => (
-            <button
-              key={template.id}
-              onClick={() => handleBriefingChange("template", template.id)}
-              className={`w-full p-3 rounded-lg border-2 text-left transition-all ${
-                briefingData.template === template.id 
-                  ? 'border-primary bg-primary/10' 
-                  : 'border-border/30 hover:border-border'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-2">
-                <h5 className="font-medium text-sm">{template.name}</h5>
-                {briefingData.template === template.id && (
-                  <Check className="w-4 h-4 text-primary" />
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
-              <div className="flex flex-wrap gap-1">
-                {template.nichos.slice(0, 3).map((nicho) => (
-                  <Badge key={nicho} variant="secondary" className="text-xs">
-                    {nicho}
-                  </Badge>
-                ))}
-                {template.nichos.length > 3 && (
-                  <Badge variant="secondary" className="text-xs">
-                    +{template.nichos.length - 3}
-                  </Badge>
-                )}
-              </div>
-            </button>
-          ))}
+          <Button
+            variant="outline"
+            onClick={() => setShowTemplateSelector(true)}
+            className="w-full justify-between text-left"
+          >
+            <span>
+              {briefingData.template 
+                ? templates.find(t => t.id === briefingData.template)?.name || "Selecionar Template"
+                : "Clique para escolher um template"
+              }
+            </span>
+            <Layout className="w-4 h-4" />
+          </Button>
+          
+          {briefingData.template && (
+            <div className="text-xs text-muted-foreground">
+              {templates.find(t => t.id === briefingData.template)?.description}
+            </div>
+          )}
         </div>
       </Card>
 
@@ -467,6 +457,17 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
           </>
         )}
       </Button>
+
+      {/* Template Selector Modal */}
+      <TemplateSelector
+        isOpen={showTemplateSelector}
+        onClose={() => setShowTemplateSelector(false)}
+        onSelect={(templateId) => {
+          handleBriefingChange("template", templateId);
+          setShowTemplateSelector(false);
+        }}
+        selectedTemplate={briefingData.template}
+      />
     </div>
   );
 };

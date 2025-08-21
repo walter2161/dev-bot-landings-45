@@ -264,15 +264,90 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
   };
 
   const quickPrompts = [
-    "Petshop com promoção banho e tosa",
-    "Restaurante de comida caseira",
-    "Academia de musculação",
-    "Salão de beleza feminino",
-    "Loja de roupas jovens",
-    "Clínica veterinária",
-    "Corretor de imóveis especialista",
-    "Lançamento imobiliário - luxo",
-    "Loja de roupas femininas jovem"
+    {
+      text: "Restaurante de comida caseira",
+      prompt: `Nome da Empresa: Sabores da Vovó
+Tipo de Negócio: Restaurante de comida caseira
+Descrição: Restaurante especializado em comida caseira tradicional brasileira, com receitas de família
+Público-Alvo: Famílias e pessoas que valorizam comida caseira saborosa
+Objetivo Principal: Atrair clientes para almoço e jantar
+Serviços/Produtos: Pratos executivos, marmitas, refeições completas, sobremesas caseiras
+WhatsApp: (11) 99876-5432
+Endereço: Rua das Flores, 123 - Centro, São Paulo/SP
+Ofertas Especiais: Almoço executivo por R$ 25,90 de segunda a sexta
+TEMPLATE OBRIGATÓRIO: Use o template "Moderno & Visual" (moderno-visual)
+PALETA DE CORES OBRIGATÓRIA: Primária: #8B4513, Secundária: #A0522D, Destaque: #FFD700`
+    },
+    {
+      text: "Petshop com promoção banho e tosa",
+      prompt: `Nome da Empresa: PetCare Amigos
+Tipo de Negócio: Petshop e clínica veterinária
+Descrição: Cuidados completos para seu pet com amor e profissionalismo
+Público-Alvo: Donos de cães e gatos que amam seus animais
+Objetivo Principal: Agendar serviços de banho, tosa e consultas
+Serviços/Produtos: Banho e tosa, consultas veterinárias, vacinas, cirurgias, ração premium
+WhatsApp: (11) 98765-4321
+Endereço: Av. dos Animais, 456 - Vila Pet, São Paulo/SP
+Ofertas Especiais: Banho e tosa completa por R$ 45,00 neste mês
+TEMPLATE OBRIGATÓRIO: Use o template "Moderno & Visual" (moderno-visual)
+PALETA DE CORES OBRIGATÓRIA: Primária: #4CAF50, Secundária: #388E3C, Destaque: #FFC107`
+    },
+    {
+      text: "Clínica médica particular",
+      prompt: `Nome da Empresa: Clínica Saúde Total
+Tipo de Negócio: Clínica médica particular
+Descrição: Atendimento médico especializado com tecnologia de ponta
+Público-Alvo: Pessoas que buscam atendimento médico de qualidade
+Objetivo Principal: Agendar consultas e exames
+Serviços/Produtos: Consultas médicas, exames laboratoriais, cardiologia, dermatologia
+WhatsApp: (11) 97654-3210
+Endereço: Rua da Saúde, 789 - Jardins, São Paulo/SP
+Ofertas Especiais: Check-up completo com 20% de desconto
+TEMPLATE OBRIGATÓRIO: Use o template "Minimalista & Clean" (minimalista-clean)
+PALETA DE CORES OBRIGATÓRIA: Primária: #2196F3, Secundária: #1976D2, Destaque: #FF9800`
+    },
+    {
+      text: "Salão de beleza feminino",
+      prompt: `Nome da Empresa: Espaço Beleza Feminina
+Tipo de Negócio: Salão de beleza e estética
+Descrição: Transformamos você na sua melhor versão com tratamentos exclusivos
+Público-Alvo: Mulheres de 25 a 55 anos que valorizam beleza e bem-estar
+Objetivo Principal: Agendar serviços de cabelo, unhas e estética
+Serviços/Produtos: Corte e coloração, manicure, pedicure, tratamentos faciais, massagens
+WhatsApp: (11) 96543-2109
+Endereço: Rua da Beleza, 321 - Moema, São Paulo/SP
+Ofertas Especiais: Pacote completo cabelo + unhas por R$ 150,00
+TEMPLATE OBRIGATÓRIO: Use o template "Interativo & Dinâmico" (interativo-dinamico)
+PALETA DE CORES OBRIGATÓRIA: Primária: #E91E63, Secundária: #C2185B, Destaque: #FFD700`
+    },
+    {
+      text: "Academia de musculação",
+      prompt: `Nome da Empresa: Power Gym Academia
+Tipo de Negócio: Academia de musculação e fitness
+Descrição: Conquiste o corpo dos seus sonhos com equipamentos modernos e instrutores qualificados
+Público-Alvo: Homens e mulheres de 18 a 50 anos que querem ficar em forma
+Objetivo Principal: Captar novos alunos e matrículas
+Serviços/Produtos: Musculação, aulas funcionais, personal trainer, avaliação física
+WhatsApp: (11) 95432-1098
+Endereço: Av. Fitness, 654 - Vila Olímpica, São Paulo/SP
+Ofertas Especiais: Matrícula grátis + 50% desconto no primeiro mês
+TEMPLATE OBRIGATÓRIO: Use o template "Interativo & Dinâmico" (interativo-dinamico)
+PALETA DE CORES OBRIGATÓRIA: Primária: #FF5722, Secundária: #E64A19, Destaque: #FFC107`
+    },
+    {
+      text: "Escritório de advocacia",
+      prompt: `Nome da Empresa: Advocacia & Direito
+Tipo de Negócio: Escritório de advocacia
+Descrição: Defendemos seus direitos com excelência jurídica e atendimento personalizado
+Público-Alvo: Pessoas físicas e jurídicas que precisam de assistência jurídica
+Objetivo Principal: Captar novos clientes e casos
+Serviços/Produtos: Direito civil, trabalhista, criminal, família, empresarial
+WhatsApp: (11) 94321-0987
+Endereço: Rua dos Advogados, 987 - Centro, São Paulo/SP
+Ofertas Especiais: Primeira consulta gratuita
+TEMPLATE OBRIGATÓRIO: Use o template "Minimalista & Clean" (minimalista-clean)
+PALETA DE CORES OBRIGATÓRIA: Primária: #1A237E, Secundária: #303F9F, Destaque: #FFD700`
+    }
   ];
 
   if (isIntegrated) {
@@ -309,10 +384,10 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
                      key={index}
                      variant="outline"
                      size="sm"
-                     onClick={() => setInputMessage(prompt)}
+                     onClick={() => handleSendMessage(prompt.prompt)}
                      className="text-xs h-auto py-1 px-2 text-left justify-start hover:bg-primary/5 border-primary/30"
                    >
-                     {prompt}
+                     {prompt.text}
                    </Button>
                  ))}
                </div>
@@ -423,19 +498,19 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
           <div className="text-center text-muted-foreground">
             <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-sm mb-4">Descreva o negócio que você quer criar uma landing page:</p>
-            <div className="grid grid-cols-1 gap-2">
-              {quickPrompts.map((prompt, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setInputMessage(prompt)}
-                  className="text-xs h-auto py-2 px-3 text-left justify-start hover:bg-primary/5 border-primary/30"
-                >
-                  {prompt}
-                </Button>
-              ))}
-            </div>
+             <div className="grid grid-cols-1 gap-2">
+               {quickPrompts.map((prompt, index) => (
+                 <Button
+                   key={index}
+                   variant="outline"
+                   size="sm"
+                   onClick={() => handleSendMessage(prompt.prompt)}
+                   className="text-xs h-auto py-2 px-3 text-left justify-start hover:bg-primary/5 border-primary/30"
+                 >
+                   {prompt.text}
+                 </Button>
+               ))}
+             </div>
           </div>
         )}
 

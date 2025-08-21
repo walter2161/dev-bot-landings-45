@@ -43,23 +43,30 @@ export class HtmlAgent {
     const baseUrl = 'https://image.pollinations.ai/prompt/';
     const imageParams = '?width=720&height=480&enhance=true&nologo=true';
     
-    const logoPrompt = images.logo || `Logo da empresa ${images.hero || 'negócio profissional'}`;
+    const logoPrompt = images.logo || `Logo da empresa ${businessData?.title || 'negócio profissional'}`;
     
-    // Priorizar logos personalizados do usuário
-    const hasCustomLogo = customImages?.logo && !customImages.logo.includes('pollinations.ai');
+    // Priorizar logos personalizados do usuário (blob URLs ou arquivo local)
+    const hasCustomLogo = customImages?.logo && (customImages.logo.startsWith('blob:') || customImages.logo.startsWith('data:') || !customImages.logo.includes('pollinations.ai'));
     
     const imageUrls = {
       logo: hasCustomLogo ? customImages.logo : `${baseUrl}${encodeURIComponent(logoPrompt)}${imageParams}`,
-      hero: customImages?.hero || `${baseUrl}${encodeURIComponent(images.hero)}${imageParams}`,
-      motivation: customImages?.motivation || `${baseUrl}${encodeURIComponent(images.motivation)}${imageParams}`,
-      target: customImages?.target || `${baseUrl}${encodeURIComponent(images.target)}${imageParams}`,
-      method: customImages?.method || `${baseUrl}${encodeURIComponent(images.method)}${imageParams}`,
-      results: customImages?.results || `${baseUrl}${encodeURIComponent(images.results)}${imageParams}`,
-      access: customImages?.access || `${baseUrl}${encodeURIComponent(images.access)}${imageParams}`,
-      investment: customImages?.investment || `${baseUrl}${encodeURIComponent(images.investment)}${imageParams}`,
+      hero: customImages?.hero || `${baseUrl}${encodeURIComponent(images.hero || `${businessData?.title} - ambiente principal do negócio profissional`)}${imageParams}`,
+      motivation: customImages?.motivation || `${baseUrl}${encodeURIComponent(images.motivation || `${businessData?.title} - motivação e propósito do negócio`)}${imageParams}`,
+      target: customImages?.target || `${baseUrl}${encodeURIComponent(images.target || `${businessData?.title} - público-alvo satisfeito com o serviço`)}${imageParams}`,
+      method: customImages?.method || `${baseUrl}${encodeURIComponent(images.method || `${businessData?.title} - método e processo de trabalho`)}${imageParams}`,
+      results: customImages?.results || `${baseUrl}${encodeURIComponent(images.results || `${businessData?.title} - resultados e conquistas alcançadas`)}${imageParams}`,
+      access: customImages?.access || `${baseUrl}${encodeURIComponent(images.access || `${businessData?.title} - formas de contato e acesso`)}${imageParams}`,
+      investment: customImages?.investment || `${baseUrl}${encodeURIComponent(images.investment || `${businessData?.title} - investimento e preços competitivos`)}${imageParams}`,
       gallery: businessData?.galleryImages ? businessData.galleryImages.map((prompt: string, i: number) => 
         customImages?.[`gallery_${i}`] || `${baseUrl}${encodeURIComponent(prompt)}${imageParams}`
-      ) : []
+      ) : [
+        `${baseUrl}${encodeURIComponent(`${businessData?.title} - ambiente interno profissional`)}${imageParams}`,
+        `${baseUrl}${encodeURIComponent(`${businessData?.title} - cliente satisfeito com o serviço`)}${imageParams}`,
+        `${baseUrl}${encodeURIComponent(`${businessData?.title} - equipe trabalhando`)}${imageParams}`,
+        `${baseUrl}${encodeURIComponent(`${businessData?.title} - produto ou serviço em ação`)}${imageParams}`,
+        `${baseUrl}${encodeURIComponent(`${businessData?.title} - atendimento de qualidade`)}${imageParams}`,
+        `${baseUrl}${encodeURIComponent(`${businessData?.title} - resultado final do trabalho`)}${imageParams}`
+      ]
     };
 
     return imageUrls;
@@ -340,6 +347,228 @@ export class HtmlAgent {
             color: white;
             font-size: 24px;
             animation: bounce 2s infinite;
+            border: none;
+            box-shadow: 0 4px 20px rgba(255, 102, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(255, 102, 0, 0.4);
+        }
+
+        /* Sellerbot Modal */
+        .sellerbot-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .sellerbot-container {
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .sellerbot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: ${businessData.colors.primary};
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .sellerbot-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sellerbot-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sellerbot-info h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .sellerbot-info p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sellerbot-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .assistant-message {
+            background: #f0f0f0;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background: ${businessData.colors.primary};
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message-time {
+            font-size: 10px;
+            opacity: 0.7;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .sellerbot-quick-actions {
+            padding: 10px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sellerbot-quick-actions button {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sellerbot-quick-actions button:hover {
+            background: ${businessData.colors.primary};
+            color: white;
+            border-color: ${businessData.colors.primary};
+        }
+
+        .sellerbot-input {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            gap: 10px;
+        }
+
+        .sellerbot-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .sellerbot-input input:focus {
+            border-color: ${businessData.colors.primary};
+        }
+
+        .sellerbot-input button {
+            width: 45px;
+            height: 45px;
+            background: ${businessData.colors.primary};
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .sellerbot-input button:hover {
+            transform: scale(1.05);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 16px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            align-self: flex-start;
+            max-width: 80px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
         }
         
         /* Animações */
@@ -514,20 +743,151 @@ export class HtmlAgent {
 
   private generateModernoVisualChatWidget(businessData: BusinessContent): string {
     return `<div class="chat-widget">
-        <div class="chat-button" onclick="openWhatsApp()">💬</div>
+        <button class="chat-button" onclick="openSellerbotChat()">💬</button>
+    </div>
+    
+    <!-- Modal do Sellerbot -->
+    <div id="sellerbotModal" class="sellerbot-modal" style="display: none;">
+        <div class="sellerbot-container">
+            <div class="sellerbot-header">
+                <div class="sellerbot-info">
+                    <div class="sellerbot-avatar">💬</div>
+                    <div>
+                        <h3>${businessData.sellerbot?.name || `Atendente ${businessData.title}`}</h3>
+                        <p>Online agora</p>
+                    </div>
+                </div>
+                <button onclick="closeSellerbotChat()" class="close-btn">✕</button>
+            </div>
+            <div class="sellerbot-messages" id="sellerbotMessages">
+                <div class="message assistant-message">
+                    <p>${businessData.sellerbot?.responses?.greeting || `Olá! Bem-vindo à ${businessData.title}. Como posso ajudá-lo hoje?`}</p>
+                    <span class="message-time">${new Date().toLocaleTimeString()}</span>
+                </div>
+            </div>
+            <div class="sellerbot-quick-actions" id="quickActions">
+                <button onclick="sendQuickMessage('Quais são os seus serviços?')">Quais são os seus serviços?</button>
+                <button onclick="sendQuickMessage('Qual o preço?')">Qual o preço?</button>
+                <button onclick="sendQuickMessage('Como posso agendar?')">Como agendar?</button>
+            </div>
+            <div class="sellerbot-input">
+                <input type="text" id="sellerbotInput" placeholder="Digite sua mensagem..." onkeypress="handleSellerbotKeyPress(event)">
+                <button onclick="sendSellerbotMessage()">➤</button>
+            </div>
+        </div>
     </div>`;
   }
 
   private generateModernoVisualJavaScript(businessData: BusinessContent): string {
     return `<script>
+        let isTyping = false;
+        
+        function openSellerbotChat() {
+            document.getElementById('sellerbotModal').style.display = 'flex';
+        }
+        
+        function closeSellerbotChat() {
+            document.getElementById('sellerbotModal').style.display = 'none';
+        }
+        
+        function sendQuickMessage(message) {
+            const input = document.getElementById('sellerbotInput');
+            input.value = message;
+            sendSellerbotMessage();
+            // Esconder quick actions após primeira mensagem
+            document.getElementById('quickActions').style.display = 'none';
+        }
+        
+        function handleSellerbotKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendSellerbotMessage();
+            }
+        }
+        
+        function sendSellerbotMessage() {
+            const input = document.getElementById('sellerbotInput');
+            const message = input.value.trim();
+            if (!message || isTyping) return;
+            
+            input.value = '';
+            addMessage('user', message);
+            
+            // Esconder quick actions
+            document.getElementById('quickActions').style.display = 'none';
+            
+            // Simular digitação
+            showTyping();
+            
+            // Simular resposta da IA após 2 segundos
+            setTimeout(() => {
+                hideTyping();
+                const response = generateSellerbotResponse(message);
+                addMessage('assistant', response);
+            }, 2000);
+        }
+        
+        function addMessage(role, content) {
+            const messagesContainer = document.getElementById('sellerbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = \`message \${role}-message\`;
+            messageDiv.innerHTML = \`
+                <p>\${content}</p>
+                <span class="message-time">\${new Date().toLocaleTimeString()}</span>
+            \`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function showTyping() {
+            isTyping = true;
+            const messagesContainer = document.getElementById('sellerbotMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = \`
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            \`;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function hideTyping() {
+            isTyping = false;
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        function generateSellerbotResponse(userMessage) {
+            const msg = userMessage.toLowerCase();
+            
+            if (msg.includes('serviço') || msg.includes('produto')) {
+                return '${businessData.sellerbot?.responses?.services || `Oferecemos diversos serviços de qualidade. ${businessData.subtitle || ''}`}';
+            } else if (msg.includes('preço') || msg.includes('valor') || msg.includes('custo')) {
+                return '${businessData.sellerbot?.responses?.pricing || 'Entre em contato conosco para conhecer nossos preços e condições especiais.'}';
+            } else if (msg.includes('agendar') || msg.includes('marcar') || msg.includes('horário')) {
+                return '${businessData.sellerbot?.responses?.appointment || 'Ficou interessado? Entre em contato conosco para agendar!'} WhatsApp: ${businessData.contact.phone}';
+            } else if (msg.includes('endereço') || msg.includes('localização') || msg.includes('onde')) {
+                return 'Estamos localizados em: ${businessData.contact.address}';
+            } else if (msg.includes('contato') || msg.includes('telefone') || msg.includes('whatsapp')) {
+                return 'Você pode entrar em contato conosco pelo WhatsApp: ${businessData.contact.phone} ou email: ${businessData.contact.email}';
+            } else {
+                return 'Obrigado pelo contato! Para mais informações específicas, entre em contato conosco pelo WhatsApp: ${businessData.contact.phone}';
+            }
+        }
+        
         function openWhatsApp() {
             window.open('https://wa.me/${businessData.contact.phone?.replace(/\D/g, '')}?text=Olá, gostaria de mais informações!', '_blank');
         }
         
         function openImageModal(src, caption) {
-            // Criar modal para visualizar imagem
             const modal = document.createElement('div');
-            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10001; display: flex; align-items: center; justify-content: center;';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10002; display: flex; align-items: center; justify-content: center;';
             
             const img = document.createElement('img');
             img.src = src;
@@ -538,6 +898,14 @@ export class HtmlAgent {
             
             document.body.appendChild(modal);
         }
+        
+        // Fechar modal ao clicar fora
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('sellerbotModal');
+            if (event.target === modal) {
+                closeSellerbotChat();
+            }
+        });
     </script>`;
   }
 
