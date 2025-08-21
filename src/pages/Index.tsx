@@ -17,8 +17,8 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex h-screen">
+    <div className="bg-background">
+      <div className="flex" style={{ height: 'calc(100vh - 60px)' }}>
         <Sidebar onLandingPageGenerated={handleLandingPageGenerated} businessData={businessData} />
         <PreviewFrame 
           generatedHTML={generatedHTML} 
