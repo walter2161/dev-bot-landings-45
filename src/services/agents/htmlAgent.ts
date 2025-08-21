@@ -386,10 +386,37 @@ export class HtmlAgent {
             <div class="gallery">
                 ${images.gallery.map((imageUrl: string, index: number) => `
                     <div class="gallery-item">
-                        <img src="${imageUrl}" alt="Galeria ${index + 1}" loading="lazy">
+                        <img src="${imageUrl}" alt="Galeria ${index + 1}" loading="lazy" onclick="openImageModal('${imageUrl}', 'Galeria ${index + 1}')" style="cursor: pointer;">
                     </div>
                 `).join('')}
             </div>
+        </div>
+        
+        <!-- Modal para visualizar imagens -->
+        <div id="imageModal" style="
+            display: none; position: fixed; z-index: 10001; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.9);
+        " onclick="closeImageModal()">
+            <div style="
+                position: absolute; top: 50%; left: 50%; 
+                transform: translate(-50%, -50%); 
+                max-width: 90%; max-height: 90%;
+            ">
+                <img id="modalImage" src="" alt="" style="
+                    width: 100%; height: auto; 
+                    border-radius: 10px;
+                ">
+                <p id="modalCaption" style="
+                    color: white; text-align: center; 
+                    margin-top: 15px; font-size: 18px;
+                "></p>
+            </div>
+            <span style="
+                position: absolute; top: 20px; right: 30px; 
+                color: #f1f1f1; font-size: 40px; 
+                font-weight: bold; cursor: pointer;
+            " onclick="closeImageModal()">&times;</span>
         </div>
     </section>`;
   }
@@ -410,9 +437,9 @@ export class HtmlAgent {
     <footer style="background: #000000; color: white; padding: 1rem 0; border-top: 2px solid #ff6600;">
         <div class="container">
             <div style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <span style="font-size: 0.9rem;">By:</span>
+                <span style="font-size: 0.9rem;">Criado por:</span>
                 <a href="https://pagejet.app" target="_blank" style="text-decoration: none; display: flex; align-items: center;">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAAXVBMVEUAAAD/Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//Zv//ZwBqeUQmAAAAHnRSTlMABAgQFBggJCgsMDg8QERIUFhcYGRobHB0eHyAgIhJGnQgAAABiklEQVRYw+2X2RKCMBAFR9k3BRFFRdz+/yNNJhMSE1GxrOctejqZnmRyA/w/YTgdEkIQSk7xfMskBCEUn+IhJfB+HyEIpecETwmBrz8JQSjJiXhKCLz/SQhCKT5FQkrg/U9CEEpOyVOC4P1PQhBK8SkYUgLvfxKCUHKKnhIE738SglCKT4GQEnj/kxCEklPwlCB4/5MQhFJ8CoKUwPufhCCUnIKnBMH7n4QglOJTEKQE3v8kBKHkFDwlCN7/JAShFJ8CISWA/GCY8VcbIxTqm/mQlEIUolCfKESha1Gog3+hDOmPKMzgA4Uo9CcKNfBBFGrggygknC/UIZVwvlCHVM9AiUJPp6TiY8Y1C5QorEvKqW58iFJCCqMShVdLebU7hTLdKZTpTqFMdwplulMo051Cme4UynSnUKY7hTLdKZTpTqFMdwplulMo051Cme4UynSnUKY7hTLdKZTpTqFMdwplulMo051Cme4UynSnUKY7hTLdKZTpTqFMdwplulMo051Cme4UyjjYB6B4TBHGnAy7AAAAAElFTkSuQmCC" alt="PageJet" style="height: 20px; object-fit: contain;">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 80'%3E%3Crect width='320' height='80' fill='%23000'/%3E%3Ctext x='160' y='45' text-anchor='middle' fill='%23ff6600' font-family='Arial, sans-serif' font-size='24' font-weight='bold'%3EPageJet%3C/text%3E%3C/svg%3E" alt="PageJet" style="height: 30px; object-fit: contain;">
                 </a>
             </div>
         </div>
@@ -491,6 +518,28 @@ export class HtmlAgent {
                         addMessage('bot', '${businessData.sellerbot.responses.services}');
                     }, 1000);
                 }
+            }
+        });
+        
+        // Modal de imagens
+        function openImageModal(imageSrc, caption) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const modalCaption = document.getElementById('modalCaption');
+            
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+            modalCaption.textContent = caption;
+        }
+        
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+        
+        // Fechar modal com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
             }
         });
         
