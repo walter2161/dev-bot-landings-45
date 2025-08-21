@@ -31,13 +31,12 @@ export class AgentOrchestrator {
       // Etapa 3: Gerar sellerbot
       console.log('🤖 Agente de Sellerbot trabalhando...');
       
-      // Preparar dados do negócio para o sellerbot
       const businessDataForSellerbot = {
         contact: {
-          address: briefing.contactInfo.address || "A definir",
-          phone: briefing.contactInfo.other || "A definir", 
-          email: briefing.contactInfo.other || "contato@empresa.com",
-          socialMedia: { whatsapp: briefing.contactInfo.whatsapp || "A definir" }
+          address: briefing.contactInfo.address || "São Paulo, SP",
+          phone: briefing.contactInfo.other?.match(/\([0-9]{2}\)\s?[0-9-]+/)?.[0] || "(11) 3333-3333", 
+          email: briefing.contactInfo.other?.includes('@') ? briefing.contactInfo.other.split(' ')[0] : `contato@${briefing.businessName.toLowerCase().replace(/\s+/g, '')}.com`,
+          socialMedia: { whatsapp: briefing.contactInfo.whatsapp || "(11) 99999-9999" }
         },
         sections: content.sections
       };
@@ -87,14 +86,25 @@ export class AgentOrchestrator {
           investment: imagePrompts.investment,
           gallery: imagePrompts.gallery
         },
+        // Adicionar informações de contato do briefing
+        contact: {
+          email: briefing.contactInfo.other?.includes('@') ? briefing.contactInfo.other.split(' ')[0] : `contato@${briefing.businessName.toLowerCase().replace(/\s+/g, '')}.com`,
+          phone: briefing.contactInfo.other?.match(/\([0-9]{2}\)\s?[0-9-]+/)?.[0] || "(11) 3333-3333",
+          address: briefing.contactInfo.address || "São Paulo, SP",
+          socialMedia: {
+            whatsapp: briefing.contactInfo.whatsapp || "(11) 99999-9999",
+            instagram: `@${briefing.businessName.toLowerCase().replace(/\s+/g, '')}`,
+            facebook: `facebook.com/${briefing.businessName.toLowerCase().replace(/\s+/g, '')}`
+          }
+        },
         // Criar array de imagens da galeria (6 imagens)
         galleryImages: [
-          `${userRequest} - ambiente interno profissional e bem iluminado`,
-          `${userRequest} - cliente satisfeito utilizando o serviço de qualidade`,
-          `${userRequest} - equipe profissional trabalhando com dedicação`,
-          `${userRequest} - detalhes do produto ou serviço sendo executado`,
-          `${userRequest} - ambiente de atendimento ao cliente acolhedor`,
-          `${userRequest} - resultado final do trabalho realizado com excelência`
+          `${briefing.businessName} - ambiente interno profissional e bem iluminado`,
+          `${briefing.businessName} - cliente satisfeito utilizando o serviço de qualidade`,
+          `${briefing.businessName} - equipe profissional trabalhando com dedicação`,
+          `${briefing.businessName} - detalhes do produto ou serviço sendo executado`,
+          `${briefing.businessName} - ambiente de atendimento ao cliente acolhedor`,
+          `${briefing.businessName} - resultado final do trabalho realizado com excelência`
         ],
         sellerbot,
         seo: {
