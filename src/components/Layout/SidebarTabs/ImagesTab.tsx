@@ -23,9 +23,15 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Apenas as imagens principais das seções
+  // Todas as 7 seções principais
   const mainImages = businessData?.images ? [
-    { key: 'hero', label: 'Imagem Hero', description: businessData.images.hero },
+    { key: 'hero', label: 'Hero', description: businessData.images.hero },
+    { key: 'motivation', label: 'Motivação', description: businessData.images.motivation },
+    { key: 'target', label: 'Público-Alvo', description: businessData.images.target },
+    { key: 'method', label: 'Método', description: businessData.images.method },
+    { key: 'results', label: 'Resultados', description: businessData.images.results },
+    { key: 'access', label: 'Acesso', description: businessData.images.access },
+    { key: 'investment', label: 'Investimento', description: businessData.images.investment },
   ] : [];
 
   // Imagens da galeria (6 imagens)
