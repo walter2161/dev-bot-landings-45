@@ -593,110 +593,100 @@ export class HtmlAgent {
 
   private generateJavaScript(businessData: BusinessContent): string {
     return `<script>
-        let chatbotOpen = false;
+        let chatOpen = false;
+        const businessData = ${JSON.stringify(businessData)};
 
-        const chatbotData = {
-            name: '${businessData.sellerbot.name}',
-            personality: '${businessData.sellerbot.personality}',
-            instructions: 'Você é o assistente virtual da ${businessData.title}. Seja cordial e ajude os clientes com informações sobre nossos serviços.',
-            whatsapp: '${businessData.contact.phone}',
-            businessHours: 'Segunda à Sexta: 9h às 18h',
-            specialOffers: '',
-            companyName: '${businessData.title}',
-            services: '${businessData.sellerbot.responses.services}',
-            targetAudience: '${businessData.subtitle}'
-        };
+        function toggleChat() {
+            const chatBox = document.getElementById('chatbotWindow');
+            chatOpen = !chatOpen;
+            chatBox.style.display = chatOpen ? 'flex' : 'none';
+            
+            if (chatOpen && document.getElementById('chatbotMessages').children.length === 1) {
+                // Manter apenas a mensagem inicial
+            }
+        }
 
         function toggleChatbot() {
-            const window = document.getElementById('chatbotWindow');
-            chatbotOpen = !chatbotOpen;
-            window.style.display = chatbotOpen ? 'flex' : 'none';
-
-            if (chatbotOpen) {
-                document.getElementById('chatbotInput').focus();
-            }
+            toggleChat();
         }
 
-        function sendMessage() {
+        function addMessage(sender, message) {
+            const messagesDiv = document.getElementById('chatbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + sender;
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function sendMessage() {
             const input = document.getElementById('chatbotInput');
-            const messages = document.getElementById('chatbotMessages');
-            const userMessage = input.value.trim();
+            const message = input.value.trim();
+            if (!message) return;
 
-            if (!userMessage) return;
-
-            // Add user message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'message user';
-            userDiv.textContent = userMessage;
-            messages.appendChild(userDiv);
-
-            // Clear input
+            addMessage('user', message);
             input.value = '';
 
-            // Generate bot response
-            setTimeout(() => {
-                const botResponse = generateBotResponse(userMessage);
-                const botDiv = document.createElement('div');
-                botDiv.className = 'message bot';
-                botDiv.innerHTML = botResponse;
-                messages.appendChild(botDiv);
-                messages.scrollTop = messages.scrollHeight;
-            }, 1000);
+            try {
+                const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer aynCSftAcQBOlxmtmpJqVzco8K4aaTDQ'
+                    },
+                    body: JSON.stringify({
+                        model: 'mistral-large-latest',
+                        messages: [{
+                            role: 'user',
+                            content: \`Você é \${businessData.sellerbot.name}, assistente específico do negócio: \${businessData.title}.
 
-            messages.scrollTop = messages.scrollHeight;
-        }
+Personalidade: \${businessData.sellerbot.personality}
+Conhecimentos: \${businessData.sellerbot.knowledge.join(", ")}
 
-        function generateBotResponse(userMessage) {
-            const msg = userMessage.toLowerCase();
+INFORMAÇÕES DO NEGÓCIO:
+- Endereço: \${businessData.contact.address}
+- Telefone: \${businessData.contact.phone}
+- Email: \${businessData.contact.email}
+- WhatsApp: \${businessData.contact.socialMedia?.whatsapp || 'Não informado'}
 
-            // Respostas específicas baseadas na configuração da empresa
-            if (msg.includes('horário') || msg.includes('funcionamento')) {
-                return \`📅 Nosso horário de funcionamento: \${chatbotData.businessHours}\`;
+INSTRUÇÕES CRÍTICAS:
+- Responda APENAS sobre o negócio específico: \${businessData.title}
+- Use as informações de contato quando relevante
+- Mantenha o foco nos produtos/serviços do negócio
+- Seja natural e útil, evite respostas robóticas
+- Máximo 250 caracteres para manter fluidez
+
+Mensagem do cliente: "\${message}"\`
+                        }],
+                        temperature: 0.7,
+                        max_tokens: 300
+                    })
+                });
+
+                const data = await response.json();
+                const botMessage = data.choices[0].message.content;
+                addMessage('bot', botMessage);
+            } catch (error) {
+                addMessage('bot', businessData.sellerbot.responses.greeting);
             }
-
-            if (msg.includes('serviço') || msg.includes('produto')) {
-                return \`📋 Oferecemos: \${chatbotData.services}. Qual serviço específico você gostaria de saber mais?\`;
-            }
-
-            if (msg.includes('preço') || msg.includes('valor') || msg.includes('orçamento')) {
-                let response = '💰 ${businessData.sellerbot.responses.pricing}';
-                if (chatbotData.specialOffers) {
-                    response += \` \${chatbotData.specialOffers}\`;
-                }
-                if (chatbotData.whatsapp) {
-                    response += \` Ou fale diretamente no WhatsApp: \${chatbotData.whatsapp}\`;
-                }
-                return response;
-            }
-
-            if (msg.includes('contato') || msg.includes('telefone') || msg.includes('whatsapp')) {
-                if (chatbotData.whatsapp) {
-                    return \`📱 Você pode entrar em contato conosco pelo WhatsApp: \${chatbotData.whatsapp} ou pelo formulário de contato no site.\`;
-                }
-                return '📱 Entre em contato conosco pelo formulário no site ou pelos dados de contato disponíveis.';
-            }
-
-            if (msg.includes('localização') || msg.includes('endereço') || msg.includes('onde')) {
-                return '📍 Nossa localização: ${businessData.contact.address}. Como posso ajudar com mais informações?';
-            }
-
-            // Respostas genéricas baseadas na personalidade
-            const responses = [
-                \`Obrigado por entrar em contato com a \${chatbotData.companyName}! Como posso ajudar você hoje?\`,
-                \`Fico feliz em ajudar! Conte-me mais sobre o que você precisa.\`,
-                \`Perfeito! Vou te ajudar com isso. \${chatbotData.instructions}\`,
-                \`Excelente pergunta! Para melhor atendê-lo, você pode me dar mais detalhes?\`
-            ];
-
-            return responses[Math.floor(Math.random() * responses.length)];
         }
 
         // Permitir que a tecla Enter envie a mensagem
-        document.getElementById('chatbotInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('chatbotInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
         });
+
+        // Função para toggle do menu mobile
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            if (navMenu) {
+                navMenu.classList.toggle('active');
+            }
+        }
 
         // Modal de imagens
         function openImageModal(imageSrc, caption) {
@@ -719,14 +709,6 @@ export class HtmlAgent {
                 closeImageModal();
             }
         });
-
-        // Função para toggle do menu mobile
-        function toggleMenu() {
-            const navMenu = document.getElementById('navMenu');
-            if (navMenu) {
-                navMenu.classList.toggle('active');
-            }
-        }
         
         // Smooth scroll para navegação
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -739,7 +721,10 @@ export class HtmlAgent {
                         block: 'start'
                     });
                     // Fechar menu mobile após clique
-                    document.getElementById('navMenu').classList.remove('active');
+                    const navMenu = document.getElementById('navMenu');
+                    if (navMenu) {
+                        navMenu.classList.remove('active');
+                    }
                 }
             });
         });
