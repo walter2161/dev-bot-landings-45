@@ -2,8 +2,8 @@ export class ImageService {
   async generateImageUrl(prompt: string): Promise<string> {
     // Encode the prompt for URL
     const encodedPrompt = encodeURIComponent(prompt);
-    // Reduzir tamanho das imagens para melhor performance
-    return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=400&height=300&model=flux&nologo=true&quality=80`;
+    // Dimensões padronizadas para as imagens
+    return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=720&height=480&model=flux&nologo=true&quality=80`;
   }
 
   async convertImageToBase64(imageUrl: string): Promise<string> {

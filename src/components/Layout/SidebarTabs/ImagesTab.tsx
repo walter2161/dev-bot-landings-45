@@ -23,8 +23,9 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Todas as 7 seções principais
+  // Todas as 8 seções principais incluindo logo
   const mainImages = businessData?.images ? [
+    { key: 'logo', label: 'Logo', description: businessData.images.logo },
     { key: 'hero', label: 'Hero', description: businessData.images.hero },
     { key: 'motivation', label: 'Motivação', description: businessData.images.motivation },
     { key: 'target', label: 'Público-Alvo', description: businessData.images.target },
