@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/enhanced-button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import {
   Download
 } from "lucide-react";
 import { BusinessContent } from "@/services/contentGenerator";
+import { sellerbotAgent } from "@/services/agents/sellerbotAgent";
 
 interface PreviewFrameProps {
   generatedHTML?: string;
@@ -22,6 +23,45 @@ interface PreviewFrameProps {
 const PreviewFrame = ({ generatedHTML, businessData }: PreviewFrameProps) => {
   const [deviceMode, setDeviceMode] = useState("desktop");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Listener para mensagens do chat sellerbot
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.data.type === 'SELLERBOT_CHAT') {
+        try {
+          setIsChatLoading(true);
+          const response = await sellerbotAgent.generateChatResponse(
+            event.data.message,
+            event.data.businessData
+          );
+          
+          // Enviar resposta de volta para a landing page
+          if (iframeRef.current?.contentWindow) {
+            iframeRef.current.contentWindow.postMessage({
+              type: 'SELLERBOT_RESPONSE',
+              response: response
+            }, '*');
+          }
+        } catch (error) {
+          console.error('Erro no chat sellerbot:', error);
+          // Enviar resposta de fallback
+          if (iframeRef.current?.contentWindow) {
+            iframeRef.current.contentWindow.postMessage({
+              type: 'SELLERBOT_RESPONSE',
+              response: 'Desculpe, ocorreu um erro. Como posso ajudar você hoje?'
+            }, '*');
+          }
+        } finally {
+          setIsChatLoading(false);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   const deviceModes = [
     { id: "desktop", icon: Monitor, label: "Desktop", width: "100%" },
@@ -362,6 +402,7 @@ const PreviewFrame = ({ generatedHTML, businessData }: PreviewFrameProps) => {
               }}
             >
               <iframe
+                ref={iframeRef}
                 srcDoc={currentHTML}
                 className="w-full h-full border-0"
                 title="Landing Page Preview"

@@ -537,51 +537,86 @@ export class HtmlAgent {
             const loadingId = addMessage('bot', loadingMessage);
             
             try {
-                const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer aynCSftAcQBOlxmtmpJqVzco8K4aaTDQ'
-                    },
-                    body: JSON.stringify({
-                        model: 'mistral-large-latest',
-                        messages: [{
-                            role: 'system',
-                            content: \`Você é ${businessData.sellerbot.name}.
-Personalidade: ${businessData.sellerbot.personality}
-Conhecimento: ${businessData.sellerbot.knowledge.join(', ')}
-Empresa: ${businessData.title}
-Produtos/Serviços: ${businessData.subtitle}
-Contato: ${businessData.contact.email}, ${businessData.contact.phone}
-
-Responda de forma amigável, profissional e ajude com informações sobre a empresa.\`
-                        }, {
-                            role: 'user',
-                            content: userMessage
-                        }],
-                        temperature: 0.7,
-                        max_tokens: 500
-                    })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const aiResponse = data.choices[0].message.content;
-                    removeMessage(loadingId);
-                    addMessage('bot', aiResponse);
-                } else {
-                    throw new Error('Erro na API');
+                // Tentar comunicar com o app principal via postMessage (quando no preview)
+                if (window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'SELLERBOT_CHAT',
+                        message: userMessage,
+                        businessData: {
+                            sellerbot: ${JSON.stringify(businessData.sellerbot)},
+                            title: '${businessData.title}',
+                            subtitle: '${businessData.subtitle}',
+                            contact: ${JSON.stringify(businessData.contact)}
+                        }
+                    }, '*');
+                    
+                    // Aguardar resposta
+                    const responsePromise = new Promise((resolve) => {
+                        const handler = (event) => {
+                            if (event.data.type === 'SELLERBOT_RESPONSE') {
+                                window.removeEventListener('message', handler);
+                                resolve(event.data.response);
+                            }
+                        };
+                        window.addEventListener('message', handler);
+                        
+                        // Timeout de 10s
+                        setTimeout(() => {
+                            window.removeEventListener('message', handler);
+                            resolve('');
+                        }, 10000);
+                    });
+                    
+                    const aiResponse = await responsePromise;
+                    if (aiResponse) {
+                        removeMessage(loadingId);
+                        addMessage('bot', aiResponse);
+                        return;
+                    }
                 }
+                
+                // Fallback: usar respostas predefinidas inteligentes
+                removeMessage(loadingId);
+                const smartResponse = getSmartResponse(userMessage);
+                addMessage('bot', smartResponse);
+                
             } catch (error) {
                 removeMessage(loadingId);
-                const fallbackResponses = [
-                    '${businessData.sellerbot.responses.services}',
-                    '${businessData.sellerbot.responses.pricing}',
-                    '${businessData.sellerbot.responses.appointment}'
-                ];
-                const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
-                addMessage('bot', randomResponse);
+                const smartResponse = getSmartResponse(userMessage);
+                addMessage('bot', smartResponse);
             }
+        }
+        
+        function getSmartResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Respostas baseadas em palavras-chave
+            if (lowerMessage.includes('preço') || lowerMessage.includes('valor') || lowerMessage.includes('custo')) {
+                return '${businessData.sellerbot.responses.pricing}';
+            }
+            
+            if (lowerMessage.includes('serviço') || lowerMessage.includes('produto') || lowerMessage.includes('trabalho')) {
+                return '${businessData.sellerbot.responses.services}';
+            }
+            
+            if (lowerMessage.includes('agendar') || lowerMessage.includes('marcar') || lowerMessage.includes('horário')) {
+                return '${businessData.sellerbot.responses.appointment}';
+            }
+            
+            if (lowerMessage.includes('contato') || lowerMessage.includes('telefone') || lowerMessage.includes('whats')) {
+                return \`Você pode entrar em contato conosco através dos seguintes canais:
+📧 Email: ${businessData.contact.email}
+📞 Telefone: ${businessData.contact.phone}
+📍 Endereço: ${businessData.contact.address}
+\${businessData.contact.whatsapp ? '📱 WhatsApp: ' + businessData.contact.whatsapp : ''}\`;
+            }
+            
+            if (lowerMessage.includes('localização') || lowerMessage.includes('endereço') || lowerMessage.includes('onde')) {
+                return \`Estamos localizados em: ${businessData.contact.address}. \${businessData.contact.whatsapp ? 'Entre em contato pelo WhatsApp ' + businessData.contact.whatsapp + ' para mais informações!' : 'Entre em contato conosco para mais informações!'}\`;
+            }
+            
+            // Resposta padrão personalizada
+            return \`Olá! Sou o ${businessData.sellerbot.name}. Como posso ajudar você com nossos serviços? Posso falar sobre preços, agendar horários ou tirar dúvidas sobre ${businessData.title}!\`;
         }
         
         // Modal de imagens
