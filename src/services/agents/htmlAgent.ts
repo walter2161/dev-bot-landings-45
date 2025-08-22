@@ -451,13 +451,15 @@ export class HtmlAgent {
 
   private generateChatWidget(businessData: BusinessContent): string {
     return `<div id="chatWidget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">
-        <div id="chatButton" onclick="toggleChat()" style="
+        <div id="chatButton" style="
             width: 60px; height: 60px; 
             background: ${businessData.colors.primary}; 
             border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
             cursor: pointer; color: white; font-size: 24px;
-        ">💬</div>
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+        " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">💬</div>
         
         <div id="chatBox" style="
             width: 350px; height: 500px; 
@@ -465,14 +467,16 @@ export class HtmlAgent {
             display: none; flex-direction: column; 
             position: absolute; bottom: 70px; right: 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid #ddd;
         ">
-            <div style="background: ${businessData.colors.primary}; color: white; padding: 15px; border-radius: 15px 15px 0 0;">
-                ${businessData.sellerbot.name}
+            <div style="background: ${businessData.colors.primary}; color: white; padding: 15px; border-radius: 15px 15px 0 0; font-weight: bold;">
+                ${businessData.sellerbot.name} - Chat IA
+                <span id="chatClose" style="float: right; cursor: pointer; font-size: 18px;">&times;</span>
             </div>
-            <div id="chatMessages" style="flex: 1; padding: 15px; overflow-y: auto;"></div>
+            <div id="chatMessages" style="flex: 1; padding: 15px; overflow-y: auto; min-height: 300px;"></div>
             <div style="padding: 15px; border-top: 1px solid #eee;">
                 <input type="text" id="chatInput" placeholder="Digite sua mensagem..." 
-                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 20px;">
+                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
             </div>
         </div>
     </div>`;
@@ -488,12 +492,35 @@ export class HtmlAgent {
         }
         
         function toggleChat() {
-            const chatBox = document.getElementById('chatBox');
-            chatOpen = !chatOpen;
-            chatBox.style.display = chatOpen ? 'flex' : 'none';
-            
-            if (chatOpen && document.getElementById('chatMessages').children.length === 0) {
-                addMessage('bot', '${businessData.sellerbot.responses.greeting}');
+            try {
+                const chatBox = document.getElementById('chatBox');
+                const chatButton = document.getElementById('chatButton');
+                
+                if (!chatBox || !chatButton) {
+                    console.error('Elementos do chat não encontrados');
+                    return;
+                }
+                
+                chatOpen = !chatOpen;
+                chatBox.style.display = chatOpen ? 'flex' : 'none';
+                
+                if (chatOpen && document.getElementById('chatMessages').children.length === 0) {
+                    addMessage('bot', '${businessData.sellerbot.responses.greeting}');
+                }
+            } catch (error) {
+                console.error('Erro ao abrir chat:', error);
+            }
+        }
+        
+        function closeChat() {
+            try {
+                const chatBox = document.getElementById('chatBox');
+                if (chatBox) {
+                    chatOpen = false;
+                    chatBox.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Erro ao fechar chat:', error);
             }
         }
         
@@ -519,16 +546,35 @@ export class HtmlAgent {
             }
         }
         
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const message = this.value.trim();
-                if (message) {
-                    addMessage('user', message);
-                    this.value = '';
-                    
-                    // Gerar resposta IA real
-                    generateAIResponse(message);
-                }
+        // Aguardar DOM carregar completamente
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listener para o botão do chat
+            const chatButton = document.getElementById('chatButton');
+            if (chatButton) {
+                chatButton.addEventListener('click', toggleChat);
+            }
+            
+            // Event listener para fechar o chat
+            const chatClose = document.getElementById('chatClose');
+            if (chatClose) {
+                chatClose.addEventListener('click', closeChat);
+            }
+            
+            // Event listener para o input do chat
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const message = this.value.trim();
+                        if (message) {
+                            addMessage('user', message);
+                            this.value = '';
+                            
+                            // Gerar resposta IA real
+                            generateAIResponse(message);
+                        }
+                    }
+                });
             }
         });
         
