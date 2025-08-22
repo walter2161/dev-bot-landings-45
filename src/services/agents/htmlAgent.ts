@@ -450,47 +450,180 @@ export class HtmlAgent {
   }
 
   private generateChatWidget(businessData: BusinessContent): string {
-    return `<div id="chatWidget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">
+    return `<!-- Chat Widget Sellerbot com IA -->
+    <div id="chatWidget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <!-- Botão do Chat -->
         <div id="chatButton" style="
-            width: 60px; height: 60px; 
-            background: ${businessData.colors.primary}; 
+            width: 65px; height: 65px; 
+            background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); 
             border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; color: white; font-size: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            transition: transform 0.2s ease;
-        " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">💬</div>
-        
-        <div id="chatBox" style="
-            width: 350px; height: 500px; 
-            background: white; border-radius: 15px; 
-            display: none; flex-direction: column; 
-            position: absolute; bottom: 70px; right: 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid #ddd;
+            cursor: pointer; color: white; font-size: 28px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
         ">
-            <div style="background: ${businessData.colors.primary}; color: white; padding: 15px; border-radius: 15px 15px 0 0; font-weight: bold;">
-                ${businessData.sellerbot.name} - Chat IA
-                <span id="chatClose" style="float: right; cursor: pointer; font-size: 18px;">&times;</span>
+            <span style="position: relative; z-index: 2;">🤖</span>
+            <div style="
+                position: absolute; top: -2px; right: -2px;
+                width: 18px; height: 18px;
+                background: #00ff88;
+                border-radius: 50%;
+                border: 2px solid white;
+                animation: pulse 2s infinite;
+            "></div>
+        </div>
+        
+        <!-- Caixa do Chat -->
+        <div id="chatBox" style="
+            width: 380px; height: 520px; 
+            background: white; border-radius: 20px; 
+            display: none; flex-direction: column; 
+            position: absolute; bottom: 80px; right: 0;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+            border: 1px solid rgba(0,0,0,0.1);
+            overflow: hidden;
+        ">
+            <!-- Header do Chat -->
+            <div style="
+                background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); 
+                color: white; padding: 20px; 
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="position: relative; z-index: 2;">
+                    <div style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">
+                        🤖 ${businessData.sellerbot.name}
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.9;">
+                        Assistente IA • Online agora
+                    </div>
+                </div>
+                <span id="chatClose" style="
+                    position: absolute; top: 15px; right: 15px;
+                    cursor: pointer; font-size: 24px; 
+                    width: 30px; height: 30px;
+                    display: flex; align-items: center; justify-content: center;
+                    border-radius: 50%; 
+                    transition: background 0.2s ease;
+                    z-index: 3;
+                " onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">×</span>
             </div>
-            <div id="chatMessages" style="flex: 1; padding: 15px; overflow-y: auto; min-height: 300px;"></div>
-            <div style="padding: 15px; border-top: 1px solid #eee;">
-                <input type="text" id="chatInput" placeholder="Digite sua mensagem..." 
-                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
+            
+            <!-- Área de Mensagens -->
+            <div id="chatMessages" style="
+                flex: 1; padding: 20px; overflow-y: auto; 
+                background: #f8f9fa;
+                min-height: 350px;
+                scroll-behavior: smooth;
+            "></div>
+            
+            <!-- Indicador de Digitação -->
+            <div id="typingIndicator" style="
+                display: none; padding: 10px 20px;
+                background: #f8f9fa;
+                border-top: 1px solid #eee;
+            ">
+                <div style="
+                    display: flex; align-items: center;
+                    color: #666; font-size: 14px;
+                ">
+                    <div style="
+                        display: flex; gap: 3px; margin-right: 8px;
+                    ">
+                        <div style="width: 8px; height: 8px; background: #666; border-radius: 50%; animation: typing 1.5s infinite;"></div>
+                        <div style="width: 8px; height: 8px; background: #666; border-radius: 50%; animation: typing 1.5s infinite 0.2s;"></div>
+                        <div style="width: 8px; height: 8px; background: #666; border-radius: 50%; animation: typing 1.5s infinite 0.4s;"></div>
+                    </div>
+                    ${businessData.sellerbot.name} está digitando...
+                </div>
+            </div>
+            
+            <!-- Área de Input -->
+            <div style="
+                padding: 20px; 
+                background: white;
+                border-top: 1px solid #eee;
+            ">
+                <div style="
+                    display: flex; gap: 10px;
+                    align-items: center;
+                ">
+                    <input type="text" id="chatInput" placeholder="Digite sua mensagem..." 
+                           style="
+                               flex: 1; padding: 12px 16px; 
+                               border: 2px solid #e0e0e0; 
+                               border-radius: 25px; outline: none;
+                               font-size: 14px;
+                               transition: border-color 0.2s ease;
+                           ">
+                    <button id="sendButton" style="
+                        width: 45px; height: 45px;
+                        background: ${businessData.colors.primary};
+                        border: none; border-radius: 50%;
+                        color: white; cursor: pointer;
+                        display: flex; align-items: center; justify-content: center;
+                        transition: all 0.2s ease;
+                        font-size: 18px;
+                    ">▶</button>
+                </div>
             </div>
         </div>
-    </div>`;
+    </div>
+
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        #chatInput:focus {
+            border-color: ${businessData.colors.primary} !important;
+        }
+        
+        #sendButton:hover {
+            transform: scale(1.1);
+            background: ${businessData.colors.secondary} !important;
+        }
+        
+        #chatButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 480px) {
+            #chatBox {
+                width: 320px !important;
+                right: -10px !important;
+            }
+        }
+    </style>`;
   }
 
   private generateJavaScript(businessData: BusinessContent): string {
     return `<script>
+        // Estado global do chat
         let chatOpen = false;
+        let chatHistory = [];
+        let isWaitingResponse = false;
         
+        // Função para toggle do menu mobile
         function toggleMenu() {
             const navMenu = document.getElementById('navMenu');
-            navMenu.classList.toggle('active');
+            if (navMenu) {
+                navMenu.classList.toggle('active');
+            }
         }
         
+        // Função para abrir/fechar chat
         function toggleChat() {
             try {
                 const chatBox = document.getElementById('chatBox');
@@ -504,14 +637,24 @@ export class HtmlAgent {
                 chatOpen = !chatOpen;
                 chatBox.style.display = chatOpen ? 'flex' : 'none';
                 
-                if (chatOpen && document.getElementById('chatMessages').children.length === 0) {
-                    addMessage('bot', '${businessData.sellerbot.responses.greeting}');
+                // Primeira mensagem de boas-vindas
+                if (chatOpen && chatHistory.length === 0) {
+                    addMessage('bot', '${businessData.sellerbot.responses.greeting}', false);
+                }
+                
+                // Focar no input quando abrir
+                if (chatOpen) {
+                    setTimeout(() => {
+                        const chatInput = document.getElementById('chatInput');
+                        if (chatInput) chatInput.focus();
+                    }, 100);
                 }
             } catch (error) {
                 console.error('Erro ao abrir chat:', error);
             }
         }
         
+        // Função para fechar chat
         function closeChat() {
             try {
                 const chatBox = document.getElementById('chatBox');
@@ -524,145 +667,300 @@ export class HtmlAgent {
             }
         }
         
-        function addMessage(sender, message) {
-            const messagesDiv = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            const messageId = 'msg_' + Date.now();
-            messageDiv.id = messageId;
-            messageDiv.style.cssText = \`
-                margin-bottom: 10px; padding: 10px; border-radius: 15px; 
-                \${sender === 'bot' ? 'background: #f0f0f0;' : 'background: ${businessData.colors.primary}; color: white;'}
-            \`;
-            messageDiv.textContent = message;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            return messageId;
+        // Função para adicionar mensagem ao chat
+        function addMessage(sender, message, saveToHistory = true) {
+            try {
+                const messagesDiv = document.getElementById('chatMessages');
+                if (!messagesDiv) return null;
+                
+                const messageDiv = document.createElement('div');
+                const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                messageDiv.id = messageId;
+                
+                const isBot = sender === 'bot';
+                const timestamp = new Date().toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                messageDiv.style.cssText = \`
+                    margin-bottom: 15px; 
+                    display: flex; 
+                    \${isBot ? 'justify-content: flex-start;' : 'justify-content: flex-end;'}
+                \`;
+                
+                messageDiv.innerHTML = \`
+                    <div style="
+                        max-width: 80%; 
+                        padding: 12px 16px; 
+                        border-radius: 18px; 
+                        \${isBot 
+                            ? 'background: white; color: #333; border: 1px solid #e0e0e0; border-bottom-left-radius: 6px;' 
+                            : 'background: ${businessData.colors.primary}; color: white; border-bottom-right-radius: 6px;'
+                        }
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                        position: relative;
+                        word-wrap: break-word;
+                        line-height: 1.4;
+                    ">
+                        <div style="font-size: 14px; white-space: pre-wrap;">\${message}</div>
+                        <div style="
+                            font-size: 11px; 
+                            opacity: 0.7; 
+                            margin-top: 4px;
+                            text-align: right;
+                        ">\${timestamp}</div>
+                    </div>
+                \`;
+                
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                
+                // Salvar no histórico
+                if (saveToHistory) {
+                    chatHistory.push({
+                        id: messageId,
+                        sender: sender,
+                        message: message,
+                        timestamp: new Date()
+                    });
+                    
+                    // Limitar histórico a 50 mensagens
+                    if (chatHistory.length > 50) {
+                        chatHistory = chatHistory.slice(-50);
+                    }
+                }
+                
+                return messageId;
+            } catch (error) {
+                console.error('Erro ao adicionar mensagem:', error);
+                return null;
+            }
         }
         
+        // Função para remover mensagem
         function removeMessage(messageId) {
-            const messageElement = document.getElementById(messageId);
-            if (messageElement) {
-                messageElement.remove();
+            try {
+                const messageElement = document.getElementById(messageId);
+                if (messageElement) {
+                    messageElement.remove();
+                }
+                
+                // Remover do histórico também
+                chatHistory = chatHistory.filter(msg => msg.id !== messageId);
+            } catch (error) {
+                console.error('Erro ao remover mensagem:', error);
+            }
+        }
+        
+        // Função para mostrar indicador de digitação
+        function showTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.style.display = 'block';
+            }
+        }
+        
+        // Função para esconder indicador de digitação
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.style.display = 'none';
+            }
+        }
+        
+        // Função para enviar mensagem
+        function sendMessage() {
+            try {
+                const chatInput = document.getElementById('chatInput');
+                if (!chatInput || isWaitingResponse) return;
+                
+                const message = chatInput.value.trim();
+                if (!message) return;
+                
+                // Adicionar mensagem do usuário
+                addMessage('user', message);
+                chatInput.value = '';
+                
+                // Gerar resposta IA
+                generateAIResponse(message);
+            } catch (error) {
+                console.error('Erro ao enviar mensagem:', error);
             }
         }
         
         // Aguardar DOM carregar completamente
         document.addEventListener('DOMContentLoaded', function() {
-            // Event listener para o botão do chat
-            const chatButton = document.getElementById('chatButton');
-            if (chatButton) {
-                chatButton.addEventListener('click', toggleChat);
-            }
-            
-            // Event listener para fechar o chat
-            const chatClose = document.getElementById('chatClose');
-            if (chatClose) {
-                chatClose.addEventListener('click', closeChat);
-            }
-            
-            // Event listener para o input do chat
-            const chatInput = document.getElementById('chatInput');
-            if (chatInput) {
-                chatInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        const message = this.value.trim();
-                        if (message) {
-                            addMessage('user', message);
-                            this.value = '';
-                            
-                            // Gerar resposta IA real
-                            generateAIResponse(message);
+            try {
+                // Event listener para o botão do chat
+                const chatButton = document.getElementById('chatButton');
+                if (chatButton) {
+                    chatButton.addEventListener('click', toggleChat);
+                }
+                
+                // Event listener para fechar o chat
+                const chatClose = document.getElementById('chatClose');
+                if (chatClose) {
+                    chatClose.addEventListener('click', closeChat);
+                }
+                
+                // Event listener para o input do chat (Enter)
+                const chatInput = document.getElementById('chatInput');
+                if (chatInput) {
+                    chatInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
                         }
-                    }
-                });
+                    });
+                    
+                    // Estilo focus/blur
+                    chatInput.addEventListener('focus', function() {
+                        this.style.borderColor = '${businessData.colors.primary}';
+                    });
+                    
+                    chatInput.addEventListener('blur', function() {
+                        this.style.borderColor = '#e0e0e0';
+                    });
+                }
+                
+                // Event listener para o botão de enviar
+                const sendButton = document.getElementById('sendButton');
+                if (sendButton) {
+                    sendButton.addEventListener('click', sendMessage);
+                }
+                
+                console.log('💬 Chat Sellerbot IA inicializado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao inicializar chat:', error);
             }
         });
         
+        // Função para gerar resposta IA
         async function generateAIResponse(userMessage) {
-            const loadingMessage = 'Digitando...';
-            const loadingId = addMessage('bot', loadingMessage);
+            if (isWaitingResponse) return;
             
             try {
+                isWaitingResponse = true;
+                showTypingIndicator();
+                
+                // Simular delay de digitação mais realista
+                await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+                
+                let aiResponse = '';
+                
                 // Tentar comunicar com o app principal via postMessage (quando no preview)
                 if (window.parent !== window) {
-                    window.parent.postMessage({
-                        type: 'SELLERBOT_CHAT',
-                        message: userMessage,
-                        businessData: {
-                            sellerbot: ${JSON.stringify(businessData.sellerbot)},
-                            title: '${businessData.title}',
-                            subtitle: '${businessData.subtitle}',
-                            contact: ${JSON.stringify(businessData.contact)}
-                        }
-                    }, '*');
-                    
-                    // Aguardar resposta
-                    const responsePromise = new Promise((resolve) => {
-                        const handler = (event) => {
-                            if (event.data.type === 'SELLERBOT_RESPONSE') {
-                                window.removeEventListener('message', handler);
-                                resolve(event.data.response);
+                    try {
+                        window.parent.postMessage({
+                            type: 'SELLERBOT_CHAT',
+                            message: userMessage,
+                            chatHistory: chatHistory.slice(-6), // Enviar histórico recente
+                            businessData: {
+                                sellerbot: ${JSON.stringify(businessData.sellerbot)},
+                                title: '${businessData.title}',
+                                subtitle: '${businessData.subtitle}',
+                                heroText: '${businessData.heroText}',
+                                contact: ${JSON.stringify(businessData.contact)},
+                                colors: ${JSON.stringify(businessData.colors)}
                             }
-                        };
-                        window.addEventListener('message', handler);
+                        }, '*');
                         
-                        // Timeout de 10s
-                        setTimeout(() => {
-                            window.removeEventListener('message', handler);
-                            resolve('');
-                        }, 10000);
-                    });
-                    
-                    const aiResponse = await responsePromise;
-                    if (aiResponse) {
-                        removeMessage(loadingId);
-                        addMessage('bot', aiResponse);
-                        return;
+                        // Aguardar resposta com timeout
+                        aiResponse = await new Promise((resolve) => {
+                            const handler = (event) => {
+                                if (event.data.type === 'SELLERBOT_RESPONSE') {
+                                    window.removeEventListener('message', handler);
+                                    resolve(event.data.response);
+                                }
+                            };
+                            window.addEventListener('message', handler);
+                            
+                            // Timeout de 15s
+                            setTimeout(() => {
+                                window.removeEventListener('message', handler);
+                                resolve('');
+                            }, 15000);
+                        });
+                    } catch (error) {
+                        console.warn('Erro na comunicação postMessage:', error);
+                        aiResponse = '';
                     }
                 }
                 
-                // Fallback: usar respostas predefinidas inteligentes
-                removeMessage(loadingId);
-                const smartResponse = getSmartResponse(userMessage);
-                addMessage('bot', smartResponse);
+                // Fallback: usar resposta inteligente local
+                if (!aiResponse) {
+                    aiResponse = getSmartResponse(userMessage);
+                }
+                
+                hideTypingIndicator();
+                addMessage('bot', aiResponse);
                 
             } catch (error) {
-                removeMessage(loadingId);
-                const smartResponse = getSmartResponse(userMessage);
-                addMessage('bot', smartResponse);
+                console.error('Erro ao gerar resposta IA:', error);
+                hideTypingIndicator();
+                addMessage('bot', getSmartResponse(userMessage));
+            } finally {
+                isWaitingResponse = false;
             }
         }
         
+        // Função para respostas inteligentes locais (fallback)
         function getSmartResponse(message) {
             const lowerMessage = message.toLowerCase();
             
-            // Respostas baseadas em palavras-chave
-            if (lowerMessage.includes('preço') || lowerMessage.includes('valor') || lowerMessage.includes('custo')) {
-                return '${businessData.sellerbot.responses.pricing}';
+            // Saudações
+            if (lowerMessage.includes('olá') || lowerMessage.includes('oi') || lowerMessage.includes('bom dia') || lowerMessage.includes('boa tarde') || lowerMessage.includes('boa noite')) {
+                return \`👋 ${businessData.sellerbot.responses.greeting}\n\nComo posso ajudar você hoje?\`;
             }
             
-            if (lowerMessage.includes('serviço') || lowerMessage.includes('produto') || lowerMessage.includes('trabalho')) {
-                return '${businessData.sellerbot.responses.services}';
+            // Preços e valores
+            if (lowerMessage.includes('preço') || lowerMessage.includes('valor') || lowerMessage.includes('custo') || lowerMessage.includes('quanto')) {
+                return \`💰 ${businessData.sellerbot.responses.pricing}\n\nPara informações mais detalhadas sobre valores, entre em contato: ${businessData.contact.phone}\`;
             }
             
-            if (lowerMessage.includes('agendar') || lowerMessage.includes('marcar') || lowerMessage.includes('horário')) {
-                return '${businessData.sellerbot.responses.appointment}';
+            // Serviços e produtos
+            if (lowerMessage.includes('serviço') || lowerMessage.includes('produto') || lowerMessage.includes('trabalho') || lowerMessage.includes('oferece')) {
+                return \`🛍️ ${businessData.sellerbot.responses.services}\n\n${businessData.heroText}\n\nQue tal agendar uma conversa para saber mais?\`;
             }
             
-            if (lowerMessage.includes('contato') || lowerMessage.includes('telefone') || lowerMessage.includes('whats')) {
-                return \`Você pode entrar em contato conosco através dos seguintes canais:
-📧 Email: ${businessData.contact.email}
-📞 Telefone: ${businessData.contact.phone}
-📍 Endereço: ${businessData.contact.address}
-\${businessData.contact.whatsapp ? '📱 WhatsApp: ' + businessData.contact.whatsapp : ''}\`;
+            // Agendamentos
+            if (lowerMessage.includes('agendar') || lowerMessage.includes('marcar') || lowerMessage.includes('horário') || lowerMessage.includes('consulta')) {
+                const contactInfo = businessData.contact.whatsapp ? '📱 ' + businessData.contact.whatsapp : '📞 ' + businessData.contact.phone;
+                return \`📅 ${businessData.sellerbot.responses.appointment}\n\nContato direto: \` + contactInfo;
             }
             
-            if (lowerMessage.includes('localização') || lowerMessage.includes('endereço') || lowerMessage.includes('onde')) {
-                return \`Estamos localizados em: ${businessData.contact.address}. \${businessData.contact.whatsapp ? 'Entre em contato pelo WhatsApp ' + businessData.contact.whatsapp + ' para mais informações!' : 'Entre em contato conosco para mais informações!'}\`;
+            // Contatos
+            if (lowerMessage.includes('contato') || lowerMessage.includes('telefone') || lowerMessage.includes('whats') || lowerMessage.includes('falar')) {
+                const whatsappInfo = businessData.contact.whatsapp ? '\n💬 WhatsApp: ' + businessData.contact.whatsapp : '';
+                return \`📞 Entre em contato conosco através dos seguintes canais:\n\n📧 Email: ${businessData.contact.email}\n📱 Telefone: ${businessData.contact.phone}\n📍 Endereço: ${businessData.contact.address}\` + whatsappInfo + \`\n\nEstamos sempre prontos para atender você!\`;
             }
             
-            // Resposta padrão personalizada
-            return \`Olá! Sou o ${businessData.sellerbot.name}. Como posso ajudar você com nossos serviços? Posso falar sobre preços, agendar horários ou tirar dúvidas sobre ${businessData.title}!\`;
+            // Localização
+            if (lowerMessage.includes('localização') || lowerMessage.includes('endereço') || lowerMessage.includes('onde') || lowerMessage.includes('local')) {
+                const locationContact = businessData.contact.whatsapp ? '📱 WhatsApp: ' + businessData.contact.whatsapp : '📞 Telefone: ' + businessData.contact.phone;
+                return \`📍 Estamos localizados em:\n${businessData.contact.address}\n\n\` + locationContact + \`\n\nVenha nos visitar!\`;
+            }
+            
+            // Ajuda e informações gerais
+            if (lowerMessage.includes('ajuda') || lowerMessage.includes('ajudar') || lowerMessage.includes('informação') || lowerMessage.includes('dúvida')) {
+                return \`🤝 Claro! Estou aqui para ajudar com informações sobre ${businessData.title}.\n\nPosso ajudar você com:\n🛍️ Nossos serviços\n💰 Preços e condições\n📅 Agendamentos\n📞 Contatos\n📍 Localização\n\nO que gostaria de saber?\`;
+            }
+            
+            // Despedidas
+            if (lowerMessage.includes('tchau') || lowerMessage.includes('obrigado') || lowerMessage.includes('obrigada') || lowerMessage.includes('valeu')) {
+                const farewellContact = businessData.contact.whatsapp ? '📱 WhatsApp: ' + businessData.contact.whatsapp : '📞 Telefone: ' + businessData.contact.phone;
+                return \`😊 Foi um prazer ajudar você!\n\nSe precisar de mais alguma coisa, estarei sempre aqui. Até logo!\n\n\` + farewellContact;
+            }
+            
+            // Resposta padrão inteligente
+            const defaultResponses = [
+                \`👋 Olá! Sou o ${businessData.sellerbot.name} da ${businessData.title}.\n\nComo posso ajudar você hoje? Posso falar sobre nossos serviços, preços, agendar horários ou tirar qualquer dúvida!\`,
+                \`😊 Oi! Que bom ter você aqui!\n\nSou especialista em ${businessData.title} e posso ajudar com informações, agendamentos e muito mais. O que gostaria de saber?\`,
+                \`🤖 Olá! Sou seu assistente virtual da ${businessData.title}.\n\nEstou aqui para ajudar com tudo que você precisar. Pode me perguntar sobre serviços, preços, horários... enfim, qualquer coisa!\`
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
         }
         
         // Modal de imagens

@@ -32,9 +32,23 @@ const PreviewFrame = ({ generatedHTML, businessData }: PreviewFrameProps) => {
       if (event.data.type === 'SELLERBOT_CHAT') {
         try {
           setIsChatLoading(true);
+          
+          // Processar dados completos do negócio
+          const fullBusinessData = {
+            ...event.data.businessData,
+            sections: businessData?.sections || [],
+            images: businessData?.images || {},
+          };
+          
+          console.log('🤖 Processando chat sellerbot:', {
+            message: event.data.message,
+            hasHistory: !!event.data.chatHistory,
+            businessTitle: fullBusinessData.title
+          });
+          
           const response = await sellerbotAgent.generateChatResponse(
             event.data.message,
-            event.data.businessData
+            fullBusinessData
           );
           
           // Enviar resposta de volta para a landing page
@@ -44,13 +58,19 @@ const PreviewFrame = ({ generatedHTML, businessData }: PreviewFrameProps) => {
               response: response
             }, '*');
           }
+          
+          console.log('✅ Resposta enviada para LP');
+          
         } catch (error) {
-          console.error('Erro no chat sellerbot:', error);
-          // Enviar resposta de fallback
+          console.error('❌ Erro no chat sellerbot:', error);
+          
+          // Enviar resposta de fallback mais inteligente
+          const fallbackResponse = `😊 Olá! Sou o assistente da ${event.data.businessData?.title || 'nossa empresa'}.\n\nEstamos com uma pequena instabilidade técnica, mas posso ajudar você!\n\nEntre em contato conosco:\n📞 ${event.data.businessData?.contact?.phone || 'Telefone não informado'}\n📧 ${event.data.businessData?.contact?.email || 'Email não informado'}`;
+          
           if (iframeRef.current?.contentWindow) {
             iframeRef.current.contentWindow.postMessage({
               type: 'SELLERBOT_RESPONSE',
-              response: 'Desculpe, ocorreu um erro. Como posso ajudar você hoje?'
+              response: fallbackResponse
             }, '*');
           }
         } finally {
@@ -61,7 +81,7 @@ const PreviewFrame = ({ generatedHTML, businessData }: PreviewFrameProps) => {
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, []);
+  }, [businessData]);
 
   const deviceModes = [
     { id: "desktop", icon: Monitor, label: "Desktop", width: "100%" },
