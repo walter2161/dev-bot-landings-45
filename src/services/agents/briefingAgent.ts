@@ -55,7 +55,7 @@ export class BriefingAgent {
 
   async processBriefing(rawBriefing: string): Promise<ProcessedBriefing> {
     try {
-      // Extrair informações estruturadas do briefing
+      // Primeiro, tentar extrair informações estruturadas do briefing
       const businessNameMatch = rawBriefing.match(/Nome da Empresa:\s*([^\n]+)/);
       const businessTypeMatch = rawBriefing.match(/Tipo de Negócio:\s*([^\n]+)/);
       const descriptionMatch = rawBriefing.match(/Descrição:\s*([^\n]+)/);
@@ -69,6 +69,12 @@ export class BriefingAgent {
       const logoMatch = rawBriefing.match(/IMPORTANTE:.*?logo personalizado\s*\(([^)]+)\)/);
       const paletteMatch = rawBriefing.match(/PALETA DE CORES OBRIGATÓRIA:.*?Primária:\s*(#[A-Fa-f0-9]{6}).*?Secundária:\s*(#[A-Fa-f0-9]{6}).*?Destaque:\s*(#[A-Fa-f0-9]{6})/);
 
+      // Se não encontrou dados estruturados, processar como pedido simples
+      let inferredData = null;
+      if (!businessNameMatch && !businessTypeMatch) {
+        inferredData = this.inferBusinessDataFromText(rawBriefing);
+      }
+
       // Função para limpar marcações das instruções
       const cleanText = (text: string) => {
         if (!text) return text;
@@ -80,25 +86,25 @@ export class BriefingAgent {
       };
 
       const processedBriefing: ProcessedBriefing = {
-        businessName: cleanText(businessNameMatch?.[1]) || "Empresa",
-        businessType: cleanText(businessTypeMatch?.[1]) || "Negócio",
-        description: cleanText(descriptionMatch?.[1]) || "",
-        targetAudience: cleanText(targetAudienceMatch?.[1]) || "",
-        mainGoal: cleanText(mainGoalMatch?.[1]) || "",
-        keyServices: cleanText(keyServicesMatch?.[1]) || "",
+        businessName: cleanText(businessNameMatch?.[1]) || inferredData?.businessName || "Empresa",
+        businessType: cleanText(businessTypeMatch?.[1]) || inferredData?.businessType || "Negócio",
+        description: cleanText(descriptionMatch?.[1]) || inferredData?.description || "",
+        targetAudience: cleanText(targetAudienceMatch?.[1]) || inferredData?.targetAudience || "",
+        mainGoal: cleanText(mainGoalMatch?.[1]) || inferredData?.mainGoal || "",
+        keyServices: cleanText(keyServicesMatch?.[1]) || inferredData?.keyServices || "",
         contactInfo: {
           whatsapp: cleanText(whatsappMatch?.[1]) || "",
           address: cleanText(addressMatch?.[1]) || "",
           other: cleanText(otherContactMatch?.[1]) || ""
         },
-        specialOffers: cleanText(specialOffersMatch?.[1]) || "",
+        specialOffers: cleanText(specialOffersMatch?.[1]) || inferredData?.specialOffers || "",
         hasCustomLogo: logoMatch !== null,
         logoFileName: logoMatch?.[1]?.trim(),
         colorPalette: paletteMatch ? {
           primary: paletteMatch[1],
           secondary: paletteMatch[2],
           accent: paletteMatch[3]
-        } : {
+        } : inferredData?.colorPalette || {
           primary: "#2563eb",
           secondary: "#1e40af",
           accent: "#f59e0b"
@@ -135,6 +141,110 @@ export class BriefingAgent {
         briefingPrompt: rawBriefing
       };
     }
+  }
+
+  private inferBusinessDataFromText(text: string): {
+    businessName: string;
+    businessType: string;
+    description: string;
+    targetAudience: string;
+    mainGoal: string;
+    keyServices: string;
+    specialOffers: string;
+    colorPalette: { primary: string; secondary: string; accent: string };
+  } {
+    const lowerText = text.toLowerCase();
+    
+    // Mapear palavras-chave para tipos de negócio
+    const businessTypeMap: { [key: string]: { type: string; services: string; target: string; goal: string; offers: string; colors: { primary: string; secondary: string; accent: string } } } = {
+      'pet shop': {
+        type: 'Pet Shop',
+        services: 'Banho e tosa, produtos para pets, ração, acessórios, medicamentos veterinários, brinquedos para animais',
+        target: 'Donos de animais de estimação, famílias com pets, pessoas que amam animais',
+        goal: 'Oferecer produtos e serviços de qualidade para o bem-estar dos pets',
+        offers: 'Promoção especial: Banho e tosa com 20% de desconto na primeira visita!',
+        colors: { primary: '#4f46e5', secondary: '#06b6d4', accent: '#f59e0b' }
+      },
+      'petshop': {
+        type: 'Pet Shop',
+        services: 'Banho e tosa, produtos para pets, ração, acessórios, medicamentos veterinários, brinquedos para animais',
+        target: 'Donos de animais de estimação, famílias com pets, pessoas que amam animais',
+        goal: 'Oferecer produtos e serviços de qualidade para o bem-estar dos pets',
+        offers: 'Promoção especial: Banho e tosa com 20% de desconto na primeira visita!',
+        colors: { primary: '#4f46e5', secondary: '#06b6d4', accent: '#f59e0b' }
+      },
+      'restaurante': {
+        type: 'Restaurante',
+        services: 'Pratos tradicionais, delivery, eventos, buffet, cardápio especial',
+        target: 'Famílias, casais, grupos de amigos, empresários',
+        goal: 'Proporcionar experiência gastronômica única e memorável',
+        offers: '2ª feira: Desconto especial de 15% no jantar!',
+        colors: { primary: '#dc2626', secondary: '#ea580c', accent: '#facc15' }
+      },
+      'loja': {
+        type: 'Loja de Variedades',
+        services: 'Produtos diversos, atendimento personalizado, entrega rápida',
+        target: 'Público geral, moradores da região, pessoas em busca de conveniência',
+        goal: 'Ser a loja de referência da região com os melhores produtos',
+        offers: 'Desconto progressivo: Quanto mais comprar, mais economiza!',
+        colors: { primary: '#059669', secondary: '#0d9488', accent: '#f59e0b' }
+      },
+      'salão': {
+        type: 'Salão de Beleza',
+        services: 'Corte, coloração, tratamentos capilares, manicure, pedicure, design de sobrancelhas',
+        target: 'Mulheres e homens que buscam cuidados com beleza e bem-estar',
+        goal: 'Realçar a beleza natural de cada cliente com atendimento de excelência',
+        offers: 'Pacote completo: Corte + Escova + Manicure com preço especial!',
+        colors: { primary: '#be185d', secondary: '#c2410c', accent: '#7c3aed' }
+      },
+      'academia': {
+        type: 'Academia',
+        services: 'Musculação, aeróbicos, personal trainer, avaliação física',
+        target: 'Pessoas que buscam saúde, condicionamento físico e bem-estar',
+        goal: 'Transformar vidas através do exercício e hábitos saudáveis',
+        offers: 'Matrícula gratuita + 1 mês de personal trainer incluso!',
+        colors: { primary: '#dc2626', secondary: '#ea580c', accent: '#facc15' }
+      }
+    };
+
+    // Encontrar o tipo de negócio baseado nas palavras-chave
+    let matchedBusiness = null;
+    for (const [keyword, businessData] of Object.entries(businessTypeMap)) {
+      if (lowerText.includes(keyword)) {
+        matchedBusiness = businessData;
+        break;
+      }
+    }
+
+    // Se não encontrou match específico, usar dados genéricos baseados no texto
+    if (!matchedBusiness) {
+      matchedBusiness = {
+        type: 'Empresa',
+        services: 'Serviços profissionais de qualidade',
+        target: 'Clientes em busca de excelência',
+        goal: 'Oferecer soluções eficazes e atendimento diferenciado',
+        offers: 'Condições especiais para novos clientes!',
+        colors: { primary: '#2563eb', secondary: '#1e40af', accent: '#f59e0b' }
+      };
+    }
+
+    // Tentar extrair nome da empresa do texto
+    let businessName = matchedBusiness.type;
+    const nameMatches = text.match(/(\w+\s*){1,3}(?=\s|$)/);
+    if (nameMatches && nameMatches[0].length > 2) {
+      businessName = nameMatches[0].trim();
+    }
+
+    return {
+      businessName,
+      businessType: matchedBusiness.type,
+      description: `${businessName} - ${matchedBusiness.type} com foco em qualidade e atendimento excepcional`,
+      targetAudience: matchedBusiness.target,
+      mainGoal: matchedBusiness.goal,
+      keyServices: matchedBusiness.services,
+      specialOffers: matchedBusiness.offers,
+      colorPalette: matchedBusiness.colors
+    };
   }
 
   generateInstructionsForAgent(briefing: ProcessedBriefing, agentType: 'content' | 'design' | 'seo' | 'copy' | 'image'): string {
