@@ -453,7 +453,7 @@ export class HtmlAgent {
     return `<!-- Chat Widget Sellerbot com IA -->
     <div id="chatWidget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <!-- Botão do Chat -->
-        <div id="chatButton" style="
+        <div id="chatButton" onclick="toggleChat()" style="
             width: 65px; height: 65px; 
             background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); 
             border-radius: 50%; 
