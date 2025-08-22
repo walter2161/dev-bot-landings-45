@@ -72,7 +72,7 @@ export class BriefingAgent {
       // Se não encontrou dados estruturados, processar como pedido simples
       let inferredData = null;
       if (!businessNameMatch && !businessTypeMatch) {
-        inferredData = this.inferBusinessDataFromText(rawBriefing);
+        inferredData = await this.inferBusinessDataFromText(rawBriefing);
       }
 
       // Função para limpar marcações das instruções
@@ -143,7 +143,51 @@ export class BriefingAgent {
     }
   }
 
-  private inferBusinessDataFromText(text: string): {
+  private async inferBusinessDataFromText(text: string): Promise<{
+    businessName: string;
+    businessType: string;
+    description: string;
+    targetAudience: string;
+    mainGoal: string;
+    keyServices: string;
+    specialOffers: string;
+    colorPalette: { primary: string; secondary: string; accent: string };
+  }> {
+    try {
+      const prompt = `Analise este pedido de negócio e retorne APENAS um JSON válido com as informações específicas:
+
+Pedido: "${text}"
+
+Retorne no formato JSON:
+{
+  "businessName": "Nome específico baseado no pedido",
+  "businessType": "Tipo de negócio específico",
+  "description": "Descrição única do negócio",
+  "targetAudience": "Público-alvo específico",
+  "mainGoal": "Objetivo principal específico",
+  "keyServices": "Serviços específicos oferecidos",
+  "specialOffers": "Oferta promocional específica",
+  "colorPalette": {
+    "primary": "cor hex apropriada",
+    "secondary": "cor hex complementar", 
+    "accent": "cor hex de destaque"
+  }
+}
+
+IMPORTANTE: Seja específico e único para cada negócio. Evite termos genéricos.`;
+
+      const response = await this.makeRequest(prompt);
+      const cleanedResponse = response.replace(/```json|```/g, '').trim();
+      const parsedData = JSON.parse(cleanedResponse);
+      
+      return parsedData;
+    } catch (error) {
+      console.error('Erro ao gerar dados via IA, usando fallback:', error);
+      return this.getFallbackBusinessData(text);
+    }
+  }
+
+  private getFallbackBusinessData(text: string): {
     businessName: string;
     businessType: string;
     description: string;
@@ -155,22 +199,54 @@ export class BriefingAgent {
   } {
     const lowerText = text.toLowerCase();
     
-    // Mapear palavras-chave para tipos de negócio
+    // Mapear palavras-chave para tipos de negócio (expandido)
     const businessTypeMap: { [key: string]: { type: string; services: string; target: string; goal: string; offers: string; colors: { primary: string; secondary: string; accent: string } } } = {
+      'drone': {
+        type: 'Empresa de Drones',
+        services: 'Filmagem aérea, inspeção industrial, mapeamento, eventos, monitoramento',
+        target: 'Empresas de eventos, construtoras, produtoras, setor agrícola',
+        goal: 'Oferecer soluções inovadoras em tecnologia de drones',
+        offers: 'Primeira filmagem com 30% de desconto!',
+        colors: { primary: '#0ea5e9', secondary: '#0284c7', accent: '#f59e0b' }
+      },
+      'tatuagem': {
+        type: 'Estúdio de Tatuagem',
+        services: 'Tatuagens artísticas, piercings, desenhos personalizados, restauração',
+        target: 'Jovens adultos, entusiastas de arte corporal, pessoas expressivas',
+        goal: 'Criar arte corporal única e significativa',
+        offers: 'Consulta gratuita + desconto na primeira tattoo!',
+        colors: { primary: '#dc2626', secondary: '#991b1b', accent: '#fbbf24' }
+      },
+      'vegan': {
+        type: 'Loja Vegana',
+        services: 'Produtos veganos, orgânicos, suplementos naturais, cosméticos',
+        target: 'Veganos, vegetarianos, pessoas conscientes da sustentabilidade',
+        goal: 'Promover um estilo de vida sustentável e saudável',
+        offers: 'Kit iniciante vegano com 25% de desconto!',
+        colors: { primary: '#16a34a', secondary: '#15803d', accent: '#84cc16' }
+      },
+      'dança': {
+        type: 'Escola de Dança',
+        services: 'Aulas de street dance, hip hop, breaking, coreografias, workshops',
+        target: 'Jovens, adolescentes, amantes de cultura urbana',
+        goal: 'Desenvolver talento e expressão através da dança urbana',
+        offers: 'Primeira aula grátis + desconto no pacote mensal!',
+        colors: { primary: '#7c3aed', secondary: '#5b21b6', accent: '#f59e0b' }
+      },
+      'sustentabilidade': {
+        type: 'Consultoria em Sustentabilidade',
+        services: 'Consultoria ambiental, certificações, auditorias, projetos sustentáveis',
+        target: 'Empresas, indústrias, organizações que buscam sustentabilidade',
+        goal: 'Transformar negócios em modelos sustentáveis e rentáveis',
+        offers: 'Diagnóstico gratuito de sustentabilidade empresarial!',
+        colors: { primary: '#059669', secondary: '#047857', accent: '#10b981' }
+      },
       'pet shop': {
         type: 'Pet Shop',
-        services: 'Banho e tosa, produtos para pets, ração, acessórios, medicamentos veterinários, brinquedos para animais',
-        target: 'Donos de animais de estimação, famílias com pets, pessoas que amam animais',
+        services: 'Banho e tosa, produtos para pets, ração, acessórios, medicamentos veterinários',
+        target: 'Donos de animais de estimação, famílias com pets',
         goal: 'Oferecer produtos e serviços de qualidade para o bem-estar dos pets',
-        offers: 'Promoção especial: Banho e tosa com 20% de desconto na primeira visita!',
-        colors: { primary: '#4f46e5', secondary: '#06b6d4', accent: '#f59e0b' }
-      },
-      'petshop': {
-        type: 'Pet Shop',
-        services: 'Banho e tosa, produtos para pets, ração, acessórios, medicamentos veterinários, brinquedos para animais',
-        target: 'Donos de animais de estimação, famílias com pets, pessoas que amam animais',
-        goal: 'Oferecer produtos e serviços de qualidade para o bem-estar dos pets',
-        offers: 'Promoção especial: Banho e tosa com 20% de desconto na primeira visita!',
+        offers: 'Banho e tosa com 20% de desconto na primeira visita!',
         colors: { primary: '#4f46e5', secondary: '#06b6d4', accent: '#f59e0b' }
       },
       'restaurante': {
@@ -178,24 +254,8 @@ export class BriefingAgent {
         services: 'Pratos tradicionais, delivery, eventos, buffet, cardápio especial',
         target: 'Famílias, casais, grupos de amigos, empresários',
         goal: 'Proporcionar experiência gastronômica única e memorável',
-        offers: '2ª feira: Desconto especial de 15% no jantar!',
+        offers: 'Segunda-feira: Desconto especial de 15% no jantar!',
         colors: { primary: '#dc2626', secondary: '#ea580c', accent: '#facc15' }
-      },
-      'loja': {
-        type: 'Loja de Variedades',
-        services: 'Produtos diversos, atendimento personalizado, entrega rápida',
-        target: 'Público geral, moradores da região, pessoas em busca de conveniência',
-        goal: 'Ser a loja de referência da região com os melhores produtos',
-        offers: 'Desconto progressivo: Quanto mais comprar, mais economiza!',
-        colors: { primary: '#059669', secondary: '#0d9488', accent: '#f59e0b' }
-      },
-      'salão': {
-        type: 'Salão de Beleza',
-        services: 'Corte, coloração, tratamentos capilares, manicure, pedicure, design de sobrancelhas',
-        target: 'Mulheres e homens que buscam cuidados com beleza e bem-estar',
-        goal: 'Realçar a beleza natural de cada cliente com atendimento de excelência',
-        offers: 'Pacote completo: Corte + Escova + Manicure com preço especial!',
-        colors: { primary: '#be185d', secondary: '#c2410c', accent: '#7c3aed' }
       },
       'academia': {
         type: 'Academia',
@@ -204,6 +264,14 @@ export class BriefingAgent {
         goal: 'Transformar vidas através do exercício e hábitos saudáveis',
         offers: 'Matrícula gratuita + 1 mês de personal trainer incluso!',
         colors: { primary: '#dc2626', secondary: '#ea580c', accent: '#facc15' }
+      },
+      'salão': {
+        type: 'Salão de Beleza',
+        services: 'Corte, coloração, tratamentos capilares, manicure, pedicure, design de sobrancelhas',
+        target: 'Mulheres e homens que buscam cuidados com beleza e bem-estar',
+        goal: 'Realçar a beleza natural de cada cliente com atendimento de excelência',
+        offers: 'Pacote completo: Corte + Escova + Manicure com preço especial!',
+        colors: { primary: '#be185d', secondary: '#c2410c', accent: '#7c3aed' }
       }
     };
 
@@ -216,23 +284,34 @@ export class BriefingAgent {
       }
     }
 
-    // Se não encontrou match específico, usar dados genéricos baseados no texto
+    // Se não encontrou match específico, usar dados genéricos únicos
     if (!matchedBusiness) {
+      const randomColors = [
+        { primary: '#2563eb', secondary: '#1e40af', accent: '#f59e0b' },
+        { primary: '#dc2626', secondary: '#b91c1c', accent: '#16a34a' },
+        { primary: '#7c3aed', secondary: '#6d28d9', accent: '#f59e0b' },
+        { primary: '#059669', secondary: '#047857', accent: '#0ea5e9' },
+        { primary: '#ea580c', secondary: '#c2410c', accent: '#7c3aed' }
+      ];
+      
+      const hash = this.createSimpleHash(text);
+      const colorIndex = hash % randomColors.length;
+      
       matchedBusiness = {
-        type: 'Empresa',
-        services: 'Serviços profissionais de qualidade',
-        target: 'Clientes em busca de excelência',
-        goal: 'Oferecer soluções eficazes e atendimento diferenciado',
+        type: 'Negócio Especializado',
+        services: `Serviços profissionais relacionados a ${text}`,
+        target: 'Clientes que buscam soluções especializadas',
+        goal: 'Oferecer excelência e inovação no atendimento',
         offers: 'Condições especiais para novos clientes!',
-        colors: { primary: '#2563eb', secondary: '#1e40af', accent: '#f59e0b' }
+        colors: randomColors[colorIndex]
       };
     }
 
     // Tentar extrair nome da empresa do texto
     let businessName = matchedBusiness.type;
-    const nameMatches = text.match(/(\w+\s*){1,3}(?=\s|$)/);
-    if (nameMatches && nameMatches[0].length > 2) {
-      businessName = nameMatches[0].trim();
+    const words = text.split(' ').filter(word => word.length > 2);
+    if (words.length > 0) {
+      businessName = words.slice(0, 2).join(' ');
     }
 
     return {
@@ -245,6 +324,16 @@ export class BriefingAgent {
       specialOffers: matchedBusiness.offers,
       colorPalette: matchedBusiness.colors
     };
+  }
+
+  private createSimpleHash(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash);
   }
 
   generateInstructionsForAgent(briefing: ProcessedBriefing, agentType: 'content' | 'design' | 'seo' | 'copy' | 'image'): string {
