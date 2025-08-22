@@ -500,6 +500,8 @@ export class HtmlAgent {
         function addMessage(sender, message) {
             const messagesDiv = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
+            const messageId = 'msg_' + Date.now();
+            messageDiv.id = messageId;
             messageDiv.style.cssText = \`
                 margin-bottom: 10px; padding: 10px; border-radius: 15px; 
                 \${sender === 'bot' ? 'background: #f0f0f0;' : 'background: ${businessData.colors.primary}; color: white;'}
@@ -507,6 +509,14 @@ export class HtmlAgent {
             messageDiv.textContent = message;
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            return messageId;
+        }
+        
+        function removeMessage(messageId) {
+            const messageElement = document.getElementById(messageId);
+            if (messageElement) {
+                messageElement.remove();
+            }
         }
         
         document.getElementById('chatInput').addEventListener('keypress', function(e) {
@@ -516,13 +526,63 @@ export class HtmlAgent {
                     addMessage('user', message);
                     this.value = '';
                     
-                    // Simular resposta do bot
-                    setTimeout(() => {
-                        addMessage('bot', '${businessData.sellerbot.responses.services}');
-                    }, 1000);
+                    // Gerar resposta IA real
+                    generateAIResponse(message);
                 }
             }
         });
+        
+        async function generateAIResponse(userMessage) {
+            const loadingMessage = 'Digitando...';
+            const loadingId = addMessage('bot', loadingMessage);
+            
+            try {
+                const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer aynCSftAcQBOlxmtmpJqVzco8K4aaTDQ'
+                    },
+                    body: JSON.stringify({
+                        model: 'mistral-large-latest',
+                        messages: [{
+                            role: 'system',
+                            content: \`Você é ${businessData.sellerbot.name}.
+Personalidade: ${businessData.sellerbot.personality}
+Conhecimento: ${businessData.sellerbot.knowledge.join(', ')}
+Empresa: ${businessData.title}
+Produtos/Serviços: ${businessData.subtitle}
+Contato: ${businessData.contact.email}, ${businessData.contact.phone}
+
+Responda de forma amigável, profissional e ajude com informações sobre a empresa.\`
+                        }, {
+                            role: 'user',
+                            content: userMessage
+                        }],
+                        temperature: 0.7,
+                        max_tokens: 500
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const aiResponse = data.choices[0].message.content;
+                    removeMessage(loadingId);
+                    addMessage('bot', aiResponse);
+                } else {
+                    throw new Error('Erro na API');
+                }
+            } catch (error) {
+                removeMessage(loadingId);
+                const fallbackResponses = [
+                    '${businessData.sellerbot.responses.services}',
+                    '${businessData.sellerbot.responses.pricing}',
+                    '${businessData.sellerbot.responses.appointment}'
+                ];
+                const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+                addMessage('bot', randomResponse);
+            }
+        }
         
         // Modal de imagens
         function openImageModal(imageSrc, caption) {

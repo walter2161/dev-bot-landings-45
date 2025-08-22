@@ -303,18 +303,18 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
                 <Upload className="h-3 w-3" />
                 Importar HTML
               </Button>
-               <div className="grid grid-cols-1 gap-1">
-                 {quickPrompts.slice(0, 6).map((prompt, index) => (
-                   <Button
-                     key={index}
-                     variant="outline"
-                     size="sm"
-                     onClick={() => setInputMessage(prompt)}
-                     className="text-xs h-auto py-1 px-2 text-left justify-start hover:bg-primary/5 border-primary/30"
-                   >
-                     {prompt}
-                   </Button>
-                 ))}
+                <div className="grid grid-cols-1 gap-1">
+                  {quickPrompts.slice(0, 6).map((prompt, index) => (
+                    <Button
+                      key={`mobile-prompt-${index}`}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setInputMessage(prompt)}
+                      className="text-xs h-auto py-1 px-2 text-left justify-start hover:bg-primary/5 border-primary/30"
+                    >
+                      {prompt}
+                    </Button>
+                  ))}
                </div>
             </div>
           )}
@@ -423,18 +423,18 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
           <div className="text-center text-muted-foreground">
             <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-sm mb-4">Descreva o negócio que você quer criar uma landing page:</p>
-            <div className="grid grid-cols-1 gap-2">
-              {quickPrompts.map((prompt, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setInputMessage(prompt)}
-                  className="text-xs h-auto py-2 px-3 text-left justify-start hover:bg-primary/5 border-primary/30"
-                >
-                  {prompt}
-                </Button>
-              ))}
+              <div className="grid grid-cols-1 gap-2">
+                {quickPrompts.map((prompt, index) => (
+                  <Button
+                    key={`desktop-prompt-${index}`}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setInputMessage(prompt)}
+                    className="text-xs h-auto py-2 px-3 text-left justify-start hover:bg-primary/5 border-primary/30"
+                  >
+                    {prompt}
+                  </Button>
+                ))}
             </div>
           </div>
         )}
