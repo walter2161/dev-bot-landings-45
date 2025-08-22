@@ -450,538 +450,254 @@ export class HtmlAgent {
   }
 
   private generateChatWidget(businessData: BusinessContent): string {
-    return `<!-- Chat Widget Sellerbot com IA -->
-    <div id="chatWidget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <!-- Botão do Chat -->
-        <div id="chatButton" onclick="toggleChat()" style="
-            width: 65px; height: 65px; 
-            background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); 
-            border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; color: white; font-size: 28px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 3px solid rgba(255,255,255,0.2);
-            position: relative;
-            overflow: hidden;
-        ">
-            <span style="position: relative; z-index: 2;">🤖</span>
-            <div style="
-                position: absolute; top: -2px; right: -2px;
-                width: 18px; height: 18px;
-                background: #00ff88;
-                border-radius: 50%;
-                border: 2px solid white;
-                animation: pulse 2s infinite;
-            "></div>
-        </div>
-        
-        <!-- Caixa do Chat -->
-        <div id="chatBox" class="chatBox">
-            <!-- Header do Chat -->
-            <div style="
-                background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); 
-                color: white; padding: 20px; 
-                position: relative;
-                overflow: hidden;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            ">
-                <div style="position: relative; z-index: 2;">
-                    <div style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">
-                        🤖 ${businessData.sellerbot.name}
-                    </div>
-                    <div style="font-size: 12px; opacity: 0.9;">
-                        Assistente IA • Online agora
-                    </div>
-                </div>
-                <span id="chatClose" style="
-                    position: absolute; top: 15px; right: 15px;
-                    cursor: pointer; font-size: 24px; 
-                    width: 30px; height: 30px;
-                    display: flex; align-items: center; justify-content: center;
-                    border-radius: 50%; 
-                    transition: background 0.2s ease;
-                    z-index: 3;
-                " onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">×</span>
-            </div>
-            
-            <!-- Área de Mensagens -->
-            <div id="chatMessages" style="
-                flex: 1; padding: 20px; overflow-y: auto; 
-                background: #f8f9fa;
-                min-height: 350px;
-                scroll-behavior: smooth;
-            "></div>
-            
-            <!-- Indicador de Digitação -->
-            <div id="typingIndicator" style="
-                display: none; padding: 10px 20px;
-                background: #f8f9fa;
-                border-top: 1px solid #eee;
-            ">
-                <div style="
-                    display: flex; align-items: center;
-                    color: #666; font-size: 14px;
-                ">
-                    <div style="
-                        display: flex; gap: 3px; margin-right: 8px;
-                    ">
-                        <div style="width: 8px; height: 8px; background: #666; border-radius: 50%; animation: typing 1.5s infinite;"></div>
-                        <div style="width: 8px; height: 8px; background: #666; border-radius: 50%; animation: typing 1.5s infinite 0.2s;"></div>
-                        <div style="width: 8px; height: 8px; background: #666; border-radius: 50%; animation: typing 1.5s infinite 0.4s;"></div>
-                    </div>
-                    ${businessData.sellerbot.name} está digitando...
-                </div>
-            </div>
-            
-            <!-- Área de Input -->
-            <div style="
-                padding: 20px; 
-                background: white;
-                border-top: 1px solid #eee;
-            ">
-                <div style="
-                    display: flex; gap: 10px;
-                    align-items: center;
-                ">
-                    <input type="text" id="chatInput" placeholder="Digite sua mensagem..." 
-                           style="
-                               flex: 1; padding: 12px 16px; 
-                               border: 2px solid #e0e0e0; 
-                               border-radius: 25px; outline: none;
-                               font-size: 14px;
-                               transition: border-color 0.2s ease;
-                           ">
-                    <button id="sendButton" style="
-                        width: 45px; height: 45px;
-                        background: ${businessData.colors.primary};
-                        border: none; border-radius: 50%;
-                        color: white; cursor: pointer;
-                        display: flex; align-items: center; justify-content: center;
-                        transition: all 0.2s ease;
-                        font-size: 18px;
-                    ">▶</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    return `<!-- CSS do Chatbot -->
     <style>
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
         }
-        
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary});
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
-        
-        .chatBox {
-            width: 380px; 
-            height: 520px; 
-            background: white; 
-            border-radius: 20px; 
-            display: none; 
-            flex-direction: column; 
-            position: absolute; 
-            bottom: 80px; 
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+        }
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
             right: 0;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
-            border: 1px solid rgba(0,0,0,0.1);
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
             overflow: hidden;
         }
-        
-        #chatInput:focus {
-            border-color: ${businessData.colors.primary} !important;
+        .chatbot-header {
+            background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary});
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
         }
-        
-        #sendButton:hover {
-            transform: scale(1.1);
-            background: ${businessData.colors.secondary} !important;
+        .chatbot-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
         }
-        
-        #chatButton:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        .chatbot-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
         }
-        
-        @media (max-width: 480px) {
-            .chatBox {
-                width: 320px !important;
-                right: -10px !important;
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .message.bot {
+            background: #e3f2fd;
+            color: #1976d2;
+            margin-right: auto;
+        }
+        .message.user {
+            background: ${businessData.colors.primary};
+            color: white;
+            margin-left: auto;
+        }
+        .chatbot-input-area {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background: white;
+        }
+        .chatbot-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        .chatbot-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 10px 15px;
+            outline: none;
+        }
+        .chatbot-send {
+            background: ${businessData.colors.primary};
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @media (max-width: 768px) {
+            .chatbot-window {
+                width: 300px;
+                height: 400px;
             }
         }
-    </style>`;
+    </style>
+
+    <!-- HTML do Chatbot -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" onclick="toggleChatbot()">
+            🤖
+        </button>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <button class="chatbot-close" onclick="toggleChatbot()">&times;</button>
+                <h6 style="margin: 0 0 5px 0;">${businessData.sellerbot.name}</h6>
+                <small>Como posso ajudar você?</small>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot">
+                    Olá! Sou ${businessData.sellerbot.name} da ${businessData.title}. ${businessData.sellerbot.responses.greeting.replace(/'/g, "\\'")}
+                </div>
+            </div>
+            <div class="chatbot-input-area">
+                <div class="chatbot-input-container">
+                    <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Digite sua mensagem...">
+                    <button class="chatbot-send" onclick="sendMessage()">
+                        ▶
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>`;
   }
 
   private generateJavaScript(businessData: BusinessContent): string {
     return `<script>
-        // Estado global do chat
-        let chatOpen = false;
-        let chatHistory = [];
-        let isWaitingResponse = false;
-        
-        // Função para toggle do menu mobile
-        function toggleMenu() {
-            const navMenu = document.getElementById('navMenu');
-            if (navMenu) {
-                navMenu.classList.toggle('active');
+        let chatbotOpen = false;
+
+        const chatbotData = {
+            name: '${businessData.sellerbot.name}',
+            personality: '${businessData.sellerbot.personality}',
+            instructions: 'Você é o assistente virtual da ${businessData.title}. Seja cordial e ajude os clientes com informações sobre nossos serviços.',
+            whatsapp: '${businessData.contact.phone}',
+            businessHours: 'Segunda à Sexta: 9h às 18h',
+            specialOffers: '',
+            companyName: '${businessData.title}',
+            services: '${businessData.sellerbot.responses.services}',
+            targetAudience: '${businessData.subtitle}'
+        };
+
+        function toggleChatbot() {
+            const window = document.getElementById('chatbotWindow');
+            chatbotOpen = !chatbotOpen;
+            window.style.display = chatbotOpen ? 'flex' : 'none';
+
+            if (chatbotOpen) {
+                document.getElementById('chatbotInput').focus();
             }
         }
-        
-        // Função para abrir/fechar chat
-        function toggleChat() {
-            try {
-                const chatBox = document.getElementById('chatBox');
-                const chatButton = document.getElementById('chatButton');
-                
-                if (!chatBox || !chatButton) {
-                    console.error('Elementos do chat não encontrados');
-                    return;
-                }
-                
-                chatOpen = !chatOpen;
-                console.log('Chat toggle:', chatOpen);
-                console.log('ChatBox element:', chatBox);
-                
-                if (chatOpen) {
-                    chatBox.style.display = 'flex';
-                    console.log('Mostrando chat box');
-                } else {
-                    chatBox.style.display = 'none';
-                    console.log('Escondendo chat box');
-                }
-                
-                // Primeira mensagem de boas-vindas
-                if (chatOpen && chatHistory.length === 0) {
-                    addMessage('bot', '${businessData.sellerbot.responses.greeting.replace(/'/g, "\\'")}', false);
-                }
-                
-                // Focar no input quando abrir
-                if (chatOpen) {
-                    setTimeout(() => {
-                        const chatInput = document.getElementById('chatInput');
-                        if (chatInput) chatInput.focus();
-                    }, 100);
-                }
-            } catch (error) {
-                console.error('Erro ao abrir chat:', error);
-            }
-        }
-        
-        // Função para fechar chat
-        function closeChat() {
-            try {
-                const chatBox = document.getElementById('chatBox');
-                if (chatBox) {
-                    chatOpen = false;
-                    chatBox.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Erro ao fechar chat:', error);
-            }
-        }
-        
-        // Função para adicionar mensagem ao chat
-        function addMessage(sender, message, saveToHistory = true) {
-            try {
-                const messagesDiv = document.getElementById('chatMessages');
-                if (!messagesDiv) return null;
-                
-                const messageDiv = document.createElement('div');
-                const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                messageDiv.id = messageId;
-                
-                const isBot = sender === 'bot';
-                const timestamp = new Date().toLocaleTimeString('pt-BR', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
-                
-                messageDiv.style.cssText = \`
-                    margin-bottom: 15px; 
-                    display: flex; 
-                    \${isBot ? 'justify-content: flex-start;' : 'justify-content: flex-end;'}
-                \`;
-                
-                messageDiv.innerHTML = \`
-                    <div style="
-                        max-width: 80%; 
-                        padding: 12px 16px; 
-                        border-radius: 18px; 
-                        \${isBot 
-                            ? 'background: white; color: #333; border: 1px solid #e0e0e0; border-bottom-left-radius: 6px;' 
-                            : 'background: ${businessData.colors.primary}; color: white; border-bottom-right-radius: 6px;'
-                        }
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                        position: relative;
-                        word-wrap: break-word;
-                        line-height: 1.4;
-                    ">
-                        <div style="font-size: 14px; white-space: pre-wrap;">\${message}</div>
-                        <div style="
-                            font-size: 11px; 
-                            opacity: 0.7; 
-                            margin-top: 4px;
-                            text-align: right;
-                        ">\${timestamp}</div>
-                    </div>
-                \`;
-                
-                messagesDiv.appendChild(messageDiv);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                
-                // Salvar no histórico
-                if (saveToHistory) {
-                    chatHistory.push({
-                        id: messageId,
-                        sender: sender,
-                        message: message,
-                        timestamp: new Date()
-                    });
-                    
-                    // Limitar histórico a 50 mensagens
-                    if (chatHistory.length > 50) {
-                        chatHistory = chatHistory.slice(-50);
-                    }
-                }
-                
-                return messageId;
-            } catch (error) {
-                console.error('Erro ao adicionar mensagem:', error);
-                return null;
-            }
-        }
-        
-        // Função para remover mensagem
-        function removeMessage(messageId) {
-            try {
-                const messageElement = document.getElementById(messageId);
-                if (messageElement) {
-                    messageElement.remove();
-                }
-                
-                // Remover do histórico também
-                chatHistory = chatHistory.filter(msg => msg.id !== messageId);
-            } catch (error) {
-                console.error('Erro ao remover mensagem:', error);
-            }
-        }
-        
-        // Função para mostrar indicador de digitação
-        function showTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) {
-                indicator.style.display = 'block';
-            }
-        }
-        
-        // Função para esconder indicador de digitação
-        function hideTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) {
-                indicator.style.display = 'none';
-            }
-        }
-        
-        // Função para enviar mensagem
+
         function sendMessage() {
-            try {
-                const chatInput = document.getElementById('chatInput');
-                if (!chatInput || isWaitingResponse) return;
-                
-                const message = chatInput.value.trim();
-                if (!message) return;
-                
-                // Adicionar mensagem do usuário
-                addMessage('user', message);
-                chatInput.value = '';
-                
-                // Gerar resposta IA
-                generateAIResponse(message);
-            } catch (error) {
-                console.error('Erro ao enviar mensagem:', error);
-            }
+            const input = document.getElementById('chatbotInput');
+            const messages = document.getElementById('chatbotMessages');
+            const userMessage = input.value.trim();
+
+            if (!userMessage) return;
+
+            // Add user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user';
+            userDiv.textContent = userMessage;
+            messages.appendChild(userDiv);
+
+            // Clear input
+            input.value = '';
+
+            // Generate bot response
+            setTimeout(() => {
+                const botResponse = generateBotResponse(userMessage);
+                const botDiv = document.createElement('div');
+                botDiv.className = 'message bot';
+                botDiv.innerHTML = botResponse;
+                messages.appendChild(botDiv);
+                messages.scrollTop = messages.scrollHeight;
+            }, 1000);
+
+            messages.scrollTop = messages.scrollHeight;
         }
-        
-        // Aguardar DOM carregar completamente
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                // Event listener para o botão do chat
-                const chatButton = document.getElementById('chatButton');
-                if (chatButton) {
-                    chatButton.addEventListener('click', toggleChat);
+
+        function generateBotResponse(userMessage) {
+            const msg = userMessage.toLowerCase();
+
+            // Respostas específicas baseadas na configuração da empresa
+            if (msg.includes('horário') || msg.includes('funcionamento')) {
+                return \`📅 Nosso horário de funcionamento: \${chatbotData.businessHours}\`;
+            }
+
+            if (msg.includes('serviço') || msg.includes('produto')) {
+                return \`📋 Oferecemos: \${chatbotData.services}. Qual serviço específico você gostaria de saber mais?\`;
+            }
+
+            if (msg.includes('preço') || msg.includes('valor') || msg.includes('orçamento')) {
+                let response = '💰 ${businessData.sellerbot.responses.pricing}';
+                if (chatbotData.specialOffers) {
+                    response += \` \${chatbotData.specialOffers}\`;
                 }
-                
-                // Event listener para fechar o chat
-                const chatClose = document.getElementById('chatClose');
-                if (chatClose) {
-                    chatClose.addEventListener('click', closeChat);
+                if (chatbotData.whatsapp) {
+                    response += \` Ou fale diretamente no WhatsApp: \${chatbotData.whatsapp}\`;
                 }
-                
-                // Event listener para o input do chat (Enter)
-                const chatInput = document.getElementById('chatInput');
-                if (chatInput) {
-                    chatInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            sendMessage();
-                        }
-                    });
-                    
-                    // Estilo focus/blur
-                    chatInput.addEventListener('focus', function() {
-                        this.style.borderColor = '${businessData.colors.primary}';
-                    });
-                    
-                    chatInput.addEventListener('blur', function() {
-                        this.style.borderColor = '#e0e0e0';
-                    });
+                return response;
+            }
+
+            if (msg.includes('contato') || msg.includes('telefone') || msg.includes('whatsapp')) {
+                if (chatbotData.whatsapp) {
+                    return \`📱 Você pode entrar em contato conosco pelo WhatsApp: \${chatbotData.whatsapp} ou pelo formulário de contato no site.\`;
                 }
-                
-                // Event listener para o botão de enviar
-                const sendButton = document.getElementById('sendButton');
-                if (sendButton) {
-                    sendButton.addEventListener('click', sendMessage);
-                }
-                
-                console.log('💬 Chat Sellerbot IA inicializado com sucesso!');
-            } catch (error) {
-                console.error('Erro ao inicializar chat:', error);
+                return '📱 Entre em contato conosco pelo formulário no site ou pelos dados de contato disponíveis.';
+            }
+
+            if (msg.includes('localização') || msg.includes('endereço') || msg.includes('onde')) {
+                return '📍 Nossa localização: ${businessData.contact.address}. Como posso ajudar com mais informações?';
+            }
+
+            // Respostas genéricas baseadas na personalidade
+            const responses = [
+                \`Obrigado por entrar em contato com a \${chatbotData.companyName}! Como posso ajudar você hoje?\`,
+                \`Fico feliz em ajudar! Conte-me mais sobre o que você precisa.\`,
+                \`Perfeito! Vou te ajudar com isso. \${chatbotData.instructions}\`,
+                \`Excelente pergunta! Para melhor atendê-lo, você pode me dar mais detalhes?\`
+            ];
+
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        // Permitir que a tecla Enter envie a mensagem
+        document.getElementById('chatbotInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
             }
         });
-        
-        // Função para gerar resposta IA
-        async function generateAIResponse(userMessage) {
-            if (isWaitingResponse) return;
-            
-            try {
-                isWaitingResponse = true;
-                showTypingIndicator();
-                
-                // Simular delay de digitação mais realista
-                await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-                
-                let aiResponse = '';
-                
-                // Tentar comunicar com o app principal via postMessage (quando no preview)
-                if (window.parent !== window) {
-                    try {
-                        window.parent.postMessage({
-                            type: 'SELLERBOT_CHAT',
-                            message: userMessage,
-                            chatHistory: chatHistory.slice(-6), // Enviar histórico recente
-                            businessData: {
-                                sellerbot: ${JSON.stringify(businessData.sellerbot)},
-                                title: '${businessData.title}',
-                                subtitle: '${businessData.subtitle}',
-                                heroText: '${businessData.heroText}',
-                                contact: ${JSON.stringify(businessData.contact)},
-                                colors: ${JSON.stringify(businessData.colors)}
-                            }
-                        }, '*');
-                        
-                        // Aguardar resposta com timeout
-                        aiResponse = await new Promise((resolve) => {
-                            const handler = (event) => {
-                                if (event.data.type === 'SELLERBOT_RESPONSE') {
-                                    window.removeEventListener('message', handler);
-                                    resolve(event.data.response);
-                                }
-                            };
-                            window.addEventListener('message', handler);
-                            
-                            // Timeout de 15s
-                            setTimeout(() => {
-                                window.removeEventListener('message', handler);
-                                resolve('');
-                            }, 15000);
-                        });
-                    } catch (error) {
-                        console.warn('Erro na comunicação postMessage:', error);
-                        aiResponse = '';
-                    }
-                }
-                
-                // Fallback: usar resposta inteligente local
-                if (!aiResponse) {
-                    aiResponse = getSmartResponse(userMessage);
-                }
-                
-                hideTypingIndicator();
-                addMessage('bot', aiResponse);
-                
-            } catch (error) {
-                console.error('Erro ao gerar resposta IA:', error);
-                hideTypingIndicator();
-                addMessage('bot', getSmartResponse(userMessage));
-            } finally {
-                isWaitingResponse = false;
-            }
-        }
-        
-        // Função para respostas inteligentes locais (fallback)
-        function getSmartResponse(message) {
-            const lowerMessage = message.toLowerCase();
-            
-            // Saudações
-            if (lowerMessage.includes('olá') || lowerMessage.includes('oi') || lowerMessage.includes('bom dia') || lowerMessage.includes('boa tarde') || lowerMessage.includes('boa noite')) {
-                return \`👋 ${businessData.sellerbot.responses.greeting}\n\nComo posso ajudar você hoje?\`;
-            }
-            
-            // Preços e valores
-            if (lowerMessage.includes('preço') || lowerMessage.includes('valor') || lowerMessage.includes('custo') || lowerMessage.includes('quanto')) {
-                return \`💰 ${businessData.sellerbot.responses.pricing}\n\nPara informações mais detalhadas sobre valores, entre em contato: ${businessData.contact.phone}\`;
-            }
-            
-            // Serviços e produtos
-            if (lowerMessage.includes('serviço') || lowerMessage.includes('produto') || lowerMessage.includes('trabalho') || lowerMessage.includes('oferece')) {
-                return \`🛍️ ${businessData.sellerbot.responses.services}\n\n${businessData.heroText}\n\nQue tal agendar uma conversa para saber mais?\`;
-            }
-            
-            // Agendamentos
-            if (lowerMessage.includes('agendar') || lowerMessage.includes('marcar') || lowerMessage.includes('horário') || lowerMessage.includes('consulta')) {
-                const contactInfo = businessData.contact.whatsapp ? '📱 ' + businessData.contact.whatsapp : '📞 ' + businessData.contact.phone;
-                return \`📅 ${businessData.sellerbot.responses.appointment}\n\nContato direto: \` + contactInfo;
-            }
-            
-            // Contatos
-            if (lowerMessage.includes('contato') || lowerMessage.includes('telefone') || lowerMessage.includes('whats') || lowerMessage.includes('falar')) {
-                const whatsappInfo = businessData.contact.whatsapp ? '\n💬 WhatsApp: ' + businessData.contact.whatsapp : '';
-                return \`📞 Entre em contato conosco através dos seguintes canais:\n\n📧 Email: ${businessData.contact.email}\n📱 Telefone: ${businessData.contact.phone}\n📍 Endereço: ${businessData.contact.address}\` + whatsappInfo + \`\n\nEstamos sempre prontos para atender você!\`;
-            }
-            
-            // Localização
-            if (lowerMessage.includes('localização') || lowerMessage.includes('endereço') || lowerMessage.includes('onde') || lowerMessage.includes('local')) {
-                const locationContact = businessData.contact.whatsapp ? '📱 WhatsApp: ' + businessData.contact.whatsapp : '📞 Telefone: ' + businessData.contact.phone;
-                return \`📍 Estamos localizados em:\n${businessData.contact.address}\n\n\` + locationContact + \`\n\nVenha nos visitar!\`;
-            }
-            
-            // Ajuda e informações gerais
-            if (lowerMessage.includes('ajuda') || lowerMessage.includes('ajudar') || lowerMessage.includes('informação') || lowerMessage.includes('dúvida')) {
-                return \`🤝 Claro! Estou aqui para ajudar com informações sobre ${businessData.title}.\n\nPosso ajudar você com:\n🛍️ Nossos serviços\n💰 Preços e condições\n📅 Agendamentos\n📞 Contatos\n📍 Localização\n\nO que gostaria de saber?\`;
-            }
-            
-            // Despedidas
-            if (lowerMessage.includes('tchau') || lowerMessage.includes('obrigado') || lowerMessage.includes('obrigada') || lowerMessage.includes('valeu')) {
-                const farewellContact = businessData.contact.whatsapp ? '📱 WhatsApp: ' + businessData.contact.whatsapp : '📞 Telefone: ' + businessData.contact.phone;
-                return \`😊 Foi um prazer ajudar você!\n\nSe precisar de mais alguma coisa, estarei sempre aqui. Até logo!\n\n\` + farewellContact;
-            }
-            
-            // Resposta padrão inteligente
-            const defaultResponses = [
-                \`👋 Olá! Sou o ${businessData.sellerbot.name} da ${businessData.title}.\n\nComo posso ajudar você hoje? Posso falar sobre nossos serviços, preços, agendar horários ou tirar qualquer dúvida!\`,
-                \`😊 Oi! Que bom ter você aqui!\n\nSou especialista em ${businessData.title} e posso ajudar com informações, agendamentos e muito mais. O que gostaria de saber?\`,
-                \`🤖 Olá! Sou seu assistente virtual da ${businessData.title}.\n\nEstou aqui para ajudar com tudo que você precisar. Pode me perguntar sobre serviços, preços, horários... enfim, qualquer coisa!\`
-            ];
-            
-            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
-        }
-        
+
         // Modal de imagens
         function openImageModal(imageSrc, caption) {
             const modal = document.getElementById('imageModal');
@@ -1003,6 +719,14 @@ export class HtmlAgent {
                 closeImageModal();
             }
         });
+
+        // Função para toggle do menu mobile
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            if (navMenu) {
+                navMenu.classList.toggle('active');
+            }
+        }
         
         // Smooth scroll para navegação
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
