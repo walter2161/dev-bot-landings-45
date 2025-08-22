@@ -844,12 +844,15 @@ INFORMAÇÕES DO NEGÓCIO:
 - Email: \${businessData.contact.email}
 - WhatsApp: \${businessData.contact.socialMedia?.whatsapp || 'Não informado'}
 
-INSTRUÇÕES CRÍTICAS:
-- Responda APENAS sobre o negócio específico: \${businessData.title}
-- Use as informações de contato quando relevante
-- Mantenha o foco nos produtos/serviços do negócio
-- Seja natural e útil, evite respostas robóticas
-- Máximo 250 caracteres para manter fluidez
+INSTRUÇÕES CRÍTICAS - RESPONDA DE FORMA DIRETA E OBJETIVA:
+- Responda APENAS o que foi perguntado, sem informações extras
+- Se perguntarem preço: dê apenas o valor ou faixa de preço
+- Se perguntarem horário: dê apenas o horário
+- Se perguntarem contato: dê apenas o contato solicitado
+- Se perguntarem localização: dê apenas o endereço
+- NUNCA adicione ofertas, promoções ou informações não solicitadas
+- Máximo 50 palavras por resposta
+- Seja direto e preciso, sem enrolação
 
 Mensagem do cliente: "\${message}"\`
                         }],
