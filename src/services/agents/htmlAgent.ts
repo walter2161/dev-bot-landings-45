@@ -658,7 +658,7 @@ export class HtmlAgent {
                 
                 // Primeira mensagem de boas-vindas
                 if (chatOpen && chatHistory.length === 0) {
-                    addMessage('bot', '${businessData.sellerbot.responses.greeting}', false);
+                    addMessage('bot', ${JSON.stringify(businessData.sellerbot.responses.greeting)}, false);
                 }
                 
                 // Focar no input quando abrir
