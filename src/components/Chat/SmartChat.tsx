@@ -264,15 +264,11 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
   };
 
   const quickPrompts = [
-    "Petshop com promoção banho e tosa",
-    "Restaurante de comida caseira",
-    "Academia de musculação",
-    "Salão de beleza feminino",
-    "Loja de roupas jovens",
-    "Clínica veterinária",
-    "Corretor de imóveis especialista",
-    "Lançamento imobiliário - luxo",
-    "Loja de roupas femininas jovem"
+    "Empresa de drones para eventos e inspeções",
+    "Estúdio de tatuagem artística especializado",
+    "Loja de produtos veganos orgânicos",
+    "Escola de dança urbana e street dance",
+    "Consultoria em sustentabilidade empresarial"
   ];
 
   if (isIntegrated) {
@@ -467,7 +463,7 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ex: Petshop com promoção..."
+            placeholder="Ex: Estúdio de tatuagem..."
             disabled={isGenerating}
             className="flex-1 bg-muted/30 text-foreground placeholder:text-muted-foreground border-primary/30 focus:border-primary focus:text-foreground"
           />
