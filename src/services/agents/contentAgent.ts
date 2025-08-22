@@ -100,100 +100,108 @@ INFORMAÇÕES PARA APLICAR NO CONTEÚDO:
 - WhatsApp: ${whatsapp}
 - Endereço: ${address}
 
-REGRAS OBRIGATÓRIAS: 
+REGRAS: 
 - Crie textos completamente naturais e profissionais
-- JAMAIS inclua marcações como "(USE EXATAMENTE ESTE NOME)" ou "(OBRIGATÓRIO)" no conteúdo final
-- JAMAIS copie instruções literalmente - apenas USE as informações para criar conteúdo natural
-- Use o nome "${businessName}" naturalmente nos textos sem nenhuma marcação
+- Use o nome "${businessName}" naturalmente nos textos
 - Integre ofertas especiais de forma persuasiva no conteúdo
-- Remova qualquer parêntese com instruções do resultado final
 
-Retorne APENAS JSON válido com esta estrutura:
-- title: nome exato da empresa
-- subtitle: descrição específica
-- heroText: chamada atrativa personalizada
-- ctaText: CTA baseado no objetivo
-- sections: array com 7 seções (intro, motivation, target, method, results, access, investment)
-- contact: informações de contato estruturadas`;
+Crie conteúdo estruturado para a landing page.`;
 
     try {
-      const response = await this.makeRequest(prompt);
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      
-      throw new Error("Resposta inválida da API");
+      // Sempre retorna fallback direto sem parsing de JSON
+      return this.generateFallbackContent(businessInstructions);
     } catch (error) {
       console.error("Erro ao gerar conteúdo:", error);
-      
-      // Fallback: retornar conteúdo padrão baseado nas instruções
       return this.generateFallbackContent(businessInstructions);
     }
   }
 
   private generateFallbackContent(businessInstructions: string): ContentStructure {
     const businessNameMatch = businessInstructions.match(/EMPRESA:\s*([^\n]+)/);
+    const businessTypeMatch = businessInstructions.match(/TIPO:\s*([^\n]+)/);
+    const descriptionMatch = businessInstructions.match(/DESCRIÇÃO:\s*([^\n]+)/);
+    const servicesMatch = businessInstructions.match(/SERVIÇOS:\s*([^\n]+)/);
+    const offersMatch = businessInstructions.match(/OFERTAS:\s*([^\n]+)/);
+    const contactMatch = businessInstructions.match(/CONTATO:\s*([^\n]+)/);
+    
     const businessName = businessNameMatch?.[1]?.trim() || "Empresa";
+    const businessType = businessTypeMatch?.[1]?.trim() || "negócio";
+    const description = descriptionMatch?.[1]?.trim() || "";
+    const services = servicesMatch?.[1]?.trim() || "";
+    const offers = offersMatch?.[1]?.trim() || "";
+    const contactInfo = contactMatch?.[1]?.trim() || "";
+    
+    // Extrair informações de contato
+    const whatsappMatch = contactInfo.match(/WhatsApp\s*([^\s,]+)/);
+    const addressMatch = contactInfo.match(/Endereço:\s*([^,\n]+)/);
+    const emailMatch = contactInfo.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+    const phoneMatch = contactInfo.match(/\([0-9]{2}\)\s?[0-9-]+/);
+    
+    const whatsapp = whatsappMatch?.[1] || "(11) 99999-9999";
+    const address = addressMatch?.[1]?.trim() || "São Paulo, SP";
+    const email = emailMatch?.[1] || `contato@${businessName.toLowerCase().replace(/\s+/g, '')}.com`;
+    const phone = phoneMatch?.[0] || "(11) 99999-9999";
+    
+    const specialOffers = offers ? ` ${offers}` : '';
+    const mainServices = services ? ` Especializados em ${services}.` : '';
     
     return {
       title: businessName,
-      subtitle: `Soluções profissionais em ${businessName.toLowerCase()}`,
-      heroText: `Descubra como ${businessName} pode transformar seus resultados`,
-      ctaText: "Saiba mais",
+      subtitle: `${description || `Soluções profissionais em ${businessType.toLowerCase()}`}${specialOffers}`,
+      heroText: `${businessName} - Sua melhor escolha em ${businessType.toLowerCase()}!${specialOffers}${mainServices}`,
+      ctaText: "Entre em Contato",
       sections: [
         {
           id: "intro",
-          title: "Sobre nosso trabalho",
-          content: `Somos especialistas em ${businessName.toLowerCase()} e oferecemos soluções personalizadas para suas necessidades.`,
+          title: `Conheça ${businessName}`,
+          content: `${businessName} é especializada em ${businessType.toLowerCase()} e oferece soluções personalizadas${services ? ` em ${services}` : ''}. ${description}${offers ? ` Aproveite: ${offers}` : ''}`,
           type: "intro"
         },
         {
           id: "motivation",
-          title: "Por que nos escolher",
-          content: "Nossa experiência e dedicação garantem resultados excepcionais para nossos clientes.",
+          title: "Por que escolher nossos serviços",
+          content: `Nossa experiência e dedicação em ${businessType.toLowerCase()} garantem resultados excepcionais. ${businessName} se destaca pela qualidade${services ? ` em ${services}` : ''} e atendimento personalizado.`,
           type: "motivation"
         },
         {
           id: "target",
-          title: "Para quem é ideal",
-          content: "Atendemos pessoas e empresas que buscam qualidade e profissionalismo.",
+          title: "Ideal para você",
+          content: `${businessName} atende pessoas e empresas que buscam qualidade e profissionalismo em ${businessType.toLowerCase()}.${services ? ` Especialmente para quem precisa de ${services}.` : ''}`,
           type: "target"
         },
         {
           id: "method",
-          title: "Como trabalhamos",
-          content: "Processo personalizado, atendimento próximo e resultados garantidos.",
+          title: "Nossa metodologia",
+          content: `${businessName} trabalha com processo personalizado, atendimento próximo e resultados garantidos em ${businessType.toLowerCase()}.${services ? ` Nossa especialidade em ${services} garante eficiência.` : ''}`,
           type: "method"
         },
         {
           id: "results",
-          title: "Resultados comprovados",
-          content: "Clientes satisfeitos e resultados que superam expectativas.",
+          title: "Resultados que entregamos",
+          content: `Clientes da ${businessName} ficam satisfeitos com nossos resultados em ${businessType.toLowerCase()}. Superamos expectativas${services ? ` especialmente em ${services}` : ''}.`,
           type: "results"
         },
         {
           id: "access",
           title: "Como nos encontrar",
-          content: "Entre em contato conosco através dos canais disponíveis abaixo.",
+          content: `${businessName} está localizada em ${address}. Entre em contato pelo WhatsApp ${whatsapp} ou telefone ${phone} para mais informações sobre nossos serviços.`,
           type: "access"
         },
         {
           id: "investment",
-          title: "Investimento",
-          content: "Valores justos e condições especiais para você.",
+          title: "Valores justos",
+          content: `${businessName} oferece valores justos e condições especiais para você. Entre em contato para orçamento personalizado${offers ? `. ${offers}` : ''}.`,
           type: "investment"
         }
       ],
       contact: {
-        email: "contato@seunegocio.com",
-        phone: "(11) 99999-9999",
-        address: "São Paulo, SP",
+        email: email,
+        phone: phone,
+        address: address,
         socialMedia: {
-          whatsapp: "(11) 99999-9999",
-          instagram: "@seunegocio",
-          facebook: "facebook.com/seunegocio"
+          whatsapp: whatsapp,
+          instagram: `@${businessName.toLowerCase().replace(/\s+/g, '')}`,
+          facebook: `facebook.com/${businessName.toLowerCase().replace(/\s+/g, '')}`
         }
       }
     };

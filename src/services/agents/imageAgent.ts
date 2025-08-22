@@ -54,58 +54,40 @@ export class ImageAgent {
     const businessType = businessTypeMatch?.[1]?.trim() || "negócio";
     const services = servicesMatch?.[1]?.trim() || "";
 
-    const prompt = `Baseando-se nas instruções: "${businessInstructions}"
+    const prompt = `Crie prompts de imagem específicos para ${businessName} que atua em ${businessType}.
 
-Crie prompts de imagem ESPECÍFICOS para ${businessName} (${businessType}).
+Cada imagem deve ser específica para este negócio, evitando imagens corporativas genéricas.
 
-CRÍTICO: Cada prompt deve ser ESPECÍFICO para este tipo de negócio. EVITE imagens corporativas genéricas.
+Serviços oferecidos: ${services}
+Tipo de logo: ${hasCustomLogo ? 'personalizado fornecido pelo cliente' : 'moderno e profissional'}
 
-${hasCustomLogo ? `LOGO: Logo personalizado da empresa ${businessName} (fornecido pelo cliente)` : `LOGO: Logo profissional moderno para ${businessName} - ${businessType}`}
-
-Return ONLY JSON:
-{
-  "logo": "${hasCustomLogo ? `Logo personalizado da empresa ${businessName} (fornecido pelo cliente)` : `Logo profissional moderno para ${businessName} - ${businessType}`}",
-  "hero": "Foto profissional de alta qualidade específica para ${businessType}, ambiente real, ${services ? 'mostrando ' + services : 'pessoas trabalhando'}",
-  "motivation": "Imagem inspiradora dos benefícios específicos de ${businessType}, resultados reais alcançados",
-  "target": "Foto do público-alvo específico de ${businessType}, pessoas reais em contexto apropriado",
-  "method": "Imagem detalhada do processo específico de ${businessType}, mostrando profissionalismo",
-  "results": "Foto de resultados concretos de ${businessType}, antes e depois ou clientes satisfeitos",
-  "access": "Imagem de localização, escritório ou espaço específico de ${businessType}",
-  "investment": "Imagem relacionada a transparência de preços e valor de ${businessType}",
-  "gallery": "Galeria mostrando diferentes aspectos do trabalho de ${businessType}, variedade de situações reais"
-}`;
+Gere descrições adequadas para cada seção da landing page.`;
 
     try {
-      const response = await this.makeRequest(prompt);
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      
-      throw new Error("Resposta inválida da API de Imagens");
+      // Sempre retorna fallback direto sem parsing de JSON
+      return this.generateFallbackPrompts(businessInstructions, businessName, hasCustomLogo);
     } catch (error) {
       console.error("Erro ao gerar prompts de imagem:", error);
-      
-      // Fallback: retornar prompts padrão
-      return this.generateFallbackPrompts(businessInstructions, businessName);
+      return this.generateFallbackPrompts(businessInstructions, businessName, hasCustomLogo);
     }
   }
 
-  private generateFallbackPrompts(businessInstructions: string, businessName: string): ImagePrompts {
+  private generateFallbackPrompts(businessInstructions: string, businessName: string, hasCustomLogo?: boolean): ImagePrompts {
     const businessTypeMatch = businessInstructions.match(/TIPO:\s*([^\n]+)/);
+    const servicesMatch = businessInstructions.match(/SERVIÇOS:\s*([^\n]+)/);
     const businessType = businessTypeMatch?.[1]?.trim() || "negócio";
+    const services = servicesMatch?.[1]?.trim() || "";
     
     return {
-      logo: `Logo profissional para ${businessName}`,
-      hero: `Imagem profissional de ${businessType}`,
-      motivation: `Benefícios de ${businessType}`,
-      target: `Público-alvo de ${businessType}`,
-      method: `Processo de trabalho de ${businessType}`,
-      results: `Resultados de ${businessType}`,
-      access: `Localização de ${businessType}`,
-      investment: `Preços de ${businessType}`,
-      gallery: `Galeria de ${businessType}`
+      logo: hasCustomLogo ? `Logo personalizado da empresa ${businessName}` : `Logo profissional moderno para ${businessName} - ${businessType}`,
+      hero: `Foto profissional de alta qualidade de ${businessType}, ambiente real de trabalho${services ? ', mostrando ' + services : ''}`,
+      motivation: `Imagem inspiradora dos benefícios específicos de ${businessType}, resultados reais e transformações`,
+      target: `Foto do público-alvo específico de ${businessType}, pessoas reais em contexto adequado`,
+      method: `Imagem do processo de trabalho específico de ${businessType}, demonstrando profissionalismo e qualidade`,
+      results: `Foto de resultados concretos de ${businessType}, clientes satisfeitos ou antes e depois`,
+      access: `Imagem da localização, escritório ou espaço de atendimento de ${businessType}`,
+      investment: `Imagem relacionada a transparência de preços e valor agregado de ${businessType}`,
+      gallery: `Galeria diversificada mostrando diferentes aspectos do trabalho de ${businessType}, situações reais variadas`
     };
   }
 }

@@ -48,45 +48,20 @@ export class SEOAgent {
   }
 
   async generateSEO(businessType: string, title: string, content: any): Promise<SEOStructure> {
-    const prompt = `Crie SEO otimizado para: "${businessType} - ${title}"
+    const prompt = `Crie SEO otimizado para: "${title}" - ${businessType}
 
-Analise o conteúdo e crie um SEO completo focado em conversão e rankeamento:
+Informações do negócio:
+- Título: ${title}
+- Tipo: ${businessType}
+- Seções: ${content?.sections?.map(s => s.title).join(', ') || ''}
 
-Retorne APENAS JSON:
-{
-  "title": "Título SEO otimizado (max 60 caracteres) com palavra-chave principal",
-  "description": "Meta description persuasiva (max 160 caracteres) que gere cliques",
-  "keywords": "5-8 palavras-chave principais separadas por vírgula",
-  "canonicalUrl": "",
-  "ogTitle": "Título para redes sociais otimizado",
-  "ogDescription": "Descrição para redes sociais que gere engajamento",
-  "ogImage": "",
-  "twitterTitle": "Título específico para Twitter",
-  "twitterDescription": "Descrição específica para Twitter",
-  "twitterImage": "",
-  "structuredData": "JSON-LD schema.org para ${businessType} (LocalBusiness, Product ou Service)",
-  "customHeadTags": "Tags extras de SEO e conversão"
-}
-
-Foque em:
-- Palavras-chave de alta conversão
-- Call-to-actions nos titles e descriptions
-- Schema markup adequado ao tipo de negócio
-- Otimização para busca local se aplicável`;
+Gere título SEO, descrição, keywords e structured data apropriados.`;
 
     try {
-      const response = await this.makeRequest(prompt);
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      
-      throw new Error("Resposta inválida da API de SEO");
+      // Sempre retorna fallback direto sem parsing de JSON
+      return this.generateFallbackSEO(businessType, title);
     } catch (error) {
       console.error("Erro ao gerar SEO:", error);
-      
-      // Fallback: retornar SEO básico
       return this.generateFallbackSEO(businessType, title);
     }
   }

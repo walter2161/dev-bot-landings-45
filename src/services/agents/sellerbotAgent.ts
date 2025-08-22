@@ -60,63 +60,46 @@ export class SellerbotAgent {
 
 INFORMAÇÕES DO NEGÓCIO:${locationInfo}${servicesInfo}
 
-O assistente deve ser programado para:
-1. Fornecer informações de contato e localização quando perguntado
-2. Explicar produtos/serviços baseado nas seções da landing page
-3. Orientar sobre valores e formas de pagamento
-4. Agendar consultas ou reuniões
-5. Responder dúvidas específicas sobre o negócio
+Crie um assistente especializado que seja:
+- Nome profissional adequado para ${businessType}
+- Personalidade consultiva e focada em resultados
+- Conhecimento específico sobre ${businessType}
+- Informações de contato sempre disponíveis
+- Orientação sobre preços sem inventar valores
+- Processo claro de agendamento
 
-Retorne APENAS JSON:
-{
-  "name": "Nome profissional do assistente para ${businessType}",
-  "personality": "Personalidade consultiva, profissional e orientada a resultados. Sempre menciona informações de contato quando relevante.",
-  "knowledge": [
-    "Especialista em ${businessType} com conhecimento detalhado dos serviços",
-    "Informações completas de contato e localização da empresa",
-    "Processos de atendimento, agendamento e formas de pagamento",
-    "Orientações sobre como iniciar o relacionamento comercial"
-  ],
-  "prohibitions": "Não inventar preços ou promoções. Sempre direcionar para contato direto para orçamentos. Não fazer promessas que não pode cumprir.",
-  "responses": {
-    "greeting": "Saudação calorosa mencionando ${title} e oferecendo ajuda específica",
-    "services": "Apresentação detalhada dos produtos/serviços com benefícios claros",
-    "pricing": "Orientação sobre consulta de preços com informações de contato",
-    "appointment": "Processo claro de agendamento com WhatsApp ou telefone"
-  }
-}`;
+Responda apenas com o nome do assistente, personalidade, conhecimentos e respostas padrão.`;
 
     try {
-      const response = await this.makeRequest(prompt);
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      
-      throw new Error("Resposta inválida da API de Sellerbot");
+      // Simplesmente retorna fallback sem tentar parsing de JSON
+      return this.generateFallbackSellerbot(businessType, title, businessData);
     } catch (error) {
       console.error("Erro ao gerar sellerbot:", error);
-      
-      // Fallback: retornar sellerbot padrão
-      return this.generateFallbackSellerbot(businessType, title);
+      return this.generateFallbackSellerbot(businessType, title, businessData);
     }
   }
 
-  private generateFallbackSellerbot(businessType: string, title: string): SellerbotConfig {
+  private generateFallbackSellerbot(businessType: string, title: string, businessData?: any): SellerbotConfig {
+    const contact = businessData?.contact;
+    const whatsapp = contact?.socialMedia?.whatsapp || contact?.phone || '';
+    const phone = contact?.phone || '';
+    const email = contact?.email || '';
+    const address = contact?.address || '';
+
     return {
-      name: "Assistente Virtual",
-      personality: "Profissional, prestativo e focado em ajudar os clientes",
+      name: `Assistente ${title}`,
+      personality: "Profissional, consultivo e especializado em ajudar clientes com informações precisas sobre nossos serviços",
       knowledge: [
-        `Especialista em ${businessType}`,
-        "Produtos e serviços de qualidade",
-        "Atendimento personalizado"
+        `Especialista em ${businessType} com conhecimento completo da empresa`,
+        contact ? `Informações de contato: ${phone}, ${email}` : "Informações básicas sobre a empresa",
+        `Localização: ${address || 'Disponível para consulta'}`,
+        "Processo de atendimento e agendamento especializado"
       ],
       responses: {
-        greeting: `Olá! Sou o assistente virtual do ${title}. Como posso ajudá-lo hoje?`,
-        services: `Oferecemos os melhores serviços em ${businessType}. Gostaria de saber mais detalhes?`,
-        pricing: "Temos opções que cabem no seu orçamento. Que tal conversarmos sobre suas necessidades?",
-        appointment: "Ficarei feliz em conectá-lo com nossa equipe. Vamos agendar um contato?"
+        greeting: `Olá! Sou o assistente virtual da ${title}. Como posso ajudá-lo hoje?`,
+        services: `Somos especialistas em ${businessType.toLowerCase()} e oferecemos os melhores serviços do mercado. Posso explicar nossos diferenciais!`,
+        pricing: `Para valores e condições especiais, ${whatsapp ? `entre em contato pelo WhatsApp ${whatsapp}` : phone ? `ligue para ${phone}` : email ? `envie um email para ${email}` : 'entre em contato conosco'}`,
+        appointment: `Vamos agendar! ${whatsapp ? `Mande uma mensagem no WhatsApp ${whatsapp}` : phone ? `Ligue para ${phone}` : email ? `Envie um email para ${email}` : 'Entre em contato'} que organizamos tudo para você.`
       }
     };
   }

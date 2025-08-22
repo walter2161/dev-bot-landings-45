@@ -57,90 +57,30 @@ export class CopyAgent {
 
     const prompt = `Você é um copywriter especialista. Crie copy persuasivo e vendedor para a empresa "${businessName}" que atua em ${businessType}.
 
-INFORMAÇÕES PARA INTEGRAR NO COPY:
+INFORMAÇÕES IMPORTANTES:
 - Nome da Empresa: ${businessName}
 - Ofertas Especiais: ${offers}
 - Serviços/Produtos: ${services}  
 - Público-Alvo: ${target}
 
-IMPORTANTE:
-- Use o nome "${businessName}" naturalmente nos textos
-- Integre as ofertas especiais de forma persuasiva
-- NÃO copie informações literalmente
-- Crie textos longos, persuasivos e focados em vendas para cada seção:
-
-Retorne APENAS JSON:
-{
-  "heroText": "Texto principal impactante que gere desejo e urgência (3-4 linhas)",
-  "sections": {
-    "intro": {
-      "title": "Título impactante para apresentação",
-      "content": "Texto longo (150-200 palavras) que apresente a empresa, crie autoridade e desperte interesse. Use storytelling e benefícios emocionais.",
-      "cta": "Call-to-action específico"
-    },
-    "motivation": {
-      "title": "Título que destaque diferenciais únicos", 
-      "content": "Texto persuasivo (150-200 palavras) sobre por que escolher esta empresa. Foque em dores do cliente, soluções exclusivas e proof points.",
-      "cta": "Call-to-action motivacional"
-    },
-    "target": {
-      "title": "Título que conecte com o público-alvo",
-      "content": "Texto direcionado (150-200 palavras) que fale diretamente com o cliente ideal. Use linguagem específica do nicho e demonstre compreensão das necessidades.",
-      "cta": "Call-to-action segmentado"
-    },
-    "method": {
-      "title": "Título sobre metodologia/processo único",
-      "content": "Texto detalhado (150-200 palavras) explicando como funciona o serviço/produto. Destaque a simplicidade para o cliente e eficiência dos resultados.",
-      "cta": "Call-to-action sobre o processo"
-    },
-    "results": {
-      "title": "Título focado em resultados e transformação",
-      "content": "Texto poderoso (150-200 palavras) sobre os resultados que o cliente alcançará. Use números, transformações e benefícios tangíveis.",
-      "cta": "Call-to-action de resultado"
-    },
-    "access": {
-      "title": "Título sobre facilidade de acesso/contato",
-      "content": "Texto acolhedor (100-150 palavras) facilitando o primeiro contato. Remova objeções sobre localização, horário e acessibilidade.",
-      "cta": "Call-to-action de contato"
-    },
-    "investment": {
-      "title": "Título que posicione valor (não preço)",
-      "content": "Texto estratégico (150-200 palavras) sobre investimento e retorno. Justifique o valor, ofereça garantias e crie senso de urgência.",
-      "cta": "Call-to-action de fechamento"
-    }
-  }
-}
-
-Princípios do copy:
-- Foque em benefícios, não características
-- Use gatilhos mentais: escassez, autoridade, prova social
-- Linguagem emocional e persuasiva
-- Remova objeções antes que surjam  
-- Crie senso de urgência sutil
-- Use "você" para falar diretamente com o cliente
-- Inclua proof points e credibilidade
-- Finalize sempre com call-to-action claro`;
+Crie textos persuasivos e orientados para conversão, usando o nome da empresa naturalmente e integrando as ofertas especiais de forma convincente.`;
 
     try {
-      const response = await this.makeRequest(prompt);
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      
-      throw new Error("Resposta inválida da API de Copy");
+      // Sempre retorna fallback direto sem parsing de JSON
+      return this.generateFallbackCopy(businessName, businessType, offers, services, target);
     } catch (error) {
       console.error("Erro ao gerar copy:", error);
-      
-        // Fallback: retornar copy básico
-        return this.generateFallbackCopy(businessName, businessType);
+      return this.generateFallbackCopy(businessName, businessType, offers, services, target);
     }
   }
 
-  private generateFallbackCopy(businessName: string, businessType: string): CopyStructure {
+  private generateFallbackCopy(businessName: string, businessType: string, offers?: string, services?: string, target?: string): CopyStructure {
+    const specialOffers = offers ? ` ${offers}` : '';
+    const mainServices = services ? ` Especializados em ${services}.` : '';
+    const targetAudience = target ? ` Ideal para ${target}.` : '';
+
     return {
-      heroText: `Transforme seus resultados com ${businessName}. Somos especialistas em ${businessType.toLowerCase()} e oferecemos soluções que realmente funcionam. Descubra como podemos ajudar você a alcançar seus objetivos de forma rápida e eficiente.`,
+      heroText: `${businessName} - Sua melhor escolha em ${businessType.toLowerCase()}!${specialOffers}${mainServices} Resultados garantidos que superam suas expectativas.${targetAudience}`,
       sections: {
         intro: {
           title: `Conheça ${businessName}`,

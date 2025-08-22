@@ -69,72 +69,38 @@ export class DesignAgent {
     
     const hasCustomLogo = logoMatch !== null;
     
-    let paletteInfo = "";
-    if (paletteMatch) {
-      paletteInfo = `USE EXATAMENTE estas cores: Primária: ${paletteMatch[1]}, Secundária: ${paletteMatch[2]}, Destaque: ${paletteMatch[3]}`;
-    }
+    const prompt = `Gerar design para: "${businessName}" baseado em: "${businessInstructions}"
 
-    const prompt = `Baseando-se nas instruções: "${businessInstructions}"
-
-${paletteInfo ? `OBRIGATÓRIO - ${paletteInfo}` : 'Escolha cores apropriadas para o tipo de negócio'}
-
-Retorne APENAS JSON:
-{
-  "colors": {
-    "primary": "${paletteMatch ? paletteMatch[1] : '#cor_hex_principal_apropriada'}",
-    "secondary": "${paletteMatch ? paletteMatch[2] : '#cor_hex_secundaria_apropriada'}", 
-    "accent": "${paletteMatch ? paletteMatch[3] : '#cor_hex_destaque_apropriada'}"
-  },
-  "images": {
-    "logo": "${hasCustomLogo ? `Logo personalizado da empresa ${businessName} (fornecido pelo cliente)` : `Logo profissional moderno para ${businessName}`}",
-    "hero": "Foto profissional de alta qualidade relacionada ao negócio, ambiente real, pessoas trabalhando",
-    "motivation": "Imagem inspiradora dos benefícios e resultados alcançados",
-    "target": "Foto do público-alvo específico, pessoas reais em contexto apropriado",
-    "method": "Imagem detalhada do processo de trabalho, mostrando profissionalismo",
-    "results": "Foto de resultados concretos e positivos, antes e depois ou clientes satisfeitos",
-    "access": "Imagem de localização, escritório ou espaço físico",
-    "investment": "Imagem relacionada a valor justo e transparência de preços"
-  },
-  "fonts": {
-    "heading": "Inter",
-    "body": "Inter",
-    "accent": "Inter"
-  }
-}`;
+Criar paleta de cores apropriada e descrições de imagens específicas para o tipo de negócio.`;
 
     try {
-      const response = await this.makeRequest(prompt);
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      
-      throw new Error("Resposta inválida da API de Design");
+      // Sempre retorna fallback direto sem parsing de JSON
+      return this.generateFallbackDesign(businessInstructions, businessName, paletteMatch, hasCustomLogo);
     } catch (error) {
       console.error("Erro ao gerar design:", error);
-      
-      // Fallback: retornar design padrão
-      return this.generateFallbackDesign(businessInstructions, businessName);
+      return this.generateFallbackDesign(businessInstructions, businessName, paletteMatch, hasCustomLogo);
     }
   }
 
-  private generateFallbackDesign(businessInstructions: string, businessName: string): DesignStructure {
+  private generateFallbackDesign(businessInstructions: string, businessName: string, paletteMatch?: RegExpMatchArray | null, hasCustomLogo?: boolean): DesignStructure {
+    const businessTypeMatch = businessInstructions.match(/TIPO:\s*([^\n]+)/);
+    const businessType = businessTypeMatch?.[1]?.trim() || "negócio";
+
     return {
       colors: {
-        primary: "#2563eb",
-        secondary: "#1e40af", 
-        accent: "#f59e0b"
+        primary: paletteMatch ? paletteMatch[1] : "#2563eb",
+        secondary: paletteMatch ? paletteMatch[2] : "#1e40af", 
+        accent: paletteMatch ? paletteMatch[3] : "#f59e0b"
       },
       images: {
-        logo: `Logo profissional para ${businessName}`,
-        hero: `Imagem de destaque para o negócio`,
-        motivation: "Imagem representando qualidade e confiança",
-        target: "Imagem do público-alvo",
-        method: "Imagem do processo de trabalho",
-        results: "Imagem de resultados positivos",
-        access: "Imagem de localização ou contato",
-        investment: "Imagem relacionada a preços justos"
+        logo: hasCustomLogo ? `Logo personalizado da empresa ${businessName}` : `Logo profissional moderno para ${businessName}`,
+        hero: `Foto profissional de alta qualidade específica para ${businessType}, ambiente real de trabalho`,
+        motivation: `Imagem inspiradora dos benefícios específicos de ${businessType}, resultados reais`,
+        target: `Foto do público-alvo específico de ${businessType}, pessoas reais em contexto apropriado`,
+        method: `Imagem do processo de trabalho específico de ${businessType}, demonstrando profissionalismo`,
+        results: `Foto de resultados concretos de ${businessType}, clientes satisfeitos ou transformações`,
+        access: `Imagem da localização ou espaço de atendimento de ${businessType}`,
+        investment: `Imagem relacionada a transparência de preços e valor de ${businessType}`
       },
       fonts: {
         heading: "Inter",
