@@ -210,6 +210,80 @@ export class HtmlAgent {
             align-items: center;
         }
         
+        .layout-reverse {
+            grid-template-columns: 1fr 1fr;
+            direction: rtl;
+        }
+        
+        .layout-reverse > * {
+            direction: ltr;
+        }
+        
+        .layout-stacked {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            text-align: center;
+        }
+        
+        .layout-asymmetric-left {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .layout-asymmetric-right {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .layout-image-bg {
+            position: relative;
+            padding: 5rem 0;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .layout-image-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+        
+        .layout-image-bg .container {
+            position: relative;
+            z-index: 2;
+            color: white;
+        }
+        
+        .layout-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 60vh;
+            gap: 0;
+        }
+        
+        .layout-split .content-side {
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .layout-split .image-side {
+            background-size: cover;
+            background-position: center;
+        }
+        
         .section-title {
             font-size: 2.5rem;
             margin-bottom: 1.5rem;
@@ -274,8 +348,30 @@ export class HtmlAgent {
         }
 
         @media (max-width: 768px) {
-            .two-columns {
-                grid-template-columns: 1fr;
+            .two-columns, .layout-reverse, .layout-asymmetric-left, .layout-asymmetric-right {
+                grid-template-columns: 1fr !important;
+                direction: ltr !important;
+            }
+            
+            .layout-reverse > * {
+                direction: ltr;
+            }
+            
+            .layout-stacked {
+                gap: 2rem;
+            }
+            
+            .layout-image-bg {
+                padding: 3rem 0;
+            }
+            
+            .layout-split {
+                grid-template-columns: 1fr !important;
+                min-height: auto;
+            }
+            
+            .layout-split .content-side {
+                padding: 2rem;
             }
             
             .hero h1 {
@@ -361,23 +457,122 @@ export class HtmlAgent {
 
   private generateContentSections(businessData: BusinessContent, images: any): string {
     return businessData.sections.slice(2).map((section, index) => {
-      const isReverse = index % 2 === 1;
       const imageKey = section.type as keyof typeof images;
       
-      return `<section id="${section.id}" class="section">
-          <div class="container">
-              <div class="two-columns ${isReverse ? 'reverse' : ''}">
-                  <div>
-                      <h2 class="section-title">${section.title}</h2>
-                      <p>${section.content}</p>
-                  </div>
-                  <div>
-                      <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+      // Criar hash simples do título da seção para gerar layout consistente mas variado
+      const hash = this.createSimpleHash(section.title + businessData.title + index);
+      const layoutType = hash % 6; // 6 tipos de layout diferentes
+      
+      switch (layoutType) {
+        case 0: // Layout padrão duas colunas
+          return `<section id="${section.id}" class="section">
+              <div class="container">
+                  <div class="two-columns">
+                      <div>
+                          <h2 class="section-title">${section.title}</h2>
+                          <p>${section.content}</p>
+                      </div>
+                      <div>
+                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+                      </div>
                   </div>
               </div>
-          </div>
-      </section>`;
+          </section>`;
+          
+        case 1: // Layout reverso
+          return `<section id="${section.id}" class="section">
+              <div class="container">
+                  <div class="layout-reverse">
+                      <div>
+                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+                      </div>
+                      <div>
+                          <h2 class="section-title">${section.title}</h2>
+                          <p>${section.content}</p>
+                      </div>
+                  </div>
+              </div>
+          </section>`;
+          
+        case 2: // Layout empilhado (imagem acima)
+          return `<section id="${section.id}" class="section">
+              <div class="container">
+                  <div class="layout-stacked">
+                      <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+                      <div>
+                          <h2 class="section-title">${section.title}</h2>
+                          <p>${section.content}</p>
+                      </div>
+                  </div>
+              </div>
+          </section>`;
+          
+        case 3: // Layout assimétrico esquerda
+          return `<section id="${section.id}" class="section">
+              <div class="container">
+                  <div class="layout-asymmetric-left">
+                      <div>
+                          <h2 class="section-title">${section.title}</h2>
+                          <p>${section.content}</p>
+                      </div>
+                      <div>
+                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+                      </div>
+                  </div>
+              </div>
+          </section>`;
+          
+        case 4: // Layout assimétrico direita
+          return `<section id="${section.id}" class="section">
+              <div class="container">
+                  <div class="layout-asymmetric-right">
+                      <div>
+                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+                      </div>
+                      <div>
+                          <h2 class="section-title">${section.title}</h2>
+                          <p>${section.content}</p>
+                      </div>
+                  </div>
+              </div>
+          </section>`;
+          
+        case 5: // Layout com imagem de fundo
+          return `<section id="${section.id}" class="section layout-image-bg" style="background-image: url('${images[imageKey]}');">
+              <div class="container">
+                  <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+                      <h2 class="section-title" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${section.title}</h2>
+                      <p style="color: white; font-size: 1.1rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">${section.content}</p>
+                  </div>
+              </div>
+          </section>`;
+          
+        default:
+          return `<section id="${section.id}" class="section">
+              <div class="container">
+                  <div class="two-columns">
+                      <div>
+                          <h2 class="section-title">${section.title}</h2>
+                          <p>${section.content}</p>
+                      </div>
+                      <div>
+                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+                      </div>
+                  </div>
+              </div>
+          </section>`;
+      }
     }).join('');
+  }
+
+  private createSimpleHash(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
   }
 
   private generateGallerySection(businessData: BusinessContent, images: any): string {
