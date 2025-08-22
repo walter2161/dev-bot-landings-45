@@ -264,11 +264,11 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
   };
 
   const quickPrompts = [
-    "Empresa de drones para eventos e inspeções",
-    "Estúdio de tatuagem artística especializado",
-    "Loja de produtos veganos orgânicos",
-    "Escola de dança urbana e street dance",
-    "Consultoria em sustentabilidade empresarial"
+    "Drones para eventos e inspeções",
+    "Estúdio de tatuagem artística",
+    "Produtos veganos orgânicos",
+    "Escola de dança urbana",
+    "Consultoria em sustentabilidade"
   ];
 
   if (isIntegrated) {
