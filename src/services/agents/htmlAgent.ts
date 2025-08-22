@@ -477,21 +477,16 @@ export class HtmlAgent {
         </div>
         
         <!-- Caixa do Chat -->
-        <div id="chatBox" style="
-            width: 380px; height: 520px; 
-            background: white; border-radius: 20px; 
-            display: none; flex-direction: column; 
-            position: absolute; bottom: 80px; right: 0;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
-            border: 1px solid rgba(0,0,0,0.1);
-            overflow: hidden;
-        ">
+        <div id="chatBox" class="chatBox">
             <!-- Header do Chat -->
             <div style="
                 background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); 
                 color: white; padding: 20px; 
                 position: relative;
                 overflow: hidden;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             ">
                 <div style="position: relative; z-index: 2;">
                     <div style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">
@@ -585,6 +580,21 @@ export class HtmlAgent {
             30% { transform: translateY(-10px); }
         }
         
+        .chatBox {
+            width: 380px; 
+            height: 520px; 
+            background: white; 
+            border-radius: 20px; 
+            display: none; 
+            flex-direction: column; 
+            position: absolute; 
+            bottom: 80px; 
+            right: 0;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+            border: 1px solid rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
         #chatInput:focus {
             border-color: ${businessData.colors.primary} !important;
         }
@@ -600,7 +610,7 @@ export class HtmlAgent {
         }
         
         @media (max-width: 480px) {
-            #chatBox {
+            .chatBox {
                 width: 320px !important;
                 right: -10px !important;
             }
@@ -635,7 +645,16 @@ export class HtmlAgent {
                 }
                 
                 chatOpen = !chatOpen;
-                chatBox.style.display = chatOpen ? 'flex' : 'none';
+                console.log('Chat toggle:', chatOpen);
+                console.log('ChatBox element:', chatBox);
+                
+                if (chatOpen) {
+                    chatBox.style.display = 'flex';
+                    console.log('Mostrando chat box');
+                } else {
+                    chatBox.style.display = 'none';
+                    console.log('Escondendo chat box');
+                }
                 
                 // Primeira mensagem de boas-vindas
                 if (chatOpen && chatHistory.length === 0) {
