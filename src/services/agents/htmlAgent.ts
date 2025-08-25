@@ -392,21 +392,27 @@ export class HtmlAgent {
   }
 
   private generateNavigation(businessData: BusinessContent, images: any): string {
-    const getMenuLabel = (sectionType: string): string => {
-      const menuLabels: { [key: string]: string } = {
-        'motivation': 'Sobre',
-        'target': 'Para Quem',
-        'method': 'Como Funciona',
-        'results': 'Resultados',
-        'access': 'Acesso',
-        'investment': 'Contato'
-      };
-      return menuLabels[sectionType] || 'Início';
+    const getPersonalizedMenuItems = (businessData: BusinessContent): string => {
+      // Determina se é produto ou serviço baseado no contexto
+      const isProductBased = businessData.title.toLowerCase().includes('loja') || 
+                            businessData.title.toLowerCase().includes('produto') ||
+                            businessData.subtitle.toLowerCase().includes('produto') ||
+                            businessData.heroText.toLowerCase().includes('produto');
+      
+      const servicesOrProducts = isProductBased ? 'Produtos' : 'Serviços';
+      
+      // Menu personalizado baseado nas seções do businessData
+      const menuItems = [
+        '<li><a href="#hero">Inicial</a></li>',
+        '<li><a href="#sobre">Sobre</a></li>',
+        `<li><a href="#servicos">${servicesOrProducts}</a></li>`,
+        '<li><a href="#galeria">Galeria</a></li>',
+        '<li><a href="#oportunidade">Oportunidades</a></li>',
+        '<li><a href="#contato">Contatos</a></li>'
+      ];
+      
+      return menuItems.join('');
     };
-
-    const menuItems = businessData.sections.map(section => 
-      `<li><a href="#${section.id}">${getMenuLabel(section.type)}</a></li>`
-    ).join('') + '<li><a href="#galeria">Galeria</a></li>';
     
     return `<nav class="navbar">
         <div class="container">
@@ -416,7 +422,7 @@ export class HtmlAgent {
                     <span>${businessData.title}</span>
                 </div>
                 <ul class="nav-menu" id="navMenu">
-                    ${menuItems}
+                    ${getPersonalizedMenuItems(businessData)}
                 </ul>
                 <div class="hamburger" id="hamburger" onclick="toggleMenu()">
                     <span></span>
@@ -620,13 +626,39 @@ export class HtmlAgent {
   }
 
   private generateFooter(businessData: BusinessContent, images: any): string {
-    return `<footer style="background: #2a2a2a; color: white; padding: 3rem 0;">
+    const isProductBased = businessData.title.toLowerCase().includes('loja') || 
+                          businessData.title.toLowerCase().includes('produto') ||
+                          businessData.subtitle.toLowerCase().includes('produto') ||
+                          businessData.heroText.toLowerCase().includes('produto');
+    
+    const servicesOrProducts = isProductBased ? 'Produtos' : 'Serviços';
+    
+    return `<footer id="contato" style="background: #2a2a2a; color: white; padding: 3rem 0;">
         <div class="container">
-            <div style="text-align: center;">
-                <h3>${businessData.title}</h3>
-                <p>${businessData.contact.email}</p>
-                <p>${businessData.contact.phone}</p>
-                <p>${businessData.contact.address}</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <!-- Informações da empresa -->
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: ${businessData.colors.primary};">${businessData.title}</h3>
+                    <p style="margin-bottom: 0.5rem;">${businessData.contact.email}</p>
+                    <p style="margin-bottom: 0.5rem;">${businessData.contact.phone}</p>
+                    ${businessData.contact.address ? `<p style="margin-bottom: 0.5rem;">${businessData.contact.address}</p>` : ''}
+                </div>
+                
+                <!-- Menu de navegação -->
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: ${businessData.colors.primary};">Navegação</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem;"><a href="#hero" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">Inicial</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#sobre" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">Sobre</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#servicos" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">${servicesOrProducts}</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#galeria" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">Galeria</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#oportunidade" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">Oportunidades</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; border-top: 1px solid #444; padding-top: 2rem;">
+                <p style="margin: 0; opacity: 0.8;">&copy; 2024 ${businessData.title}. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
