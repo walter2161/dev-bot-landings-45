@@ -9,7 +9,7 @@ export class AuthService {
     'H8J0K9', 'L1P3O5', 'D6F8G0', 'S2A4D6', 'T5Y7U8',
     'I1O3P5', 'M9N0B2', 'E4R6T8', 'Q7W9E0', 'Z1X3C5',
     'V4B6N8', 'H7J9K0', 'L2P4O6', 'D5F7G8', 'S1A3D5',
-    'T6Y8U0', 'I2O4P6', 'M7N9B1', 'E3R5T7', 'Q8W0E2'
+    'T6Y8U0', 'I2O4P6', 'M7N9B1', 'E3R5T7', 'Q8W0E2', 'A1B2C3'
   ];
 
   private static readonly SESSION_KEY = 'pagejet_session';
