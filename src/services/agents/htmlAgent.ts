@@ -435,11 +435,11 @@ export class HtmlAgent {
   }
 
   private generateHeroSection(businessData: BusinessContent, images: any): string {
-    return `<section class="section hero">
+    return `<section id="hero" class="section hero">
         <div class="container">
             <h1>${businessData.sections[0].title}</h1>
             <p>${businessData.heroText}</p>
-            <a href="#investment" class="cta-button">${businessData.ctaText}</a>
+            <a href="#contato" class="cta-button">${businessData.ctaText}</a>
         </div>
     </section>`;
   }
@@ -448,7 +448,7 @@ export class HtmlAgent {
     const firstSection = businessData.sections[1];
     if (!firstSection) return '';
     
-    return `<section id="${firstSection.id}" class="section first-section-bg" style="background-image: url('${images.hero}');">
+    return `<section id="sobre" class="section first-section-bg" style="background-image: url('${images.hero}');">
         <div class="container">
             <div class="two-columns">
                 <div>
@@ -462,21 +462,219 @@ export class HtmlAgent {
   }
 
   private generateContentSections(businessData: BusinessContent, images: any): string {
-    return businessData.sections.slice(2).map((section, index) => {
+    const sections = businessData.sections.slice(2);
+    let generatedSections = '';
+    
+    sections.forEach((section, index) => {
       const imageKey = section.type as keyof typeof images;
-      
-      // Criar hash simples do título da seção para gerar layout consistente mas variado
       const hash = this.createSimpleHash(section.title + businessData.title + index);
-      const layoutType = hash % 6; // 6 tipos de layout diferentes
+      const layoutType = hash % 25; // 25 tipos diferentes de layout
+      
+      // Adicionar seção de FAQ com acordeon se for sobre "perguntas" ou similar
+      if (section.title.toLowerCase().includes('perguntas') || section.title.toLowerCase().includes('faq') || section.title.toLowerCase().includes('dúvidas')) {
+        generatedSections += this.generateFAQSection(section, businessData);
+        return;
+      }
+      
+      // Adicionar seção de preços se for sobre "preço" ou similar
+      if (section.title.toLowerCase().includes('preço') || section.title.toLowerCase().includes('valor') || section.title.toLowerCase().includes('investimento') || section.title.toLowerCase().includes('plano')) {
+        generatedSections += this.generatePricingSection(section, businessData, images[imageKey]);
+        return;
+      }
       
       switch (layoutType) {
-        case 0: // Layout padrão duas colunas
-          return `<section id="${section.id}" class="section">
+        case 0: // Hero Section com CTA
+          generatedSections += `<section id="${section.id}" class="section hero-alternate" style="background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white; text-align: center; min-height: 80vh;">
+              <div class="container">
+                  <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
+                      <h2 style="font-size: 3rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">${section.title}</h2>
+                      <p style="font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.9;">${section.content}</p>
+                      <a href="#contato" class="cta-button" style="background: ${businessData.colors.accent}; padding: 15px 40px; font-size: 1.1rem;">Saiba Mais</a>
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 1: // Cards de serviços (3 colunas)
+          generatedSections += `<section id="${section.id}" class="section" style="background: #f8f9fa;">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                      ${this.generateServiceCards(section.content, images[imageKey], businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 2: // Split background (metade imagem, metade cor)
+          generatedSections += `<section id="${section.id}" class="section layout-split" style="min-height: 70vh;">
+              <div class="image-side" style="background-image: url('${images[imageKey]}'); background-size: cover; background-position: center;"></div>
+              <div class="content-side" style="background: ${businessData.colors.primary}; color: white; display: flex; flex-direction: column; justify-content: center; padding: 4rem;">
+                  <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">${section.title}</h2>
+                  <p style="font-size: 1.1rem; line-height: 1.8;">${section.content}</p>
+                  <a href="#contato" class="cta-button" style="background: ${businessData.colors.accent}; margin-top: 2rem; width: fit-content;">Entre em Contato</a>
+              </div>
+          </section>`;
+          break;
+          
+        case 3: // Testimonials em grid
+          generatedSections += `<section id="${section.id}" class="section">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+                      ${this.generateTestimonials(section.content, businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 4: // Timeline (linha do tempo)
+          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(45deg, #f8f9fa, #e9ecef);">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  ${this.generateTimeline(section.content, businessData, images[imageKey])}
+              </div>
+          </section>`;
+          break;
+          
+        case 5: // Contadores animados (estatísticas)
+          generatedSections += `<section id="${section.id}" class="section" style="background: ${businessData.colors.primary}; color: white;">
+              <div class="container">
+                  <h2 style="text-align: center; margin-bottom: 3rem; color: white;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; text-align: center;">
+                      ${this.generateCounters(section.content, businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 6: // Grid em mosaico (masonry)
+          generatedSections += `<section id="${section.id}" class="section">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="columns: 3; column-gap: 2rem; break-inside: avoid;">
+                      ${this.generateMasonryContent(section.content, images[imageKey], businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 7: // Parallax com scroll animado
+          generatedSections += `<section id="${section.id}" class="section" style="background-image: url('${images[imageKey]}'); background-attachment: fixed; background-size: cover; background-position: center; position: relative; min-height: 80vh;">
+              <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6);"></div>
+              <div class="container" style="position: relative; z-index: 2; display: flex; align-items: center; min-height: 80vh;">
+                  <div style="max-width: 600px; color: white; text-align: center; margin: 0 auto;">
+                      <h2 style="font-size: 3rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${section.title}</h2>
+                      <p style="font-size: 1.2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">${section.content}</p>
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 8: // CTA dividido (texto à esquerda, botão à direita)
+          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(135deg, ${businessData.colors.secondary}, ${businessData.colors.primary}); color: white;">
+              <div class="container">
+                  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 3rem; align-items: center;">
+                      <div>
+                          <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: white;">${section.title}</h2>
+                          <p style="font-size: 1.1rem; opacity: 0.9;">${section.content}</p>
+                      </div>
+                      <div style="text-align: center;">
+                          <a href="#contato" class="cta-button" style="background: ${businessData.colors.accent}; padding: 20px 40px; font-size: 1.2rem; border-radius: 50px;">Começar Agora</a>
+                      </div>
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 9: // Showcase de produto (mockup central)
+          generatedSections += `<section id="${section.id}" class="section" style="background: radial-gradient(circle, #f8f9fa, white);">
+              <div class="container">
+                  <div style="text-align: center;">
+                      <h2 class="section-title" style="margin-bottom: 2rem;">${section.title}</h2>
+                      <div style="max-width: 600px; margin: 0 auto 3rem;">
+                          <img src="${images[imageKey]}" alt="${section.title}" style="width: 100%; height: auto; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.2);">
+                      </div>
+                      <p style="font-size: 1.1rem; max-width: 700px; margin: 0 auto;">${section.content}</p>
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 10: // Seção de recursos/benefícios com ícones
+          generatedSections += `<section id="${section.id}" class="section" style="background: #f8f9fa;">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                      ${this.generateBenefitsWithIcons(section.content, businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 11: // Blog posts recentes (grid/lista)
+          generatedSections += `<section id="${section.id}" class="section">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+                      ${this.generateBlogCards(section.content, images[imageKey], businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 12: // Logos de clientes/parceiros
+          generatedSections += `<section id="${section.id}" class="section" style="background: white; border-top: 1px solid #eee; border-bottom: 1px solid #eee;">
+              <div class="container">
+                  <h2 style="text-align: center; margin-bottom: 3rem; font-size: 1.8rem; color: #666;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 2rem; align-items: center; opacity: 0.7;">
+                      ${this.generatePartnerLogos(section.content, businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 13: // Equipe (cards com fotos e cargos)
+          generatedSections += `<section id="${section.id}" class="section">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+                      ${this.generateTeamCards(section.content, images[imageKey], businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 14: // Callout destacado (frase motivacional centralizada)
+          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(45deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white; text-align: center; padding: 5rem 0;">
+              <div class="container">
+                  <div style="max-width: 800px; margin: 0 auto;">
+                      <h2 style="font-size: 3rem; margin-bottom: 2rem; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">"${section.title}"</h2>
+                      <p style="font-size: 1.3rem; opacity: 0.9; font-style: italic;">${section.content}</p>
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 15: // Grid de categorias
+          generatedSections += `<section id="${section.id}" class="section" style="background: #f8f9fa;">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                      ${this.generateCategoryGrid(section.content, businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 16: // Barra de progresso (skills/competências)
+          generatedSections += `<section id="${section.id}" class="section">
               <div class="container">
                   <div class="two-columns">
                       <div>
                           <h2 class="section-title">${section.title}</h2>
-                          <p>${section.content}</p>
+                          <p style="margin-bottom: 2rem;">${section.content}</p>
+                          ${this.generateSkillBars(businessData)}
                       </div>
                       <div>
                           <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
@@ -484,82 +682,128 @@ export class HtmlAgent {
                   </div>
               </div>
           </section>`;
+          break;
           
-        case 1: // Layout reverso
-          return `<section id="${section.id}" class="section">
+        case 17: // Seção com vídeo de fundo autoplay
+          generatedSections += `<section id="${section.id}" class="section" style="position: relative; min-height: 80vh; background: #000; overflow: hidden;">
+              <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1;"></div>
+              <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('${images[imageKey]}'); background-size: cover; background-position: center; filter: brightness(0.7);"></div>
+              <div class="container" style="position: relative; z-index: 2; display: flex; align-items: center; min-height: 80vh;">
+                  <div style="max-width: 600px; color: white; text-align: center; margin: 0 auto;">
+                      <h2 style="font-size: 3rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">${section.title}</h2>
+                      <p style="font-size: 1.2rem; margin-bottom: 2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">${section.content}</p>
+                      <a href="#contato" class="cta-button" style="background: ${businessData.colors.accent}; padding: 15px 40px;">Assista Agora</a>
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 18: // Seção de awards/prêmios conquistados
+          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(135deg, #f8f9fa, white);">
               <div class="container">
-                  <div class="layout-reverse">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                      ${this.generateAwards(section.content, businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 19: // Carrossel de imagens/produtos
+          generatedSections += `<section id="${section.id}" class="section">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="position: relative; overflow: hidden; border-radius: 15px;">
+                      <div id="carousel-${index}" style="display: flex; transition: transform 0.5s ease;">
+                          ${this.generateCarouselItems(section.content, images[imageKey], businessData)}
+                      </div>
+                      <button onclick="prevSlide(${index})" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer; font-size: 18px;">❮</button>
+                      <button onclick="nextSlide(${index})" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer; font-size: 18px;">❯</button>
+                  </div>
+                  <p style="text-align: center; margin-top: 2rem; font-size: 1.1rem;">${section.content}</p>
+              </div>
+          </section>`;
+          break;
+          
+        case 20: // Seção de download de app
+          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white;">
+              <div class="container">
+                  <div class="two-columns">
                       <div>
-                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+                          <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: white;">${section.title}</h2>
+                          <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9;">${section.content}</p>
+                          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                              <a href="#" style="display: inline-block; background: #000; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">📱 App Store</a>
+                              <a href="#" style="display: inline-block; background: #01875f; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">🤖 Google Play</a>
+                          </div>
                       </div>
                       <div>
-                          <h2 class="section-title">${section.title}</h2>
-                          <p>${section.content}</p>
+                          <img src="${images[imageKey]}" alt="${section.title}" style="max-width: 300px; height: auto; margin: 0 auto; display: block;">
                       </div>
                   </div>
               </div>
           </section>`;
+          break;
           
-        case 2: // Layout empilhado (imagem acima)
-          return `<section id="${section.id}" class="section">
+        case 21: // Comparativo de planos/tabelas
+          generatedSections += `<section id="${section.id}" class="section" style="background: #f8f9fa;">
               <div class="container">
-                  <div class="layout-stacked">
-                      <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
+                      ${this.generateComparisonTable(section.content, businessData)}
+                  </div>
+              </div>
+          </section>`;
+          break;
+          
+        case 22: // Mapa interativo + contato
+          generatedSections += `<section id="${section.id}" class="section">
+              <div class="container">
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div class="two-columns">
                       <div>
-                          <h2 class="section-title">${section.title}</h2>
-                          <p>${section.content}</p>
+                          <div style="background: #e9ecef; height: 400px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: #666;">
+                              <div style="text-align: center;">
+                                  <div style="font-size: 3rem; margin-bottom: 1rem;">📍</div>
+                                  <p>Mapa Interativo</p>
+                                  <p style="font-size: 0.9rem;">${businessData.contact.address || 'Endereço disponível em breve'}</p>
+                              </div>
+                          </div>
+                      </div>
+                      <div>
+                          <p style="margin-bottom: 2rem;">${section.content}</p>
+                          <div style="space-y: 1rem;">
+                              <p><strong>📧 Email:</strong> ${businessData.contact.email}</p>
+                              <p><strong>📞 Telefone:</strong> ${businessData.contact.phone}</p>
+                              ${businessData.contact.address ? `<p><strong>📍 Endereço:</strong> ${businessData.contact.address}</p>` : ''}
+                          </div>
                       </div>
                   </div>
               </div>
           </section>`;
+          break;
           
-        case 3: // Layout assimétrico esquerda
-          return `<section id="${section.id}" class="section">
+        case 23: // Linha de tempo horizontal (roadmap)
+          generatedSections += `<section id="${section.id}" class="section" style="background: white;">
               <div class="container">
-                  <div class="layout-asymmetric-left">
-                      <div>
-                          <h2 class="section-title">${section.title}</h2>
-                          <p>${section.content}</p>
-                      </div>
-                      <div>
-                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
-                      </div>
+                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+                  <div style="overflow-x: auto; padding: 2rem 0;">
+                      ${this.generateHorizontalTimeline(section.content, businessData)}
                   </div>
               </div>
           </section>`;
+          break;
           
-        case 4: // Layout assimétrico direita
-          return `<section id="${section.id}" class="section">
-              <div class="container">
-                  <div class="layout-asymmetric-right">
-                      <div>
-                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
-                      </div>
-                      <div>
-                          <h2 class="section-title">${section.title}</h2>
-                          <p>${section.content}</p>
-                      </div>
-                  </div>
-              </div>
-          </section>`;
-          
-        case 5: // Layout com imagem de fundo
-          return `<section id="${section.id}" class="section layout-image-bg" style="background-image: url('${images[imageKey]}');">
-              <div class="container">
-                  <div style="max-width: 600px; margin: 0 auto; text-align: center;">
-                      <h2 class="section-title" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${section.title}</h2>
-                      <p style="color: white; font-size: 1.1rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">${section.content}</p>
-                  </div>
-              </div>
-          </section>`;
-          
+        case 24: // Layout tradicional com ícones no conteúdo
         default:
-          return `<section id="${section.id}" class="section">
+          generatedSections += `<section id="${section.id}" class="section">
               <div class="container">
                   <div class="two-columns">
                       <div>
-                          <h2 class="section-title">${section.title}</h2>
-                          <p>${section.content}</p>
+                          <h2 class="section-title">✨ ${section.title}</h2>
+                          <div style="font-size: 1.1rem; line-height: 1.8;">
+                              ${this.addIconsToContent(section.content)}
+                          </div>
                       </div>
                       <div>
                           <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
@@ -567,8 +811,11 @@ export class HtmlAgent {
                   </div>
               </div>
           </section>`;
+          break;
       }
-    }).join('');
+    });
+    
+    return generatedSections;
   }
 
   private createSimpleHash(str: string): number {
@@ -579,6 +826,351 @@ export class HtmlAgent {
       hash = hash & hash; // Convert to 32bit integer
     }
     return Math.abs(hash);
+  }
+
+  private generateFAQSection(section: any, businessData: BusinessContent): string {
+    const faqItems = [
+      { question: "Como funciona?", answer: section.content },
+      { question: "Quanto tempo demora?", answer: "O prazo varia de acordo com cada projeto, mas geralmente conseguimos entregar em poucos dias." },
+      { question: "Posso fazer alterações?", answer: "Sim! Oferecemos revisões para garantir que tudo fique exatamente como você deseja." },
+      { question: "Como entrar em contato?", answer: `Entre em contato conosco pelo telefone ${businessData.contact.phone} ou email ${businessData.contact.email}.` }
+    ];
+
+    return `<section id="${section.id}" class="section" style="background: #f8f9fa;">
+        <div class="container">
+            <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+            <div style="max-width: 800px; margin: 0 auto;">
+                ${faqItems.map((item, index) => `
+                    <div style="margin-bottom: 1rem; border: 1px solid #e9ecef; border-radius: 10px; overflow: hidden; background: white;">
+                        <button onclick="toggleFAQ(${index})" style="width: 100%; padding: 1.5rem; text-align: left; background: none; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                            <span>${item.question}</span>
+                            <span id="faq-icon-${index}" style="transition: transform 0.3s;">+</span>
+                        </button>
+                        <div id="faq-content-${index}" style="display: none; padding: 0 1.5rem 1.5rem; color: #666; line-height: 1.6;">
+                            ${item.answer}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>`;
+  }
+
+  private generatePricingSection(section: any, businessData: BusinessContent, image: string): string {
+    return `<section id="${section.id}" class="section" style="background: linear-gradient(135deg, #f8f9fa, white);">
+        <div class="container">
+            <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border: 2px solid ${businessData.colors.primary};">
+                    <h3 style="color: ${businessData.colors.primary}; margin-bottom: 1rem;">💎 Premium</h3>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: ${businessData.colors.primary}; margin-bottom: 1rem;">R$ 299</div>
+                    <p style="color: #666; margin-bottom: 2rem;">${section.content}</p>
+                    <a href="#contato" class="cta-button" style="background: ${businessData.colors.primary};">Escolher</a>
+                </div>
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="color: #666; margin-bottom: 1rem;">⭐ Básico</h3>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #666; margin-bottom: 1rem;">R$ 99</div>
+                    <p style="color: #666; margin-bottom: 2rem;">Plano básico com o essencial</p>
+                    <a href="#contato" class="cta-button" style="background: #666;">Escolher</a>
+                </div>
+            </div>
+        </div>
+    </section>`;
+  }
+
+  private generateServiceCards(content: string, image: string, businessData: BusinessContent): string {
+    const services = [
+      { icon: "🎯", title: "Estratégia", description: content.substring(0, 100) + "..." },
+      { icon: "⚡", title: "Execução", description: "Implementação rápida e eficiente" },
+      { icon: "📈", title: "Resultados", description: "Acompanhamento e otimização contínua" }
+    ];
+
+    return services.map(service => `
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">${service.icon}</div>
+            <h3 style="color: ${businessData.colors.primary}; margin-bottom: 1rem;">${service.title}</h3>
+            <p style="color: #666; line-height: 1.6;">${service.description}</p>
+        </div>
+    `).join('');
+  }
+
+  private generateTestimonials(content: string, businessData: BusinessContent): string {
+    const testimonials = [
+      { name: "Maria Silva", text: content, rating: "⭐⭐⭐⭐⭐" },
+      { name: "João Santos", text: "Excelente trabalho, superou minhas expectativas!", rating: "⭐⭐⭐⭐⭐" },
+      { name: "Ana Costa", text: "Profissionais competentes e atendimento excepcional.", rating: "⭐⭐⭐⭐⭐" }
+    ];
+
+    return testimonials.map(testimonial => `
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative;">
+            <div style="font-size: 3rem; color: ${businessData.colors.primary}; opacity: 0.3; position: absolute; top: 1rem; left: 1.5rem;">"</div>
+            <p style="font-style: italic; margin-bottom: 1.5rem; color: #555; padding-top: 1rem;">${testimonial.text}</p>
+            <div>
+                <div style="font-weight: bold; color: ${businessData.colors.primary};">${testimonial.name}</div>
+                <div style="color: #666; margin-top: 0.5rem;">${testimonial.rating}</div>
+            </div>
+        </div>
+    `).join('');
+  }
+
+  private generateTimeline(content: string, businessData: BusinessContent, image: string): string {
+    const steps = [
+      { step: "1", title: "Consulta", description: "Análise das suas necessidades" },
+      { step: "2", title: "Planejamento", description: content.substring(0, 80) + "..." },
+      { step: "3", title: "Execução", description: "Desenvolvimento e implementação" },
+      { step: "4", title: "Entrega", description: "Resultado final e acompanhamento" }
+    ];
+
+    return `
+        <div style="position: relative;">
+            <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: ${businessData.colors.primary}; transform: translateX(-50%);"></div>
+            ${steps.map((step, index) => `
+                <div style="display: flex; align-items: center; margin-bottom: 3rem; ${index % 2 === 0 ? 'flex-direction: row' : 'flex-direction: row-reverse'};">
+                    <div style="flex: 1; ${index % 2 === 0 ? 'text-align: right; padding-right: 2rem' : 'text-align: left; padding-left: 2rem'};">
+                        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                            <h4 style="color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${step.title}</h4>
+                            <p style="color: #666; margin: 0;">${step.description}</p>
+                        </div>
+                    </div>
+                    <div style="flex: 0 0 60px; height: 60px; border-radius: 50%; background: ${businessData.colors.primary}; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; position: relative; z-index: 2;">
+                        ${step.step}
+                    </div>
+                    <div style="flex: 1;"></div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+  }
+
+  private generateCounters(content: string, businessData: BusinessContent): string {
+    const counters = [
+      { number: "500+", label: "Clientes Satisfeitos", icon: "👥" },
+      { number: "3+", label: "Anos de Experiência", icon: "📅" },
+      { number: "98%", label: "Taxa de Sucesso", icon: "🎯" },
+      { number: "24h", label: "Suporte", icon: "⏰" }
+    ];
+
+    return counters.map(counter => `
+        <div style="text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">${counter.icon}</div>
+            <div style="font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem;">${counter.number}</div>
+            <div style="opacity: 0.9; font-size: 1.1rem;">${counter.label}</div>
+        </div>
+    `).join('');
+  }
+
+  private generateMasonryContent(content: string, image: string, businessData: BusinessContent): string {
+    const items = [
+      { type: "text", content: content, height: "200px" },
+      { type: "image", src: image, height: "300px" },
+      { type: "quote", content: "Qualidade e dedicação em cada projeto", height: "150px" },
+      { type: "stat", number: "100%", label: "Satisfação", height: "180px" }
+    ];
+
+    return items.map(item => {
+      switch (item.type) {
+        case "image":
+          return `<div style="margin-bottom: 2rem; break-inside: avoid;"><img src="${item.src}" style="width: 100%; height: auto; border-radius: 10px;"></div>`;
+        case "quote":
+          return `<div style="background: ${businessData.colors.primary}; color: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; break-inside: avoid; text-align: center; font-style: italic;">"${item.content}"</div>`;
+        case "stat":
+          return `<div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; break-inside: avoid; text-align: center;"><div style="font-size: 2.5rem; font-weight: bold; color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${item.number}</div><div>${item.label}</div></div>`;
+        default:
+          return `<div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; break-inside: avoid;">${item.content}</div>`;
+      }
+    }).join('');
+  }
+
+  private generateBenefitsWithIcons(content: string, businessData: BusinessContent): string {
+    const benefits = [
+      { icon: "✅", title: "Qualidade Garantida", description: content.substring(0, 80) + "..." },
+      { icon: "⚡", title: "Entrega Rápida", description: "Resultados em tempo recorde" },
+      { icon: "💰", title: "Melhor Custo-Benefício", description: "Preços justos e transparentes" },
+      { icon: "🎯", title: "Foco no Resultado", description: "Estratégias personalizadas" }
+    ];
+
+    return benefits.map(benefit => `
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">${benefit.icon}</div>
+            <h4 style="color: ${businessData.colors.primary}; margin-bottom: 1rem;">${benefit.title}</h4>
+            <p style="color: #666; line-height: 1.6;">${benefit.description}</p>
+        </div>
+    `).join('');
+  }
+
+  private generateBlogCards(content: string, image: string, businessData: BusinessContent): string {
+    const posts = [
+      { title: "Dicas Importantes", content: content, date: "15 Jan 2024" },
+      { title: "Novidades do Setor", content: "Acompanhe as últimas tendências", date: "10 Jan 2024" },
+      { title: "Guia Completo", content: "Tudo que você precisa saber", date: "05 Jan 2024" }
+    ];
+
+    return posts.map(post => `
+        <article style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+            <img src="${image}" style="width: 100%; height: 200px; object-fit: cover;">
+            <div style="padding: 1.5rem;">
+                <div style="color: ${businessData.colors.primary}; font-size: 0.9rem; margin-bottom: 0.5rem;">${post.date}</div>
+                <h3 style="margin-bottom: 1rem; color: #333;">${post.title}</h3>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 1rem;">${post.content.substring(0, 100)}...</p>
+                <a href="#" style="color: ${businessData.colors.primary}; text-decoration: none; font-weight: bold;">Ler mais →</a>
+            </div>
+        </article>
+    `).join('');
+  }
+
+  private generatePartnerLogos(content: string, businessData: BusinessContent): string {
+    const partners = ["Partner 1", "Partner 2", "Partner 3", "Partner 4", "Partner 5"];
+    
+    return partners.map(partner => `
+        <div style="background: #f8f9fa; border-radius: 10px; padding: 2rem; display: flex; align-items: center; justify-content: center; min-height: 80px;">
+            <span style="font-weight: bold; color: #666;">${partner}</span>
+        </div>
+    `).join('');
+  }
+
+  private generateTeamCards(content: string, image: string, businessData: BusinessContent): string {
+    const team = [
+      { name: "João Silva", role: "CEO", image: image },
+      { name: "Maria Santos", role: "Diretora", image: image },
+      { name: "Pedro Costa", role: "Especialista", image: image }
+    ];
+
+    return team.map(member => `
+        <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;">
+            <img src="${member.image}" style="width: 100%; height: 250px; object-fit: cover;">
+            <div style="padding: 1.5rem;">
+                <h4 style="color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${member.name}</h4>
+                <p style="color: #666; margin-bottom: 1rem;">${member.role}</p>
+                <p style="color: #888; font-size: 0.9rem;">${content.substring(0, 80)}...</p>
+            </div>
+        </div>
+    `).join('');
+  }
+
+  private generateCategoryGrid(content: string, businessData: BusinessContent): string {
+    const categories = [
+      { name: "Categoria 1", icon: "📂" },
+      { name: "Categoria 2", icon: "🎯" },
+      { name: "Categoria 3", icon: "⚡" },
+      { name: "Categoria 4", icon: "🚀" },
+      { name: "Categoria 5", icon: "💎" },
+      { name: "Categoria 6", icon: "🌟" }
+    ];
+
+    return categories.map(category => `
+        <div style="background: white; border-radius: 10px; padding: 1.5rem; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">${category.icon}</div>
+            <h4 style="color: ${businessData.colors.primary};">${category.name}</h4>
+        </div>
+    `).join('');
+  }
+
+  private generateSkillBars(businessData: BusinessContent): string {
+    const skills = [
+      { name: "Qualidade", percentage: 95 },
+      { name: "Rapidez", percentage: 90 },
+      { name: "Inovação", percentage: 88 },
+      { name: "Atendimento", percentage: 98 }
+    ];
+
+    return `<div style="space-y: 1.5rem;">
+        ${skills.map(skill => `
+            <div style="margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="font-weight: bold; color: #333;">${skill.name}</span>
+                    <span style="color: ${businessData.colors.primary}; font-weight: bold;">${skill.percentage}%</span>
+                </div>
+                <div style="background: #e9ecef; border-radius: 50px; height: 10px; overflow: hidden;">
+                    <div style="background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); height: 100%; width: ${skill.percentage}%; border-radius: 50px; transition: width 2s ease;"></div>
+                </div>
+            </div>
+        `).join('')}
+    </div>`;
+  }
+
+  private generateAwards(content: string, businessData: BusinessContent): string {
+    const awards = [
+      { title: "Prêmio Excelência", year: "2024", icon: "🏆" },
+      { title: "Melhor Atendimento", year: "2023", icon: "⭐" },
+      { title: "Inovação", year: "2023", icon: "🚀" }
+    ];
+
+    return awards.map(award => `
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">${award.icon}</div>
+            <h4 style="color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${award.title}</h4>
+            <p style="color: #666;">${award.year}</p>
+        </div>
+    `).join('');
+  }
+
+  private generateCarouselItems(content: string, image: string, businessData: BusinessContent): string {
+    const items = [image, image, image]; // Poderia usar diferentes imagens
+    
+    return items.map((item, index) => `
+        <div style="min-width: 100%; position: relative;">
+            <img src="${item}" style="width: 100%; height: 400px; object-fit: cover;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; padding: 2rem;">
+                <h3 style="margin-bottom: 0.5rem;">Item ${index + 1}</h3>
+                <p>${content.substring(0, 100)}...</p>
+            </div>
+        </div>
+    `).join('');
+  }
+
+  private generateComparisonTable(content: string, businessData: BusinessContent): string {
+    const plans = [
+      { name: "Básico", price: "R$ 99", features: ["Recurso 1", "Recurso 2", "Suporte email"] },
+      { name: "Premium", price: "R$ 199", features: ["Tudo do Básico", "Recurso 3", "Recurso 4", "Suporte 24h"], highlight: true },
+      { name: "Enterprise", price: "R$ 399", features: ["Tudo do Premium", "Recurso 5", "Recurso 6", "Consultoria"] }
+    ];
+
+    return plans.map(plan => `
+        <div style="background: white; border-radius: 15px; padding: 2rem; text-align: center; position: relative; ${plan.highlight ? `border: 2px solid ${businessData.colors.primary}; transform: scale(1.05);` : 'border: 1px solid #e9ecef;'}">
+            ${plan.highlight ? `<div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: ${businessData.colors.primary}; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Mais Popular</div>` : ''}
+            <h3 style="color: ${businessData.colors.primary}; margin-bottom: 1rem;">${plan.name}</h3>
+            <div style="font-size: 2.5rem; font-weight: bold; color: ${businessData.colors.primary}; margin-bottom: 1rem;">${plan.price}</div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
+                ${plan.features.map(feature => `<li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">✓ ${feature}</li>`).join('')}
+            </ul>
+            <a href="#contato" class="cta-button" style="background: ${plan.highlight ? businessData.colors.primary : '#666'};">Escolher</a>
+        </div>
+    `).join('');
+  }
+
+  private generateHorizontalTimeline(content: string, businessData: BusinessContent): string {
+    const milestones = [
+      { year: "2020", title: "Início", description: "Fundação da empresa" },
+      { year: "2021", title: "Crescimento", description: "Expansão dos serviços" },
+      { year: "2022", title: "Reconhecimento", description: "Primeiros prêmios" },
+      { year: "2024", title: "Futuro", description: content.substring(0, 50) + "..." }
+    ];
+
+    return `
+        <div style="display: flex; justify-content: space-between; align-items: center; min-width: 800px; position: relative;">
+            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: ${businessData.colors.primary}; z-index: 1;"></div>
+            ${milestones.map(milestone => `
+                <div style="background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative; z-index: 2; text-align: center; min-width: 150px;">
+                    <div style="width: 20px; height: 20px; background: ${businessData.colors.primary}; border-radius: 50%; margin: 0 auto -10px auto; position: relative; z-index: 3;"></div>
+                    <div style="font-weight: bold; color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${milestone.year}</div>
+                    <h4 style="margin-bottom: 0.5rem;">${milestone.title}</h4>
+                    <p style="font-size: 0.9rem; color: #666;">${milestone.description}</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
+  }
+
+  private addIconsToContent(content: string): string {
+    return content
+      .replace(/\b(qualidade|excelência)\b/gi, '✨ $1')
+      .replace(/\b(rápido|rápida|rapidez)\b/gi, '⚡ $1')
+      .replace(/\b(garantia|garantido)\b/gi, '🛡️ $1')
+      .replace(/\b(resultado|sucesso)\b/gi, '🎯 $1')
+      .replace(/\b(inovação|inovador)\b/gi, '🚀 $1')
+      .replace(/\b(profissional|especialista)\b/gi, '👨‍💼 $1')
+      .replace(/\b(atendimento|suporte)\b/gi, '🤝 $1')
+      .replace(/\b(tecnologia|digital)\b/gi, '💻 $1');
   }
 
   private generateGallerySection(businessData: BusinessContent, images: any): string {
@@ -909,6 +1501,38 @@ Mensagem do cliente: "\${message}"\`
                 }
             });
         });
+
+        // Função para toggle do FAQ
+        function toggleFAQ(index) {
+            const content = document.getElementById('faq-content-' + index);
+            const icon = document.getElementById('faq-icon-' + index);
+            
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                icon.textContent = '−';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '+';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Carrossel functions
+        let currentSlides = {};
+        function nextSlide(index) {
+            const carousel = document.getElementById('carousel-' + index);
+            if (!currentSlides[index]) currentSlides[index] = 0;
+            currentSlides[index] = (currentSlides[index] + 1) % 3;
+            carousel.style.transform = 'translateX(-' + (currentSlides[index] * 100) + '%)';
+        }
+        
+        function prevSlide(index) {
+            const carousel = document.getElementById('carousel-' + index);
+            if (!currentSlides[index]) currentSlides[index] = 0;
+            currentSlides[index] = (currentSlides[index] - 1 + 3) % 3;
+            carousel.style.transform = 'translateX(-' + (currentSlides[index] * 100) + '%)';
+        }
 
         // Função para toggle do menu mobile
         function toggleMenu() {
