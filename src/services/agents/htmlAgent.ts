@@ -1,40 +1,46 @@
-
 import { BusinessContent } from '../contentGenerator';
 
+const PICSUM_BASE_URL = "https://picsum.photos";
+
 export class HtmlAgent {
-  async generateHTML(businessData: BusinessContent): Promise<string> {
-    const images = await this.generateImageUrls(businessData.images, businessData.customImages, businessData);
-    
+  async generateLandingPage(businessData: BusinessContent): Promise<string> {
+    const images = this.generateImageUrls(businessData);
     return this.buildHTMLTemplate(businessData, images);
   }
 
-  private async generateImageUrls(images: any, customImages?: { [key: string]: string }, businessData?: BusinessContent): Promise<any> {
-    const baseUrl = 'https://image.pollinations.ai/prompt/';
-    const imageParams = '?width=720&height=480&enhance=true&nologo=true';
+  // Método para compatibilidade com código antigo
+  async generateHTML(businessData: BusinessContent): Promise<string> {
+    return this.generateLandingPage(businessData);
+  }
+
+  private generateImageUrls(businessData: BusinessContent): any {
+    const baseUrl = `${PICSUM_BASE_URL}/800/600?random=`;
+    const imageParams = `&blur=0&grayscale=0`;
     
-    const logoPrompt = images.logo || `Logo da empresa ${images.hero || 'negócio profissional'}`;
-    
-    // Priorizar logos personalizados do usuário
-    const hasCustomLogo = customImages?.logo && !customImages.logo.includes('pollinations.ai');
+    const customImages = businessData.customImages || {};
     
     const imageUrls = {
-      logo: hasCustomLogo ? customImages.logo : `${baseUrl}${encodeURIComponent(logoPrompt)}${imageParams}`,
-      hero: customImages?.hero || `${baseUrl}${encodeURIComponent(images.hero)}${imageParams}`,
-      motivation: customImages?.motivation || `${baseUrl}${encodeURIComponent(images.motivation)}${imageParams}`,
-      target: customImages?.target || `${baseUrl}${encodeURIComponent(images.target)}${imageParams}`,
-      method: customImages?.method || `${baseUrl}${encodeURIComponent(images.method)}${imageParams}`,
-      results: customImages?.results || `${baseUrl}${encodeURIComponent(images.results)}${imageParams}`,
-      access: customImages?.access || `${baseUrl}${encodeURIComponent(images.access)}${imageParams}`,
-      investment: customImages?.investment || `${baseUrl}${encodeURIComponent(images.investment)}${imageParams}`,
-      gallery: businessData.galleryImages ? businessData.galleryImages.map((prompt: string, i: number) => 
-        customImages?.[`gallery_${i}`] || `${baseUrl}${encodeURIComponent(prompt)}${imageParams}`
-      ) : []
+      logo: customImages.logo || `${baseUrl}logo${imageParams}`,
+      hero: customImages.hero || `${baseUrl}hero${imageParams}`,
+      motivation: customImages.motivation || `${baseUrl}motivation${imageParams}`,
+      target: customImages.target || `${baseUrl}target${imageParams}`,
+      method: customImages.method || `${baseUrl}method${imageParams}`,
+      results: customImages.results || `${baseUrl}results${imageParams}`,
+      access: customImages.access || `${baseUrl}access${imageParams}`,
+      investment: customImages.investment || `${baseUrl}investment${imageParams}`,
+      gallery: Array.from({ length: 6 }, (_, i) => 
+        customImages?.[`gallery_${i}`] || `${baseUrl}gallery${i}${imageParams}`
+      )
     };
 
     return imageUrls;
   }
 
   private buildHTMLTemplate(businessData: BusinessContent, images: any): string {
+    // Detectar tipo de LP do prompt
+    const prompt = businessData.heroText || '';
+    const landingPageType = this.detectLandingPageType(prompt);
+    
     return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -45,1602 +51,715 @@ export class HtmlAgent {
     ${this.generateCSS(businessData)}
 </head>
 <body>
-    ${this.generateNavigation(businessData, images)}
-    ${this.generateHeroSection(businessData, images)}
-    ${this.generateFirstSectionWithBackground(businessData, images)}
-    ${this.generateContentSections(businessData, images)}
-    ${this.generateGallerySection(businessData, images)}
-    ${this.generateFooter(businessData, images)}
-    ${this.generateChatWidget(businessData)}
+    ${this.generateDynamicLandingPage(landingPageType, businessData, images)}
     ${this.generateJavaScript(businessData)}
 </body>
 </html>`;
   }
 
-  private generateCSS(businessData: BusinessContent): string {
-    return `<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 1rem 0;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-        
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: ${businessData.colors.primary};
-        }
-        
-        .logo-image {
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-        
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-        
-        .nav-menu a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-menu a:hover {
-            color: ${businessData.colors.primary};
-        }
-        
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 4px;
-        }
-        
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background: #333;
-            transition: 0.3s;
-        }
-        
-        @media (max-width: 768px) {
-            .nav-menu {
-                position: fixed;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: white;
-                flex-direction: column;
-                padding: 2rem;
-                box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-                transform: translateY(-100%);
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s;
-            }
-            
-            .nav-menu.active {
-                transform: translateY(0);
-                opacity: 1;
-                visibility: visible;
-            }
-            
-            .hamburger {
-                display: flex;
-            }
-        }
-        
-        .section {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 2rem 0;
-        }
-        
-        .hero {
-            position: relative;
-            color: white;
-            text-align: center;
-            background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary});
-        }
-        
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background: ${businessData.colors.accent};
-            color: white;
-            padding: 1rem 2rem;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .two-columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-        
-        .layout-reverse {
-            grid-template-columns: 1fr 1fr;
-            direction: rtl;
-        }
-        
-        .layout-reverse > * {
-            direction: ltr;
-        }
-        
-        .layout-stacked {
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
-            text-align: center;
-        }
-        
-        .layout-asymmetric-left {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-        
-        .layout-asymmetric-right {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 3rem;
-            align-items: center;
-        }
-        
-        .layout-image-bg {
-            position: relative;
-            padding: 5rem 0;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        
-        .layout-image-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1;
-        }
-        
-        .layout-image-bg .container {
-            position: relative;
-            z-index: 2;
-            color: white;
-        }
-        
-        .layout-split {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 60vh;
-            gap: 0;
-        }
-        
-        .layout-split .content-side {
-            padding: 4rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .layout-split .image-side {
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            color: ${businessData.colors.primary};
-        }
-        
-        .feature-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        
-        .first-section-bg {
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            position: relative;
-        }
-        
-        .first-section-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1;
-        }
-        
-        .first-section-bg .container {
-            position: relative;
-            z-index: 2;
-            color: white;
-        }
-        
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .gallery-item {
-            aspect-ratio: 4/3;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        
-        .gallery-item:hover {
-            transform: translateY(-5px);
-        }
-        
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        @media (max-width: 768px) {
-            .two-columns, .layout-reverse, .layout-asymmetric-left, .layout-asymmetric-right {
-                grid-template-columns: 1fr !important;
-                direction: ltr !important;
-            }
-            
-            .layout-reverse > * {
-                direction: ltr;
-            }
-            
-            .layout-stacked {
-                gap: 2rem;
-            }
-            
-            .layout-image-bg {
-                padding: 3rem 0;
-            }
-            
-            .layout-split {
-                grid-template-columns: 1fr !important;
-                min-height: auto;
-            }
-            
-            .layout-split .content-side {
-                padding: 2rem;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .gallery {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .gallery {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>`;
+  private detectLandingPageType(prompt: string): 'simples' | 'avancada' | 'completa' {
+    if (prompt.includes('SIMPLES') || prompt.includes('simples')) return 'simples';
+    if (prompt.includes('AVANÇADA') || prompt.includes('avancada')) return 'avancada'; 
+    if (prompt.includes('COMPLETA') || prompt.includes('completa')) return 'completa';
+    return 'avancada'; // default
   }
 
-  private generateNavigation(businessData: BusinessContent, images: any): string {
-    const getPersonalizedMenuItems = (businessData: BusinessContent): string => {
-      // Detectar se é produtos ou serviços baseado no contexto
-      const isProduct = businessData.sections.some(section => 
-        section.content.toLowerCase().includes('produto') || 
-        section.content.toLowerCase().includes('loja') ||
-        section.content.toLowerCase().includes('venda') ||
-        section.content.toLowerCase().includes('comprar')
-      );
-      
-      const servicesOrProducts = isProduct ? 'Produtos' : 'Serviços';
-      
-      // Menu personalizado baseado nas seções do businessData
-      const menuItems = [
-        '<li><a href="#hero">Inicial</a></li>',
-        '<li><a href="#sobre">Sobre</a></li>',
-        `<li><a href="#servicos">${servicesOrProducts}</a></li>`,
-        '<li><a href="#galeria">Galeria</a></li>',
-        '<li><a href="#oportunidade">Oportunidades</a></li>',
-        '<li><a href="#contato">Contatos</a></li>'
-      ];
-      
-      return menuItems.join('');
-    };
+  private generateDynamicLandingPage(type: 'simples' | 'avancada' | 'completa', businessData: BusinessContent, images: any): string {
+    const businessType = this.extractBusinessType(businessData.heroText || '');
+    const sections = [];
     
-    return `<nav class="navbar">
-        <div class="container">
-            <div class="nav-content">
-                <div class="logo">
-                    <img src="${images.logo}" alt="Logo" class="logo-image">
-                    <span>${businessData.title}</span>
-                </div>
-                <ul class="nav-menu" id="navMenu">
-                    ${getPersonalizedMenuItems(businessData)}
-                </ul>
-                <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </div>
-    </nav>`;
-  }
-
-  private generateHeroSection(businessData: BusinessContent, images: any): string {
-    return `<section id="hero" class="section hero">
-        <div class="container">
-            <h1>${businessData.sections[0].title}</h1>
-            <p>${businessData.heroText}</p>
-            <a href="#contato" class="cta-button">${businessData.ctaText}</a>
-        </div>
-    </section>`;
-  }
-
-  private generateFirstSectionWithBackground(businessData: BusinessContent, images: any): string {
-    const firstSection = businessData.sections[1];
-    if (!firstSection) return '';
+    // Cabeçalho sempre presente
+    sections.push(this.generateNavigation(businessData, images));
     
-    return `<section id="sobre" class="section first-section-bg" style="background-image: url('${images.hero}');">
-        <div class="container">
-            <div class="two-columns">
-                <div>
-                    <h2 class="section-title">${firstSection.title}</h2>
-                    <p>${firstSection.content}</p>
-                </div>
-                <div></div>
-            </div>
-        </div>
-    </section>`;
-  }
-
-  private generateContentSections(businessData: BusinessContent, images: any): string {
-    const sections = businessData.sections.slice(2);
-    let generatedSections = '';
-    
-    sections.forEach((section, index) => {
-      const imageKey = section.type as keyof typeof images;
-      const hash = this.createSimpleHash(section.title + businessData.title + index);
-      const layoutType = hash % 25; // 25 tipos diferentes de layout
-      
-      // Adicionar seção de FAQ com acordeon se for sobre "perguntas" ou similar
-      if (section.title.toLowerCase().includes('perguntas') || section.title.toLowerCase().includes('faq') || section.title.toLowerCase().includes('dúvidas')) {
-        generatedSections += this.generateFAQSection(section, businessData);
-        return;
-      }
-      
-      // Adicionar seção de preços se for sobre "preço" ou similar
-      if (section.title.toLowerCase().includes('preço') || section.title.toLowerCase().includes('valor') || section.title.toLowerCase().includes('investimento') || section.title.toLowerCase().includes('plano')) {
-        generatedSections += this.generatePricingSection(section, businessData, images[imageKey]);
-        return;
-      }
-      
-      switch (layoutType) {
-        case 0: // Hero Section com CTA
-          generatedSections += `<section id="${section.id}" class="section hero-alternate" style="background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white; text-align: center; min-height: 80vh;">
-              <div class="container">
-                  <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
-                      <h2 style="font-size: 3rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">${section.title}</h2>
-                      <p style="font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.9;">${section.content}</p>
-                      <a href="#contato" class="cta-button" style="background: ${businessData.colors.accent}; padding: 15px 40px; font-size: 1.1rem;">Saiba Mais</a>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 1: // Cards de serviços (3 colunas)
-          generatedSections += `<section id="${section.id}" class="section" style="background: #f8f9fa;">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                      ${this.generateServiceCards(section.content, images[imageKey], businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 2: // Split background (metade imagem, metade cor)
-          generatedSections += `<section id="${section.id}" class="section layout-split" style="min-height: 70vh;">
-              <div class="image-side" style="background-image: url('${images[imageKey]}'); background-size: cover; background-position: center;"></div>
-              <div class="content-side" style="background: ${businessData.colors.primary}; color: white; display: flex; flex-direction: column; justify-content: center; padding: 4rem;">
-                  <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">${section.title}</h2>
-                  <p style="font-size: 1.1rem; line-height: 1.8;">${section.content}</p>
-                  <a href="#contato" class="cta-button" style="background: ${businessData.colors.accent}; margin-top: 2rem; width: fit-content;">Entre em Contato</a>
-              </div>
-          </section>`;
-          break;
-          
-        case 3: // Testimonials em grid
-          generatedSections += `<section id="${section.id}" class="section">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
-                      ${this.generateTestimonials(section.content, businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 4: // Timeline (linha do tempo)
-          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(45deg, #f8f9fa, #e9ecef);">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  ${this.generateTimeline(section.content, businessData, images[imageKey])}
-              </div>
-          </section>`;
-          break;
-          
-        case 5: // Contadores animados (estatísticas)
-          generatedSections += `<section id="${section.id}" class="section" style="background: ${businessData.colors.primary}; color: white;">
-              <div class="container">
-                  <h2 style="text-align: center; margin-bottom: 3rem; color: white;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; text-align: center;">
-                      ${this.generateCounters(section.content, businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 6: // Grid em mosaico (masonry)
-          generatedSections += `<section id="${section.id}" class="section">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="columns: 3; column-gap: 2rem; break-inside: avoid;">
-                      ${this.generateMasonryContent(section.content, images[imageKey], businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 7: // Parallax com scroll animado
-          generatedSections += `<section id="${section.id}" class="section" style="background-image: url('${images[imageKey]}'); background-attachment: fixed; background-size: cover; background-position: center; position: relative; min-height: 80vh;">
-              <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6);"></div>
-              <div class="container" style="position: relative; z-index: 2; display: flex; align-items: center; min-height: 80vh;">
-                  <div style="max-width: 600px; color: white; text-align: center; margin: 0 auto;">
-                      <h2 style="font-size: 3rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${section.title}</h2>
-                      <p style="font-size: 1.2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">${section.content}</p>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 8: // CTA dividido (texto à esquerda, botão à direita)
-          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(135deg, ${businessData.colors.secondary}, ${businessData.colors.primary}); color: white;">
-              <div class="container">
-                  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 3rem; align-items: center;">
-                      <div>
-                          <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: white;">${section.title}</h2>
-                          <p style="font-size: 1.1rem; opacity: 0.9;">${section.content}</p>
-                      </div>
-                      <div style="text-align: center;">
-                          <a href="#contato" class="cta-button" style="background: ${businessData.colors.accent}; padding: 20px 40px; font-size: 1.2rem; border-radius: 50px;">Começar Agora</a>
-                      </div>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 9: // Showcase de produto (mockup central)
-          generatedSections += `<section id="${section.id}" class="section" style="background: radial-gradient(circle, #f8f9fa, white);">
-              <div class="container">
-                  <div style="text-align: center;">
-                      <h2 class="section-title" style="margin-bottom: 2rem;">${section.title}</h2>
-                      <div style="max-width: 600px; margin: 0 auto 3rem;">
-                          <img src="${images[imageKey]}" alt="${section.title}" style="width: 100%; height: auto; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.2);">
-                      </div>
-                      <p style="font-size: 1.1rem; max-width: 700px; margin: 0 auto;">${section.content}</p>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 10: // Seção de recursos/benefícios com ícones
-          generatedSections += `<section id="${section.id}" class="section" style="background: #f8f9fa;">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
-                      ${this.generateBenefitsWithIcons(section.content, businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 11: // Blog posts recentes (grid/lista)
-          generatedSections += `<section id="${section.id}" class="section">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
-                      ${this.generateBlogCards(section.content, images[imageKey], businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 12: // Logos de clientes/parceiros
-          generatedSections += `<section id="${section.id}" class="section" style="background: white; border-top: 1px solid #eee; border-bottom: 1px solid #eee;">
-              <div class="container">
-                  <h2 style="text-align: center; margin-bottom: 3rem; font-size: 1.8rem; color: #666;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 2rem; align-items: center; opacity: 0.7;">
-                      ${this.generatePartnerLogos(section.content, businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 13: // Equipe (cards com fotos e cargos)
-          generatedSections += `<section id="${section.id}" class="section">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
-                      ${this.generateTeamCards(section.content, images[imageKey], businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 14: // Callout destacado (frase motivacional centralizada)
-          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(45deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white; text-align: center; padding: 5rem 0;">
-              <div class="container">
-                  <div style="max-width: 800px; margin: 0 auto;">
-                      <h2 style="font-size: 3rem; margin-bottom: 2rem; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">"${section.title}"</h2>
-                      <p style="font-size: 1.3rem; opacity: 0.9; font-style: italic;">${section.content}</p>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 15: // Grid de categorias
-          generatedSections += `<section id="${section.id}" class="section" style="background: #f8f9fa;">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
-                      ${this.generateCategoryGrid(section.content, businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 16: // Barra de progresso (skills/competências)
-          generatedSections += `<section id="${section.id}" class="section">
-              <div class="container">
-                  <div class="two-columns">
-                      <div>
-                          <h2 class="section-title">${section.title}</h2>
-                          <p style="margin-bottom: 2rem;">${section.content}</p>
-                          ${this.generateSkillBars(businessData)}
-                      </div>
-                      <div>
-                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
-                      </div>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 17: // Seção com vídeo de fundo autoplay
-          generatedSections += `<section id="${section.id}" class="section" style="position: relative; min-height: 80vh; background: #000; overflow: hidden;">
-              <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1;"></div>
-              <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('${images[imageKey]}'); background-size: cover; background-position: center; filter: brightness(0.7);"></div>
-              <div class="container" style="position: relative; z-index: 2; display: flex; align-items: center; min-height: 80vh;">
-                  <div style="max-width: 600px; color: white; text-align: center; margin: 0 auto;">
-                      <h2 style="font-size: 3rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">${section.title}</h2>
-                      <p style="font-size: 1.2rem; margin-bottom: 2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">${section.content}</p>
-                      <a href="#contato" class="cta-button" style="background: ${businessData.colors.accent}; padding: 15px 40px;">Assista Agora</a>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 18: // Seção de awards/prêmios conquistados
-          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(135deg, #f8f9fa, white);">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
-                      ${this.generateAwards(section.content, businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 19: // Carrossel de imagens/produtos
-          generatedSections += `<section id="${section.id}" class="section">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="position: relative; overflow: hidden; border-radius: 15px;">
-                      <div id="carousel-${index}" style="display: flex; transition: transform 0.5s ease;">
-                          ${this.generateCarouselItems(section.content, images[imageKey], businessData)}
-                      </div>
-                      <button onclick="prevSlide(${index})" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer; font-size: 18px;">❮</button>
-                      <button onclick="nextSlide(${index})" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer; font-size: 18px;">❯</button>
-                  </div>
-                  <p style="text-align: center; margin-top: 2rem; font-size: 1.1rem;">${section.content}</p>
-              </div>
-          </section>`;
-          break;
-          
-        case 20: // Seção de download de app
-          generatedSections += `<section id="${section.id}" class="section" style="background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white;">
-              <div class="container">
-                  <div class="two-columns">
-                      <div>
-                          <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: white;">${section.title}</h2>
-                          <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9;">${section.content}</p>
-                          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                              <a href="#" style="display: inline-block; background: #000; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">📱 App Store</a>
-                              <a href="#" style="display: inline-block; background: #01875f; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">🤖 Google Play</a>
-                          </div>
-                      </div>
-                      <div>
-                          <img src="${images[imageKey]}" alt="${section.title}" style="max-width: 300px; height: auto; margin: 0 auto; display: block;">
-                      </div>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 21: // Comparativo de planos/tabelas
-          generatedSections += `<section id="${section.id}" class="section" style="background: #f8f9fa;">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
-                      ${this.generateComparisonTable(section.content, businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 22: // Mapa interativo + contato
-          generatedSections += `<section id="${section.id}" class="section">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div class="two-columns">
-                      <div>
-                          <div style="background: #e9ecef; height: 400px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: #666;">
-                              <div style="text-align: center;">
-                                  <div style="font-size: 3rem; margin-bottom: 1rem;">📍</div>
-                                  <p>Mapa Interativo</p>
-                                  <p style="font-size: 0.9rem;">${businessData.contact.address || 'Endereço disponível em breve'}</p>
-                              </div>
-                          </div>
-                      </div>
-                      <div>
-                          <p style="margin-bottom: 2rem;">${section.content}</p>
-                          <div style="space-y: 1rem;">
-                              <p><strong>📧 Email:</strong> ${businessData.contact.email}</p>
-                              <p><strong>📞 Telefone:</strong> ${businessData.contact.phone}</p>
-                              ${businessData.contact.address ? `<p><strong>📍 Endereço:</strong> ${businessData.contact.address}</p>` : ''}
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 23: // Linha de tempo horizontal (roadmap)
-          generatedSections += `<section id="${section.id}" class="section" style="background: white;">
-              <div class="container">
-                  <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-                  <div style="overflow-x: auto; padding: 2rem 0;">
-                      ${this.generateHorizontalTimeline(section.content, businessData)}
-                  </div>
-              </div>
-          </section>`;
-          break;
-          
-        case 24: // Layout tradicional com ícones no conteúdo
-        default:
-          generatedSections += `<section id="${section.id}" class="section">
-              <div class="container">
-                  <div class="two-columns">
-                      <div>
-                          <h2 class="section-title">✨ ${section.title}</h2>
-                          <div style="font-size: 1.1rem; line-height: 1.8;">
-                              ${this.addIconsToContent(section.content)}
-                          </div>
-                      </div>
-                      <div>
-                          <img src="${images[imageKey]}" alt="${section.title}" class="feature-image">
-                      </div>
-                  </div>
-              </div>
-          </section>`;
-          break;
-      }
-    });
-    
-    return generatedSections;
-  }
-
-  private createSimpleHash(str: string): number {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
+    switch(type) {
+      case 'simples':
+        sections.push(...this.generateSimpleLandingPage(businessData, images, businessType));
+        break;
+      case 'avancada':
+        sections.push(...this.generateAdvancedLandingPage(businessData, images, businessType));
+        break;
+      case 'completa':
+        sections.push(...this.generateCompleteLandingPage(businessData, images, businessType));
+        break;
     }
-    return Math.abs(hash);
+    
+    // Footer e Chat sempre presentes
+    sections.push(this.generateFooter(businessData, images));
+    sections.push(this.generateChatWidget(businessData));
+    
+    return sections.join('\n');
   }
 
-  private generateFAQSection(section: any, businessData: BusinessContent): string {
-    const faqItems = [
-      { question: "Como funciona?", answer: section.content },
-      { question: "Quanto tempo demora?", answer: "O prazo varia de acordo com cada projeto, mas geralmente conseguimos entregar em poucos dias." },
-      { question: "Posso fazer alterações?", answer: "Sim! Oferecemos revisões para garantir que tudo fique exatamente como você deseja." },
-      { question: "Como entrar em contato?", answer: `Entre em contato conosco pelo telefone ${businessData.contact.phone} ou email ${businessData.contact.email}.` }
+  private extractBusinessType(prompt: string): string {
+    const typeMatch = prompt.match(/Tipo de Negócio:\s*([^\n]+)/i);
+    return typeMatch ? typeMatch[1].trim().toLowerCase() : 'geral';
+  }
+
+  private generateSimpleLandingPage(businessData: BusinessContent, images: any, businessType: string): string[] {
+    const sections = [];
+    
+    // 1. Hero Section minimalista
+    sections.push(`
+      <section class="hero-simple" style="background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white; text-align: center; padding: 120px 0;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+          <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: bold;">${businessData.title}</h1>
+          <p style="font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.9;">${businessData.heroText}</p>
+          <a href="javascript:sendToWhatsApp('cta', {origem: 'Hero Principal'})" class="cta-button" style="background: ${businessData.colors.accent}; padding: 20px 40px; color: white; text-decoration: none; border-radius: 8px; font-size: 1.1rem; display: inline-block; transition: all 0.3s;">
+            ${businessData.ctaText}
+          </a>
+        </div>
+      </section>
+    `);
+    
+    // 2. Benefícios rápidos
+    sections.push(`
+      <section style="padding: 80px 0; background: #f8f9fa;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+          <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #333;">Por que escolher ${businessData.title}?</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            ${this.generateBenefitCards(businessData, businessType)}
+          </div>
+        </div>
+      </section>
+    `);
+    
+    // 3. Depoimento rápido
+    sections.push(this.generateTestimonialSection(businessData));
+    
+    // 4. Sobre produto/serviço
+    sections.push(this.generateAboutSection(businessData, images, businessType));
+    
+    // 5. Pricing simples
+    sections.push(this.generateSimplePricingSection(businessData));
+    
+    // 6. FAQ básico
+    sections.push(this.generateFAQSection(businessData));
+    
+    // 7. CTA final
+    sections.push(this.generateFinalCTASection(businessData));
+    
+    return sections;
+  }
+
+  private generateAdvancedLandingPage(businessData: BusinessContent, images: any, businessType: string): string[] {
+    const sections = [];
+    
+    // Hero mais elaborado
+    sections.push(this.generateAdvancedHero(businessData, images));
+    
+    // Problema x Solução
+    sections.push(this.generateProblemSolutionSection(businessData, images, businessType));
+    
+    // Múltiplas seções variadas
+    const layouts = this.getBusinessLayouts(businessType);
+    for (let i = 0; i < 15; i++) {
+      sections.push(this.generateVariedSection(layouts[i % layouts.length], businessData, images, i));
+    }
+    
+    return sections;
+  }
+
+  private generateCompleteLandingPage(businessData: BusinessContent, images: any, businessType: string): string[] {
+    const sections = [];
+    
+    // Header sticky
+    sections.push(this.generateStickyHeader(businessData, images));
+    
+    // Hero impactante
+    sections.push(this.generateImpactfulHero(businessData, images));
+    
+    // Todas as seções possíveis
+    const allLayouts = this.getAllLayouts(businessType);
+    for (let i = 0; i < 25; i++) {
+      sections.push(this.generateVariedSection(allLayouts[i % allLayouts.length], businessData, images, i));
+    }
+    
+    return sections;
+  }
+
+  private getBusinessLayouts(businessType: string): string[] {
+    const baseLayouts = ['hero-banner', 'cards-grid', 'split-content', 'testimonials', 'pricing-table', 'timeline', 'gallery', 'stats', 'team', 'contact-form'];
+    
+    if (businessType.includes('consultoria') || businessType.includes('coach')) {
+      return [...baseLayouts, 'expertise', 'case-studies', 'authority', 'transformation'];
+    }
+    if (businessType.includes('ecommerce') || businessType.includes('loja')) {
+      return [...baseLayouts, 'products-showcase', 'categories', 'reviews', 'shipping-info'];
+    }
+    if (businessType.includes('saude') || businessType.includes('clinica')) {
+      return [...baseLayouts, 'specialists', 'treatments', 'before-after', 'appointments'];
+    }
+    
+    return baseLayouts;
+  }
+
+  private getAllLayouts(businessType: string): string[] {
+    return [
+      'hero-banner', 'cards-grid', 'split-content', 'testimonials', 'pricing-table', 
+      'timeline', 'gallery', 'stats', 'team', 'contact-form', 'parallax', 'carousel',
+      'comparison', 'features', 'awards', 'newsletter', 'blog-posts', 'social-proof',
+      'video-section', 'interactive-map', 'download-section', 'webinar-cta',
+      'partners-logos', 'masonry-grid', 'progress-bars'
+    ];
+  }
+
+  private generateVariedSection(layout: string, businessData: BusinessContent, images: any, index: number): string {
+    switch(layout) {
+      case 'cards-grid':
+        return `
+          <section style="padding: 80px 0; background: ${index % 2 === 0 ? '#fff' : '#f8f9fa'};">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+              <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">Nossos Serviços</h2>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                ${this.generateServiceCards(businessData)}
+              </div>
+            </div>
+          </section>
+        `;
+      
+      case 'split-content':
+        return `
+          <section style="min-height: 70vh; display: flex;">
+            <div style="flex: 1; background-image: url('${images.hero}'); background-size: cover; background-position: center;"></div>
+            <div style="flex: 1; background: ${businessData.colors.primary}; color: white; display: flex; flex-direction: column; justify-content: center; padding: 4rem;">
+              <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Transforme sua vida</h2>
+              <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">Com ${businessData.title}, você terá acesso aos melhores resultados do mercado.</p>
+              <a href="javascript:sendToWhatsApp('cta', {origem: 'Seção Split'})" style="background: ${businessData.colors.accent}; padding: 15px 30px; color: white; text-decoration: none; border-radius: 8px; width: fit-content;">
+                Quero começar agora
+              </a>
+            </div>
+          </section>
+        `;
+        
+      case 'testimonials':
+        return this.generateTestimonialCarousel(businessData);
+        
+      case 'pricing-table':
+        return this.generatePricingTable(businessData);
+        
+      case 'stats':
+        return this.generateStatsSection(businessData);
+        
+      default:
+        return this.generateDefaultSection(businessData, images, index);
+    }
+  }
+
+  private generateBenefitCards(businessData: BusinessContent, businessType: string): string {
+    const benefits = this.getBenefitsForBusinessType(businessType, businessData.title);
+    return benefits.map(benefit => `
+      <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">${benefit.icon}</div>
+        <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: ${businessData.colors.primary};">${benefit.title}</h3>
+        <p style="color: #666; line-height: 1.6;">${benefit.description}</p>
+      </div>
+    `).join('');
+  }
+
+  private getBenefitsForBusinessType(businessType: string, businessName: string): any[] {
+    if (businessType.includes('consultoria') || businessType.includes('coach')) {
+      return [
+        { icon: '🎯', title: 'Resultados Garantidos', description: `Com ${businessName}, você alcança seus objetivos de forma eficiente` },
+        { icon: '⚡', title: 'Método Exclusivo', description: 'Técnicas comprovadas e personalizadas para seu sucesso' },
+        { icon: '🏆', title: 'Experiência Comprovada', description: 'Anos de experiência transformando vidas e negócios' }
+      ];
+    }
+    
+    return [
+      { icon: '✨', title: 'Qualidade Superior', description: `${businessName} oferece a melhor qualidade do mercado` },
+      { icon: '🚀', title: 'Rapidez', description: 'Resultados rápidos e eficientes para suas necessidades' },
+      { icon: '💰', title: 'Melhor Custo-Benefício', description: 'Preços justos com máxima qualidade' }
+    ];
+  }
+
+  private generateTestimonialSection(businessData: BusinessContent): string {
+    return `
+      <section style="padding: 80px 0; background: linear-gradient(45deg, ${businessData.colors.primary}20, ${businessData.colors.secondary}20);">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: center;">
+          <h2 style="font-size: 2.5rem; margin-bottom: 3rem; color: #333;">O que nossos clientes dizem</h2>
+          <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;">
+            <div style="font-size: 4rem; color: ${businessData.colors.primary}; margin-bottom: 1rem;">"</div>
+            <p style="font-size: 1.2rem; line-height: 1.8; color: #555; margin-bottom: 2rem; font-style: italic;">
+              "${businessData.title} transformou completamente minha experiência. Recomendo para todos que buscam excelência e qualidade."
+            </p>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+              <div style="width: 60px; height: 60px; background: ${businessData.colors.primary}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">
+                M
+              </div>
+              <div>
+                <div style="font-weight: bold; color: #333;">Maria Silva</div>
+                <div style="color: #666; font-size: 0.9rem;">Cliente satisfeita</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  private generateAboutSection(businessData: BusinessContent, images: any, businessType: string): string {
+    return `
+      <section style="padding: 80px 0;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+            <div>
+              <h2 style="font-size: 2.5rem; margin-bottom: 2rem; color: ${businessData.colors.primary};">Sobre ${businessData.title}</h2>
+              <p style="font-size: 1.1rem; line-height: 1.8; color: #555; margin-bottom: 2rem;">
+                ${businessData.subtitle}
+              </p>
+              <p style="font-size: 1rem; line-height: 1.7; color: #666;">
+                Com anos de experiência no mercado, nos especializamos em oferecer soluções de alta qualidade para nossos clientes.
+              </p>
+            </div>
+            <div>
+              <img src="${images.hero}" alt="Sobre ${businessData.title}" style="width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  private generateSimplePricingSection(businessData: BusinessContent): string {
+    return `
+      <section style="padding: 80px 0; background: #f8f9fa;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: center;">
+          <h2 style="font-size: 2.5rem; margin-bottom: 3rem; color: #333;">Investimento</h2>
+          <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto;">
+            <div style="font-size: 3rem; color: ${businessData.colors.primary}; font-weight: bold; margin-bottom: 1rem;">
+              Consulte
+            </div>
+            <p style="color: #666; margin-bottom: 2rem; font-size: 1.1rem;">
+              Valores personalizados para suas necessidades
+            </p>
+            <a href="javascript:sendToWhatsApp('orcamento', {origem: 'Pricing Simples'})" style="background: ${businessData.colors.primary}; color: white; padding: 20px 40px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.1rem;">
+              Solicitar Orçamento
+            </a>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  private generateFAQSection(businessData: BusinessContent): string {
+    const faqs = [
+      { question: `Como funciona o ${businessData.title}?`, answer: 'Oferecemos um serviço personalizado e de alta qualidade, adaptado às suas necessidades específicas.' },
+      { question: 'Qual o prazo de entrega?', answer: 'O prazo varia conforme o projeto, mas sempre priorizamos a qualidade e pontualidade.' },
+      { question: 'Vocês oferecem garantia?', answer: 'Sim, oferecemos garantia em todos os nossos serviços para sua total tranquilidade.' }
     ];
 
-    return `<section id="${section.id}" class="section" style="background: #f8f9fa;">
-        <div class="container">
-            <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-            <div style="max-width: 800px; margin: 0 auto;">
-                ${faqItems.map((item, index) => `
-                    <div style="margin-bottom: 1rem; border: 1px solid #e9ecef; border-radius: 10px; overflow: hidden; background: white;">
-                        <button onclick="toggleFAQ(${index})" style="width: 100%; padding: 1.5rem; text-align: left; background: none; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                            <span>${item.question}</span>
-                            <span id="faq-icon-${index}" style="transition: transform 0.3s;">+</span>
-                        </button>
-                        <div id="faq-content-${index}" style="display: none; padding: 0 1.5rem 1.5rem; color: #666; line-height: 1.6;">
-                            ${item.answer}
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
+    return `
+      <section style="padding: 80px 0;">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
+          <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #333;">Perguntas Frequentes</h2>
+          <div style="space-y: 1rem;">
+            ${faqs.map((faq, index) => `
+              <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; margin-bottom: 1rem;">
+                <button onclick="toggleFAQ(${index})" style="width: 100%; padding: 1.5rem; text-align: left; background: none; border: none; font-size: 1.1rem; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                  ${faq.question}
+                  <span id="faq-icon-${index}" style="font-size: 1.5rem; transition: transform 0.3s;">+</span>
+                </button>
+                <div id="faq-content-${index}" style="display: none; padding: 0 1.5rem 1.5rem; color: #666; line-height: 1.6;">
+                  ${faq.answer}
+                </div>
+              </div>
+            `).join('')}
+          </div>
         </div>
-    </section>`;
+      </section>
+    `;
   }
 
-  private generatePricingSection(section: any, businessData: BusinessContent, image: string): string {
-    return `<section id="${section.id}" class="section" style="background: linear-gradient(135deg, #f8f9fa, white);">
-        <div class="container">
-            <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">${section.title}</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border: 2px solid ${businessData.colors.primary};">
-                    <h3 style="color: ${businessData.colors.primary}; margin-bottom: 1rem;">💎 Premium</h3>
-                    <div style="font-size: 2.5rem; font-weight: bold; color: ${businessData.colors.primary}; margin-bottom: 1rem;">R$ 299</div>
-                    <p style="color: #666; margin-bottom: 2rem;">${section.content}</p>
-                    <a href="#contato" class="cta-button" style="background: ${businessData.colors.primary};">Escolher</a>
-                </div>
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;">
-                    <h3 style="color: #666; margin-bottom: 1rem;">⭐ Básico</h3>
-                    <div style="font-size: 2.5rem; font-weight: bold; color: #666; margin-bottom: 1rem;">R$ 99</div>
-                    <p style="color: #666; margin-bottom: 2rem;">Plano básico com o essencial</p>
-                    <a href="#contato" class="cta-button" style="background: #666;">Escolher</a>
-                </div>
-            </div>
+  private generateFinalCTASection(businessData: BusinessContent): string {
+    return `
+      <section style="padding: 100px 0; background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white; text-align: center;">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
+          <h2 style="font-size: 3rem; margin-bottom: 1.5rem; font-weight: bold;">Pronto para começar?</h2>
+          <p style="font-size: 1.3rem; margin-bottom: 3rem; opacity: 0.9;">
+            Entre em contato conosco agora e descubra como ${businessData.title} pode transformar seus resultados.
+          </p>
+          <a href="javascript:sendToWhatsApp('contato_final', {origem: 'CTA Final'})" style="background: ${businessData.colors.accent}; color: white; padding: 25px 50px; text-decoration: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; display: inline-block; transition: all 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            🚀 COMEÇAR AGORA
+          </a>
         </div>
-    </section>`;
+      </section>
+    `;
   }
 
-  private generateServiceCards(content: string, image: string, businessData: BusinessContent): string {
+  // Continuar com métodos auxiliares...
+  private generateAdvancedHero(businessData: BusinessContent, images: any): string {
+    return `
+      <section style="min-height: 100vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${images.hero}'); background-size: cover; background-position: center; display: flex; align-items: center; color: white;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; width: 100%;">
+          <div style="max-width: 600px;">
+            <h1 style="font-size: 4rem; margin-bottom: 1.5rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">${businessData.title}</h1>
+            <p style="font-size: 1.4rem; margin-bottom: 3rem; line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">${businessData.heroText}</p>
+            <a href="javascript:sendToWhatsApp('cta', {origem: 'Hero Avançado'})" style="background: ${businessData.colors.accent}; padding: 20px 40px; color: white; text-decoration: none; border-radius: 8px; font-size: 1.2rem; display: inline-block; transition: all 0.3s;">
+              ${businessData.ctaText}
+            </a>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  private generateProblemSolutionSection(businessData: BusinessContent, images: any, businessType: string): string {
+    return `
+      <section style="padding: 100px 0;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;">
+            <div>
+              <h2 style="font-size: 2.5rem; margin-bottom: 2rem; color: #dc2626;">❌ O Problema</h2>
+              <p style="font-size: 1.1rem; line-height: 1.8; color: #555;">
+                Muitas pessoas enfrentam dificuldades para encontrar soluções de qualidade no mercado atual.
+              </p>
+            </div>
+            <div>
+              <h2 style="font-size: 2.5rem; margin-bottom: 2rem; color: ${businessData.colors.primary};">✅ A Solução</h2>
+              <p style="font-size: 1.1rem; line-height: 1.8; color: #555;">
+                Com ${businessData.title}, você tem acesso à excelência e qualidade que merece.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  private generateServiceCards(businessData: BusinessContent): string {
     const services = [
-      { icon: "🎯", title: "Estratégia", description: content.substring(0, 100) + "..." },
-      { icon: "⚡", title: "Execução", description: "Implementação rápida e eficiente" },
-      { icon: "📈", title: "Resultados", description: "Acompanhamento e otimização contínua" }
+      { title: 'Qualidade Premium', description: 'Serviços de alta qualidade com foco na excelência' },
+      { title: 'Atendimento Personalizado', description: 'Suporte dedicado para suas necessidades específicas' },
+      { title: 'Resultados Garantidos', description: 'Compromisso com sua satisfação e sucesso' }
     ];
 
     return services.map(service => `
-        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">${service.icon}</div>
-            <h3 style="color: ${businessData.colors.primary}; margin-bottom: 1rem;">${service.title}</h3>
-            <p style="color: #666; line-height: 1.6;">${service.description}</p>
-        </div>
+      <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid ${businessData.colors.primary};">
+        <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: ${businessData.colors.primary};">${service.title}</h3>
+        <p style="color: #666; line-height: 1.6;">${service.description}</p>
+      </div>
     `).join('');
   }
 
-  private generateTestimonials(content: string, businessData: BusinessContent): string {
+  private generateTestimonialCarousel(businessData: BusinessContent): string {
+    return `
+      <section style="padding: 80px 0; background: #f8f9fa;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: center;">
+          <h2 style="font-size: 2.5rem; margin-bottom: 3rem; color: #333;">Depoimentos</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            ${this.generateMultipleTestimonials(businessData)}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  private generateMultipleTestimonials(businessData: BusinessContent): string {
     const testimonials = [
-      { name: "Maria Silva", text: content, rating: "⭐⭐⭐⭐⭐" },
-      { name: "João Santos", text: "Excelente trabalho, superou minhas expectativas!", rating: "⭐⭐⭐⭐⭐" },
-      { name: "Ana Costa", text: "Profissionais competentes e atendimento excepcional.", rating: "⭐⭐⭐⭐⭐" }
+      { name: 'Ana Costa', role: 'Empresária', text: `${businessData.title} superou todas as minhas expectativas. Recomendo!` },
+      { name: 'João Santos', role: 'Consultor', text: 'Profissionalismo e qualidade em todos os detalhes.' },
+      { name: 'Carla Lima', role: 'Gerente', text: 'Atendimento excepcional e resultados incríveis.' }
     ];
 
     return testimonials.map(testimonial => `
-        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative;">
-            <div style="font-size: 3rem; color: ${businessData.colors.primary}; opacity: 0.3; position: absolute; top: 1rem; left: 1.5rem;">"</div>
-            <p style="font-style: italic; margin-bottom: 1.5rem; color: #555; padding-top: 1rem;">${testimonial.text}</p>
-            <div>
-                <div style="font-weight: bold; color: ${businessData.colors.primary};">${testimonial.name}</div>
-                <div style="color: #666; margin-top: 0.5rem;">${testimonial.rating}</div>
-            </div>
+      <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <p style="font-style: italic; margin-bottom: 1.5rem; color: #555; line-height: 1.6;">"${testimonial.text}"</p>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 50px; height: 50px; background: ${businessData.colors.primary}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+            ${testimonial.name.charAt(0)}
+          </div>
+          <div>
+            <div style="font-weight: bold; color: #333;">${testimonial.name}</div>
+            <div style="color: #666; font-size: 0.9rem;">${testimonial.role}</div>
+          </div>
         </div>
+      </div>
     `).join('');
   }
 
-  private generateTimeline(content: string, businessData: BusinessContent, image: string): string {
-    const steps = [
-      { step: "1", title: "Consulta", description: "Análise das suas necessidades" },
-      { step: "2", title: "Planejamento", description: content.substring(0, 80) + "..." },
-      { step: "3", title: "Execução", description: "Desenvolvimento e implementação" },
-      { step: "4", title: "Entrega", description: "Resultado final e acompanhamento" }
-    ];
-
+  private generatePricingTable(businessData: BusinessContent): string {
     return `
-        <div style="position: relative;">
-            <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: ${businessData.colors.primary}; transform: translateX(-50%);"></div>
-            ${steps.map((step, index) => `
-                <div style="display: flex; align-items: center; margin-bottom: 3rem; ${index % 2 === 0 ? 'flex-direction: row' : 'flex-direction: row-reverse'};">
-                    <div style="flex: 1; ${index % 2 === 0 ? 'text-align: right; padding-right: 2rem' : 'text-align: left; padding-left: 2rem'};">
-                        <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                            <h4 style="color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${step.title}</h4>
-                            <p style="color: #666; margin: 0;">${step.description}</p>
-                        </div>
-                    </div>
-                    <div style="flex: 0 0 60px; height: 60px; border-radius: 50%; background: ${businessData.colors.primary}; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; position: relative; z-index: 2;">
-                        ${step.step}
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            `).join('')}
+      <section style="padding: 80px 0; background: #f8f9fa;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: center;">
+          <h2 style="font-size: 2.5rem; margin-bottom: 3rem; color: #333;">Planos e Preços</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            ${this.generatePricingCards(businessData)}
+          </div>
         </div>
+      </section>
     `;
   }
 
-  private generateCounters(content: string, businessData: BusinessContent): string {
-    const counters = [
-      { number: "500+", label: "Clientes Satisfeitos", icon: "👥" },
-      { number: "3+", label: "Anos de Experiência", icon: "📅" },
-      { number: "98%", label: "Taxa de Sucesso", icon: "🎯" },
-      { number: "24h", label: "Suporte", icon: "⏰" }
-    ];
-
-    return counters.map(counter => `
-        <div style="text-align: center;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">${counter.icon}</div>
-            <div style="font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem;">${counter.number}</div>
-            <div style="opacity: 0.9; font-size: 1.1rem;">${counter.label}</div>
-        </div>
-    `).join('');
-  }
-
-  private generateMasonryContent(content: string, image: string, businessData: BusinessContent): string {
-    const items = [
-      { type: "text", content: content, height: "200px" },
-      { type: "image", src: image, height: "300px" },
-      { type: "quote", content: "Qualidade e dedicação em cada projeto", height: "150px" },
-      { type: "stat", number: "100%", label: "Satisfação", height: "180px" }
-    ];
-
-    return items.map(item => {
-      switch (item.type) {
-        case "image":
-          return `<div style="margin-bottom: 2rem; break-inside: avoid;"><img src="${item.src}" style="width: 100%; height: auto; border-radius: 10px;"></div>`;
-        case "quote":
-          return `<div style="background: ${businessData.colors.primary}; color: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; break-inside: avoid; text-align: center; font-style: italic;">"${item.content}"</div>`;
-        case "stat":
-          return `<div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; break-inside: avoid; text-align: center;"><div style="font-size: 2.5rem; font-weight: bold; color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${item.number}</div><div>${item.label}</div></div>`;
-        default:
-          return `<div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; break-inside: avoid;">${item.content}</div>`;
-      }
-    }).join('');
-  }
-
-  private generateBenefitsWithIcons(content: string, businessData: BusinessContent): string {
-    const benefits = [
-      { icon: "✅", title: "Qualidade Garantida", description: content.substring(0, 80) + "..." },
-      { icon: "⚡", title: "Entrega Rápida", description: "Resultados em tempo recorde" },
-      { icon: "💰", title: "Melhor Custo-Benefício", description: "Preços justos e transparentes" },
-      { icon: "🎯", title: "Foco no Resultado", description: "Estratégias personalizadas" }
-    ];
-
-    return benefits.map(benefit => `
-        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">${benefit.icon}</div>
-            <h4 style="color: ${businessData.colors.primary}; margin-bottom: 1rem;">${benefit.title}</h4>
-            <p style="color: #666; line-height: 1.6;">${benefit.description}</p>
-        </div>
-    `).join('');
-  }
-
-  private generateBlogCards(content: string, image: string, businessData: BusinessContent): string {
-    const posts = [
-      { title: "Dicas Importantes", content: content, date: "15 Jan 2024" },
-      { title: "Novidades do Setor", content: "Acompanhe as últimas tendências", date: "10 Jan 2024" },
-      { title: "Guia Completo", content: "Tudo que você precisa saber", date: "05 Jan 2024" }
-    ];
-
-    return posts.map(post => `
-        <article style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="${image}" style="width: 100%; height: 200px; object-fit: cover;">
-            <div style="padding: 1.5rem;">
-                <div style="color: ${businessData.colors.primary}; font-size: 0.9rem; margin-bottom: 0.5rem;">${post.date}</div>
-                <h3 style="margin-bottom: 1rem; color: #333;">${post.title}</h3>
-                <p style="color: #666; line-height: 1.6; margin-bottom: 1rem;">${post.content.substring(0, 100)}...</p>
-                <a href="#" style="color: ${businessData.colors.primary}; text-decoration: none; font-weight: bold;">Ler mais →</a>
-            </div>
-        </article>
-    `).join('');
-  }
-
-  private generatePartnerLogos(content: string, businessData: BusinessContent): string {
-    const partners = ["Partner 1", "Partner 2", "Partner 3", "Partner 4", "Partner 5"];
-    
-    return partners.map(partner => `
-        <div style="background: #f8f9fa; border-radius: 10px; padding: 2rem; display: flex; align-items: center; justify-content: center; min-height: 80px;">
-            <span style="font-weight: bold; color: #666;">${partner}</span>
-        </div>
-    `).join('');
-  }
-
-  private generateTeamCards(content: string, image: string, businessData: BusinessContent): string {
-    const team = [
-      { name: "João Silva", role: "CEO", image: image },
-      { name: "Maria Santos", role: "Diretora", image: image },
-      { name: "Pedro Costa", role: "Especialista", image: image }
-    ];
-
-    return team.map(member => `
-        <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;">
-            <img src="${member.image}" style="width: 100%; height: 250px; object-fit: cover;">
-            <div style="padding: 1.5rem;">
-                <h4 style="color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${member.name}</h4>
-                <p style="color: #666; margin-bottom: 1rem;">${member.role}</p>
-                <p style="color: #888; font-size: 0.9rem;">${content.substring(0, 80)}...</p>
-            </div>
-        </div>
-    `).join('');
-  }
-
-  private generateCategoryGrid(content: string, businessData: BusinessContent): string {
-    const categories = [
-      { name: "Categoria 1", icon: "📂" },
-      { name: "Categoria 2", icon: "🎯" },
-      { name: "Categoria 3", icon: "⚡" },
-      { name: "Categoria 4", icon: "🚀" },
-      { name: "Categoria 5", icon: "💎" },
-      { name: "Categoria 6", icon: "🌟" }
-    ];
-
-    return categories.map(category => `
-        <div style="background: white; border-radius: 10px; padding: 1.5rem; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-            <div style="font-size: 2rem; margin-bottom: 1rem;">${category.icon}</div>
-            <h4 style="color: ${businessData.colors.primary};">${category.name}</h4>
-        </div>
-    `).join('');
-  }
-
-  private generateSkillBars(businessData: BusinessContent): string {
-    const skills = [
-      { name: "Qualidade", percentage: 95 },
-      { name: "Rapidez", percentage: 90 },
-      { name: "Inovação", percentage: 88 },
-      { name: "Atendimento", percentage: 98 }
-    ];
-
-    return `<div style="space-y: 1.5rem;">
-        ${skills.map(skill => `
-            <div style="margin-bottom: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <span style="font-weight: bold; color: #333;">${skill.name}</span>
-                    <span style="color: ${businessData.colors.primary}; font-weight: bold;">${skill.percentage}%</span>
-                </div>
-                <div style="background: #e9ecef; border-radius: 50px; height: 10px; overflow: hidden;">
-                    <div style="background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); height: 100%; width: ${skill.percentage}%; border-radius: 50px; transition: width 2s ease;"></div>
-                </div>
-            </div>
-        `).join('')}
-    </div>`;
-  }
-
-  private generateAwards(content: string, businessData: BusinessContent): string {
-    const awards = [
-      { title: "Prêmio Excelência", year: "2024", icon: "🏆" },
-      { title: "Melhor Atendimento", year: "2023", icon: "⭐" },
-      { title: "Inovação", year: "2023", icon: "🚀" }
-    ];
-
-    return awards.map(award => `
-        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">${award.icon}</div>
-            <h4 style="color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${award.title}</h4>
-            <p style="color: #666;">${award.year}</p>
-        </div>
-    `).join('');
-  }
-
-  private generateCarouselItems(content: string, image: string, businessData: BusinessContent): string {
-    const items = [image, image, image]; // Poderia usar diferentes imagens
-    
-    return items.map((item, index) => `
-        <div style="min-width: 100%; position: relative;">
-            <img src="${item}" style="width: 100%; height: 400px; object-fit: cover;">
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; padding: 2rem;">
-                <h3 style="margin-bottom: 0.5rem;">Item ${index + 1}</h3>
-                <p>${content.substring(0, 100)}...</p>
-            </div>
-        </div>
-    `).join('');
-  }
-
-  private generateComparisonTable(content: string, businessData: BusinessContent): string {
+  private generatePricingCards(businessData: BusinessContent): string {
     const plans = [
-      { name: "Básico", price: "R$ 99", features: ["Recurso 1", "Recurso 2", "Suporte email"] },
-      { name: "Premium", price: "R$ 199", features: ["Tudo do Básico", "Recurso 3", "Recurso 4", "Suporte 24h"], highlight: true },
-      { name: "Enterprise", price: "R$ 399", features: ["Tudo do Premium", "Recurso 5", "Recurso 6", "Consultoria"] }
+      { name: 'Básico', price: 'R$ 97', features: ['Atendimento básico', 'Suporte por email', '1 revisão'] },
+      { name: 'Premium', price: 'R$ 197', features: ['Atendimento premium', 'Suporte prioritário', '3 revisões', 'Bônus especiais'], popular: true },
+      { name: 'VIP', price: 'R$ 397', features: ['Atendimento VIP', 'Suporte 24/7', 'Revisões ilimitadas', 'Consultoria inclusa'] }
     ];
 
     return plans.map(plan => `
-        <div style="background: white; border-radius: 15px; padding: 2rem; text-align: center; position: relative; ${plan.highlight ? `border: 2px solid ${businessData.colors.primary}; transform: scale(1.05);` : 'border: 1px solid #e9ecef;'}">
-            ${plan.highlight ? `<div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: ${businessData.colors.primary}; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Mais Popular</div>` : ''}
-            <h3 style="color: ${businessData.colors.primary}; margin-bottom: 1rem;">${plan.name}</h3>
-            <div style="font-size: 2.5rem; font-weight: bold; color: ${businessData.colors.primary}; margin-bottom: 1rem;">${plan.price}</div>
-            <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
-                ${plan.features.map(feature => `<li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">✓ ${feature}</li>`).join('')}
-            </ul>
-            <a href="#contato" class="cta-button" style="background: ${plan.highlight ? businessData.colors.primary : '#666'};">Escolher</a>
-        </div>
+      <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; ${plan.popular ? `border: 3px solid ${businessData.colors.primary};` : ''}">
+        ${plan.popular ? `<div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: ${businessData.colors.primary}; color: white; padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: bold;">MAIS POPULAR</div>` : ''}
+        <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: ${businessData.colors.primary};">${plan.name}</h3>
+        <div style="font-size: 2.5rem; font-weight: bold; color: #333; margin-bottom: 2rem;">${plan.price}</div>
+        <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
+          ${plan.features.map(feature => `<li style="padding: 0.5rem 0; color: #666;">✓ ${feature}</li>`).join('')}
+        </ul>
+        <a href="javascript:sendToWhatsApp('orcamento', {plano: '${plan.name}', preco: '${plan.price}'})" style="background: ${plan.popular ? businessData.colors.primary : businessData.colors.secondary}; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: block; font-weight: bold;">
+          Escolher Plano
+        </a>
+      </div>
     `).join('');
   }
 
-  private generateHorizontalTimeline(content: string, businessData: BusinessContent): string {
-    const milestones = [
-      { year: "2020", title: "Início", description: "Fundação da empresa" },
-      { year: "2021", title: "Crescimento", description: "Expansão dos serviços" },
-      { year: "2022", title: "Reconhecimento", description: "Primeiros prêmios" },
-      { year: "2024", title: "Futuro", description: content.substring(0, 50) + "..." }
-    ];
-
+  private generateStatsSection(businessData: BusinessContent): string {
     return `
-        <div style="display: flex; justify-content: space-between; align-items: center; min-width: 800px; position: relative;">
-            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: ${businessData.colors.primary}; z-index: 1;"></div>
-            ${milestones.map(milestone => `
-                <div style="background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative; z-index: 2; text-align: center; min-width: 150px;">
-                    <div style="width: 20px; height: 20px; background: ${businessData.colors.primary}; border-radius: 50%; margin: 0 auto -10px auto; position: relative; z-index: 3;"></div>
-                    <div style="font-weight: bold; color: ${businessData.colors.primary}; margin-bottom: 0.5rem;">${milestone.year}</div>
-                    <h4 style="margin-bottom: 0.5rem;">${milestone.title}</h4>
-                    <p style="font-size: 0.9rem; color: #666;">${milestone.description}</p>
-                </div>
-            `).join('')}
+      <section style="padding: 80px 0; background: ${businessData.colors.primary}; color: white;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+          <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">Nossos Números</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
+            <div>
+              <div style="font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem;">500+</div>
+              <div style="font-size: 1.1rem; opacity: 0.9;">Clientes Satisfeitos</div>
+            </div>
+            <div>
+              <div style="font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem;">99%</div>
+              <div style="font-size: 1.1rem; opacity: 0.9;">Taxa de Satisfação</div>
+            </div>
+            <div>
+              <div style="font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem;">5</div>
+              <div style="font-size: 1.1rem; opacity: 0.9;">Anos de Experiência</div>
+            </div>
+            <div>
+              <div style="font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem;">24/7</div>
+              <div style="font-size: 1.1rem; opacity: 0.9;">Suporte Disponível</div>
+            </div>
+          </div>
         </div>
+      </section>
     `;
   }
 
-  private addIconsToContent(content: string): string {
-    return content
-      .replace(/\b(qualidade|excelência)\b/gi, '✨ $1')
-      .replace(/\b(rápido|rápida|rapidez)\b/gi, '⚡ $1')
-      .replace(/\b(garantia|garantido)\b/gi, '🛡️ $1')
-      .replace(/\b(resultado|sucesso)\b/gi, '🎯 $1')
-      .replace(/\b(inovação|inovador)\b/gi, '🚀 $1')
-      .replace(/\b(profissional|especialista)\b/gi, '👨‍💼 $1')
-      .replace(/\b(atendimento|suporte)\b/gi, '🤝 $1')
-      .replace(/\b(tecnologia|digital)\b/gi, '💻 $1');
+  private generateDefaultSection(businessData: BusinessContent, images: any, index: number): string {
+    return `
+      <section style="padding: 80px 0; background: ${index % 2 === 0 ? '#fff' : '#f8f9fa'};">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: center;">
+          <h2 style="font-size: 2.5rem; margin-bottom: 2rem; color: ${businessData.colors.primary};">Seção ${index + 1}</h2>
+          <p style="font-size: 1.1rem; line-height: 1.8; color: #555; max-width: 800px; margin: 0 auto;">
+            Conte com ${businessData.title} para obter os melhores resultados em todos os aspectos do seu negócio.
+          </p>
+        </div>
+      </section>
+    `;
   }
 
-  private generateGallerySection(businessData: BusinessContent, images: any): string {
-    if (!images.gallery || !Array.isArray(images.gallery)) return '';
-    
-    return `<section id="galeria" class="section">
-        <div class="container">
-            <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">Galeria</h2>
-            <div class="gallery">
-                ${images.gallery.map((imageUrl: string, index: number) => `
-                    <div class="gallery-item">
-                        <img src="${imageUrl}" alt="Galeria ${index + 1}" loading="lazy" onclick="openImageModal('${imageUrl}', 'Galeria ${index + 1}')" style="cursor: pointer;">
-                    </div>
-                `).join('')}
-            </div>
+  private generateStickyHeader(businessData: BusinessContent, images: any): string {
+    return `
+      <header style="position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; padding: 1rem 0; box-shadow: 0 2px 20px rgba(0,0,0,0.1);">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 1.5rem; font-weight: bold; color: ${businessData.colors.primary};">
+            ${businessData.title}
+          </div>
+          <a href="javascript:sendToWhatsApp('cta', {origem: 'Header Sticky'})" style="background: ${businessData.colors.primary}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Contato
+          </a>
         </div>
-        
-        <!-- Modal para visualizar imagens -->
-        <div id="imageModal" style="
-            display: none; position: fixed; z-index: 10001; 
-            left: 0; top: 0; width: 100%; height: 100%; 
-            background-color: rgba(0,0,0,0.9);
-        " onclick="closeImageModal()">
-            <div style="
-                position: absolute; top: 50%; left: 50%; 
-                transform: translate(-50%, -50%); 
-                max-width: 90%; max-height: 90%;
-            ">
-                <img id="modalImage" src="" alt="" style="
-                    width: 100%; height: auto; 
-                    border-radius: 10px;
-                ">
-                <p id="modalCaption" style="
-                    color: white; text-align: center; 
-                    margin-top: 15px; font-size: 18px;
-                "></p>
-            </div>
-            <span style="
-                position: absolute; top: 20px; right: 30px; 
-                color: #f1f1f1; font-size: 40px; 
-                font-weight: bold; cursor: pointer;
-            " onclick="closeImageModal()">&times;</span>
+      </header>
+      <div style="height: 80px;"></div>
+    `;
+  }
+
+  private generateImpactfulHero(businessData: BusinessContent, images: any): string {
+    return `
+      <section style="min-height: 100vh; background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary}); color: white; display: flex; align-items: center; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('${images.hero}'); background-size: cover; background-position: center; opacity: 0.2;"></div>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2;">
+          <h1 style="font-size: 4.5rem; margin-bottom: 2rem; font-weight: 900; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.1;">
+            ${businessData.title}
+          </h1>
+          <p style="font-size: 1.5rem; margin-bottom: 3rem; opacity: 0.95; max-width: 800px; margin-left: auto; margin-right: auto;">${businessData.heroText}</p>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="javascript:sendToWhatsApp('cta', {origem: 'Hero Impactante'})" style="background: ${businessData.colors.accent}; color: white; padding: 20px 40px; text-decoration: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; transition: all 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+              🚀 ${businessData.ctaText}
+            </a>
+            <a href="#sobre" style="background: rgba(255,255,255,0.2); color: white; padding: 20px 40px; text-decoration: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.3);">
+              Saiba Mais
+            </a>
+          </div>
         </div>
-    </section>`;
+      </section>
+    `;
+  }
+
+  private generatePremiumFooter(businessData: BusinessContent, images: any): string {
+    return `
+      <footer style="background: #1a1a1a; color: white; padding: 60px 0 20px;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+            <div>
+              <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: ${businessData.colors.primary};">${businessData.title}</h3>
+              <p style="color: #ccc; line-height: 1.6;">${businessData.subtitle}</p>
+            </div>
+            <div>
+              <h4 style="margin-bottom: 1rem;">Contato</h4>
+              <p style="color: #ccc; margin-bottom: 0.5rem;">📱 ${businessData.contact?.phone || 'WhatsApp'}</p>
+              <p style="color: #ccc; margin-bottom: 0.5rem;">📧 ${businessData.contact?.email || 'contato@empresa.com'}</p>
+              <p style="color: #ccc;">📍 ${businessData.contact?.address || 'Endereço não informado'}</p>
+            </div>
+            <div>
+              <h4 style="margin-bottom: 1rem;">Links Rápidos</h4>
+              <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="#hero" style="color: #ccc; text-decoration: none;">Início</a>
+                <a href="#sobre" style="color: #ccc; text-decoration: none;">Sobre</a>
+                <a href="#servicos" style="color: #ccc; text-decoration: none;">Serviços</a>
+                <a href="#contato" style="color: #ccc; text-decoration: none;">Contato</a>
+              </div>
+            </div>
+          </div>
+          <div style="border-top: 1px solid #333; padding-top: 2rem; text-align: center; color: #999;">
+            <p>© 2024 ${businessData.title}. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      </footer>
+    `;
+  }
+
+  private generateNavigation(businessData: BusinessContent, images: any): string {
+    return `
+      <nav style="background: rgba(255,255,255,0.95); padding: 1rem 0; position: fixed; top: 0; width: 100%; z-index: 1000; backdrop-filter: blur(10px); box-shadow: 0 2px 20px rgba(0,0,0,0.1);">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 1.5rem; font-weight: bold; color: ${businessData.colors.primary};">
+            ${businessData.title}
+          </div>
+          <div style="display: flex; gap: 2rem; align-items: center;">
+            <a href="#hero" style="color: #333; text-decoration: none; font-weight: 500;">Início</a>
+            <a href="#sobre" style="color: #333; text-decoration: none; font-weight: 500;">Sobre</a>
+            <a href="#servicos" style="color: #333; text-decoration: none; font-weight: 500;">Serviços</a>
+            <a href="javascript:sendToWhatsApp('cta', {origem: 'Menu'})" style="background: ${businessData.colors.primary}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              Contato
+            </a>
+          </div>
+        </div>
+      </nav>
+      <div style="height: 80px;"></div>
+    `;
   }
 
   private generateFooter(businessData: BusinessContent, images: any): string {
-    const isProductBased = businessData.title.toLowerCase().includes('loja') || 
-                          businessData.title.toLowerCase().includes('produto') ||
-                          businessData.subtitle.toLowerCase().includes('produto') ||
-                          businessData.heroText.toLowerCase().includes('produto');
-    
-    const servicesOrProducts = isProductBased ? 'Produtos' : 'Serviços';
-    
-    return `<footer id="contato" style="background: #2a2a2a; color: white; padding: 3rem 0;">
-        <div class="container">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
-                <!-- Informações da empresa -->
-                <div>
-                    <h3 style="margin-bottom: 1rem; color: ${businessData.colors.primary};">${businessData.title}</h3>
-                    <p style="margin-bottom: 0.5rem;">${businessData.contact.email}</p>
-                    <p style="margin-bottom: 0.5rem;">${businessData.contact.phone}</p>
-                    ${businessData.contact.address ? `<p style="margin-bottom: 0.5rem;">${businessData.contact.address}</p>` : ''}
-                </div>
-                
-                <!-- Menu de navegação -->
-                <div>
-                    <h4 style="margin-bottom: 1rem; color: ${businessData.colors.primary};">Navegação</h4>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 0.5rem;"><a href="#hero" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">Inicial</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="#sobre" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">Sobre</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="#servicos" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">${servicesOrProducts}</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="#galeria" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">Galeria</a></li>
-                        <li style="margin-bottom: 0.5rem;"><a href="#oportunidade" style="color: white; text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='${businessData.colors.primary}'" onmouseout="this.style.color='white'">Oportunidades</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div style="text-align: center; border-top: 1px solid #444; padding-top: 2rem;">
-                <p style="margin: 0; opacity: 0.8;">&copy; 2024 ${businessData.title}. Todos os direitos reservados.</p>
-            </div>
+    return `
+      <footer style="background: #333; color: white; padding: 40px 0;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: center;">
+          <h3 style="margin-bottom: 1rem; color: ${businessData.colors.primary};">${businessData.title}</h3>
+          <p style="color: #ccc; margin-bottom: 2rem;">${businessData.subtitle}</p>
+          <div style="border-top: 1px solid #555; padding-top: 2rem;">
+            <p style="color: #999;">© 2024 ${businessData.title}. Todos os direitos reservados.</p>
+          </div>
         </div>
-    </footer>
-    
-    <!-- PageJet Signature Footer -->
-    <footer style="background: #000000; color: white; padding: 1rem 0; border-top: 2px solid #ff6600;">
-        <div class="container">
-            <div style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <span style="font-size: 0.9rem;">Criado por:</span>
-                <a href="https://pagejet.app" target="_blank" style="text-decoration: none; display: flex; align-items: center;">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 80'%3E%3Crect width='320' height='80' fill='%23000'/%3E%3Ctext x='160' y='45' text-anchor='middle' fill='%23ff6600' font-family='Arial, sans-serif' font-size='24' font-weight='bold'%3EPageJet%3C/text%3E%3C/svg%3E" alt="PageJet" style="height: 30px; object-fit: contain;">
-                </a>
-            </div>
-        </div>
-    </footer>`;
+      </footer>
+    `;
   }
 
   private generateChatWidget(businessData: BusinessContent): string {
-    return `<!-- CSS do Chatbot -->
-    <style>
-        .chatbot-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-        .chatbot-toggle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary});
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        .chatbot-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-        }
-        .chatbot-window {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
-            width: 350px;
-            height: 500px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .chatbot-header {
-            background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary});
-            color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-        .chatbot-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .chatbot-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background: #f8f9fa;
-        }
-        .message {
-            margin-bottom: 15px;
-            padding: 12px 16px;
-            border-radius: 18px;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-        .message.bot {
-            background: #e3f2fd;
-            color: #1976d2;
-            margin-right: auto;
-        }
-        .message.user {
-            background: ${businessData.colors.primary};
-            color: white;
-            margin-left: auto;
-        }
-        .chatbot-input-area {
-            padding: 15px;
-            border-top: 1px solid #eee;
-            background: white;
-        }
-        .chatbot-input-container {
-            display: flex;
-            gap: 10px;
-        }
-        .chatbot-input {
-            flex: 1;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 10px 15px;
-            outline: none;
-        }
-        .chatbot-send {
-            background: ${businessData.colors.primary};
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        @media (max-width: 768px) {
-            .chatbot-window {
-                width: 300px;
-                height: 400px;
-            }
-        }
-    </style>
+    return `
+      <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+        <a href="javascript:sendToWhatsApp('cta', {origem: 'Widget Chat'})" style="background: #25d366; color: white; padding: 15px 20px; border-radius: 50px; text-decoration: none; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); font-weight: bold;">
+          💬 Chat no WhatsApp
+        </a>
+      </div>
+    `;
+  }
 
-    <!-- HTML do Chatbot -->
-    <div class="chatbot-container">
-        <button class="chatbot-toggle" onclick="toggleChatbot()">
-            🤖
-        </button>
-        <div class="chatbot-window" id="chatbotWindow">
-            <div class="chatbot-header">
-                <button class="chatbot-close" onclick="toggleChatbot()">&times;</button>
-                <h6 style="margin: 0 0 5px 0;">${businessData.sellerbot.name}</h6>
-                <small>Como posso ajudar você?</small>
-            </div>
-            <div class="chatbot-messages" id="chatbotMessages">
-                <div class="message bot">
-                    Olá! Sou ${businessData.sellerbot.name} da ${businessData.title}. ${businessData.sellerbot.responses.greeting.replace(/'/g, "\\'")}
-                </div>
-            </div>
-            <div class="chatbot-input-area">
-                <div class="chatbot-input-container">
-                    <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Digite sua mensagem...">
-                    <button class="chatbot-send" onclick="sendMessage()">
-                        ▶
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>`;
+  private generateCSS(businessData: BusinessContent): string {
+    return `
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        html { scroll-behavior: smooth; }
+        
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        
+        @media (max-width: 768px) {
+          h1 { font-size: 2.5rem !important; }
+          h2 { font-size: 2rem !important; }
+          .hero-simple, section { padding: 60px 0 !important; }
+          div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+          div[style*="display: flex"] { flex-direction: column !important; }
+        }
+      </style>
+    `;
   }
 
   private generateJavaScript(businessData: BusinessContent): string {
-    return `<script>
-        let chatOpen = false;
-        const businessData = ${JSON.stringify(businessData)};
+    const whatsappNumber = businessData.contact?.phone || businessData.contact?.socialMedia?.whatsapp || '';
+    const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '');
 
-        function toggleChat() {
-            const chatBox = document.getElementById('chatbotWindow');
-            chatOpen = !chatOpen;
-            chatBox.style.display = chatOpen ? 'flex' : 'none';
-            
-            if (chatOpen && document.getElementById('chatbotMessages').children.length === 1) {
-                // Manter apenas a mensagem inicial
-            }
-        }
-
-        function toggleChatbot() {
-            toggleChat();
-        }
-
-        function addMessage(sender, message) {
-            const messagesDiv = document.getElementById('chatbotMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message ' + sender;
-            messageDiv.textContent = message;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('chatbotInput');
-            const message = input.value.trim();
-            if (!message) return;
-
-            addMessage('user', message);
-            input.value = '';
-
-            try {
-                const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer aynCSftAcQBOlxmtmpJqVzco8K4aaTDQ'
-                    },
-                    body: JSON.stringify({
-                        model: 'mistral-large-latest',
-                        messages: [{
-                            role: 'user',
-                            content: \`Você é \${businessData.sellerbot.name}, assistente específico do negócio: \${businessData.title}.
-
-Personalidade: \${businessData.sellerbot.personality}
-Conhecimentos: \${businessData.sellerbot.knowledge.join(", ")}
-
-INFORMAÇÕES DO NEGÓCIO:
-- Endereço: \${businessData.contact.address}
-- Telefone: \${businessData.contact.phone}
-- Email: \${businessData.contact.email}
-- WhatsApp: \${businessData.contact.socialMedia?.whatsapp || 'Não informado'}
-
-INSTRUÇÕES CRÍTICAS - RESPONDA DE FORMA DIRETA E OBJETIVA:
-- Responda APENAS o que foi perguntado, sem informações extras
-- Se perguntarem preço: dê apenas o valor ou faixa de preço
-- Se perguntarem horário: dê apenas o horário
-- Se perguntarem contato: dê apenas o contato solicitado
-- Se perguntarem localização: dê apenas o endereço
-- NUNCA adicione ofertas, promoções ou informações não solicitadas
-- Máximo 50 palavras por resposta
-- Seja direto e preciso, sem enrolação
-
-Mensagem do cliente: "\${message}"\`
-                        }],
-                        temperature: 0.7,
-                        max_tokens: 300
-                    })
-                });
-
-                const data = await response.json();
-                const botMessage = data.choices[0].message.content;
-                addMessage('bot', botMessage);
-            } catch (error) {
-                addMessage('bot', businessData.sellerbot.responses.greeting);
-            }
-        }
-
-        // Permitir que a tecla Enter envie a mensagem
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('chatbotInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-        });
-
-        // Função para toggle do FAQ
-        function toggleFAQ(index) {
-            const content = document.getElementById('faq-content-' + index);
-            const icon = document.getElementById('faq-icon-' + index);
-            
-            if (content.style.display === 'none' || content.style.display === '') {
-                content.style.display = 'block';
-                icon.textContent = '−';
-                icon.style.transform = 'rotate(180deg)';
-            } else {
-                content.style.display = 'none';
-                icon.textContent = '+';
-                icon.style.transform = 'rotate(0deg)';
-            }
-        }
-
-        // Carrossel functions
-        let currentSlides = {};
-        function nextSlide(index) {
-            const carousel = document.getElementById('carousel-' + index);
-            if (!currentSlides[index]) currentSlides[index] = 0;
-            currentSlides[index] = (currentSlides[index] + 1) % 3;
-            carousel.style.transform = 'translateX(-' + (currentSlides[index] * 100) + '%)';
-        }
-        
-        function prevSlide(index) {
-            const carousel = document.getElementById('carousel-' + index);
-            if (!currentSlides[index]) currentSlides[index] = 0;
-            currentSlides[index] = (currentSlides[index] - 1 + 3) % 3;
-            carousel.style.transform = 'translateX(-' + (currentSlides[index] * 100) + '%)';
-        }
-
-        // Função para toggle do menu mobile
-        function toggleMenu() {
-            const navMenu = document.getElementById('navMenu');
-            if (navMenu) {
-                navMenu.classList.toggle('active');
-            }
-        }
-
-        // Modal de imagens
-        function openImageModal(imageSrc, caption) {
-            const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImage');
-            const modalCaption = document.getElementById('modalCaption');
-            
-            modal.style.display = 'block';
-            modalImg.src = imageSrc;
-            modalCaption.textContent = caption;
-        }
-        
-        function closeImageModal() {
-            document.getElementById('imageModal').style.display = 'none';
-        }
-        
-        // Fechar modal com ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeImageModal();
-            }
-        });
-        
-        // Smooth scroll para navegação
+    return `
+      <script>
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    // Fechar menu mobile após clique
-                    const navMenu = document.getElementById('navMenu');
-                    if (navMenu) {
-                        navMenu.classList.remove('active');
-                    }
-                }
-            });
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          });
         });
 
         // Função para enviar dados via WhatsApp
         function sendToWhatsApp(tipo, dados) {
-            const whatsappNumber = '${businessData.contact?.phone || businessData.contact?.socialMedia?.whatsapp || ''}';
-            const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '');
-            
-            let mensagem = '';
-            
-            switch(tipo) {
-                case 'newsletter':
-                    mensagem = \`🔔 *Novo cadastro Newsletter*\\n\\n📧 Email: \${dados.email}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\`;
-                    break;
-                case 'contato':
-                    mensagem = \`📞 *Nova mensagem de contato*\\n\\n👤 Nome: \${dados.nome}\\n📧 Email: \${dados.email}\\n💬 Mensagem: \${dados.mensagem}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\`;
-                    break;
-                case 'orcamento':
-                    mensagem = \`💰 *Solicitação de Orçamento*\\n\\n👤 Nome: \${dados.nome || 'Não informado'}\\n📧 Email: \${dados.email || 'Não informado'}\\n📱 Telefone: \${dados.telefone || 'Não informado'}\\n💬 Detalhes: \${dados.mensagem || dados.plano || 'Interesse em orçamento'}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\`;
-                    break;
-                case 'cta':
-                    mensagem = \`🎯 *Interesse via Landing Page*\\n\\n📍 Origem: \${dados.origem || 'CTA'}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\\n\\nOlá! Tenho interesse em saber mais sobre os serviços.\`;
-                    break;
-                case 'contato_final':
-                    mensagem = \`🚀 *Contato Final - Interesse Confirmado*\\n\\n📍 Origem: \${dados.origem || 'CTA Final'}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\\n\\nOlá! Quero começar agora mesmo!\`;
-                    break;
-                default:
-                    mensagem = \`📝 *Novo contato*\\n\\n\${JSON.stringify(dados, null, 2)}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\`;
-            }
-            
-            if (!cleanNumber) {
-                alert('Número do WhatsApp não configurado. Entre em contato pelos outros meios disponíveis.');
-                return;
-            }
-            
-            const encodedMessage = encodeURIComponent(mensagem);
-            const whatsappUrl = \`https://wa.me/\${cleanNumber}?text=\${encodedMessage}\`;
-            
-            window.open(whatsappUrl, '_blank');
+          const whatsappNumber = '${cleanNumber}';
+          let mensagem = '';
+          
+          switch(tipo) {
+            case 'newsletter':
+              mensagem = \`📧 *Newsletter* - Email: \${dados.email} | Empresa: ${businessData.title}\`;
+              break;
+            case 'contato':
+              mensagem = \`📞 *Contato* - Nome: \${dados.nome} | Email: \${dados.email} | Mensagem: \${dados.mensagem} | Empresa: ${businessData.title}\`;
+              break;
+            case 'orcamento':
+              mensagem = \`💰 *Orçamento* - \${dados.plano ? 'Plano: ' + dados.plano + ' - ' + dados.preco : 'Solicitação de orçamento'} | Empresa: ${businessData.title}\`;
+              break;
+            case 'cta':
+              mensagem = \`🎯 *Interesse* - Origem: \${dados.origem} | Empresa: ${businessData.title} - Olá! Tenho interesse em saber mais sobre os serviços.\`;
+              break;
+            case 'contato_final':
+              mensagem = \`🚀 *Contato Final* - Origem: \${dados.origem} | Empresa: ${businessData.title} - Olá! Quero começar agora mesmo!\`;
+              break;
+            default:
+              mensagem = \`📝 *Contato* - \${JSON.stringify(dados)} | Empresa: ${businessData.title}\`;
+          }
+          
+          if (!whatsappNumber) {
+            alert('Número do WhatsApp não configurado. Entre em contato pelos outros meios disponíveis.');
+            return;
+          }
+          
+          const encodedMessage = encodeURIComponent(mensagem);
+          const whatsappUrl = \`https://wa.me/\${whatsappNumber}?text=\${encodedMessage}\`;
+          window.open(whatsappUrl, '_blank');
         }
 
         // Função para toggle do FAQ
         function toggleFAQ(index) {
-            const content = document.getElementById('faq-content-' + index);
-            const icon = document.getElementById('faq-icon-' + index);
-            
-            if (content && icon) {
-                if (content.style.display === 'none' || content.style.display === '') {
-                    content.style.display = 'block';
-                    icon.textContent = '−';
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    content.style.display = 'none';
-                    icon.textContent = '+';
-                    icon.style.transform = 'rotate(0deg)';
-                }
+          const content = document.getElementById('faq-content-' + index);
+          const icon = document.getElementById('faq-icon-' + index);
+          
+          if (content && icon) {
+            if (content.style.display === 'none' || content.style.display === '') {
+              content.style.display = 'block';
+              icon.textContent = '−';
+              icon.style.transform = 'rotate(180deg)';
+            } else {
+              content.style.display = 'none';
+              icon.textContent = '+';
+              icon.style.transform = 'rotate(0deg)';
             }
+          }
         }
-    </script>`;
+      </script>
+    `;
   }
 }
 
