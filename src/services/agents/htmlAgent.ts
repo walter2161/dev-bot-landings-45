@@ -35,6 +35,11 @@ export class HtmlAgent {
   }
 
   private buildHTMLTemplate(businessData: BusinessContent, images: any): string {
+    // Detectar tipo de LP do prompt (passado através do businessData.prompt se existir)
+    const prompt = businessData.heroText || '';
+    const lpType = prompt.includes('SIMPLES (10 seções)') ? 'simples' : 
+                   prompt.includes('AVANÇADA (20 seções)') ? 'avancada' : 'completa';
+    
     return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -46,12 +51,8 @@ export class HtmlAgent {
 </head>
 <body>
     ${this.generateNavigation(businessData, images)}
-    ${this.generateHeroSection(businessData, images)}
-    ${this.generateFirstSectionWithBackground(businessData, images)}
-    ${this.generateContentSections(businessData, images)}
-    ${this.generateGallerySection(businessData, images)}
-    ${this.generateFooter(businessData, images)}
-    ${this.generateChatWidget(businessData)}
+    ${this.generateLandingPageByType(lpType, businessData, images)}
+    ${this.generateWhatsAppScript(businessData)}
     ${this.generateJavaScript(businessData)}
 </body>
 </html>`;
@@ -393,13 +394,15 @@ export class HtmlAgent {
 
   private generateNavigation(businessData: BusinessContent, images: any): string {
     const getPersonalizedMenuItems = (businessData: BusinessContent): string => {
-      // Determina se é produto ou serviço baseado no contexto
-      const isProductBased = businessData.title.toLowerCase().includes('loja') || 
-                            businessData.title.toLowerCase().includes('produto') ||
-                            businessData.subtitle.toLowerCase().includes('produto') ||
-                            businessData.heroText.toLowerCase().includes('produto');
+      // Detectar se é produtos ou serviços baseado no contexto
+      const isProduct = businessData.sections.some(section => 
+        section.content.toLowerCase().includes('produto') || 
+        section.content.toLowerCase().includes('loja') ||
+        section.content.toLowerCase().includes('venda') ||
+        section.content.toLowerCase().includes('comprar')
+      );
       
-      const servicesOrProducts = isProductBased ? 'Produtos' : 'Serviços';
+      const servicesOrProducts = isProduct ? 'Produtos' : 'Serviços';
       
       // Menu personalizado baseado nas seções do businessData
       const menuItems = [

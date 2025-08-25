@@ -29,7 +29,8 @@ const BriefingTab = ({ onLandingPageGenerated }: BriefingTabProps) => {
     address: "",
     specialOffers: "",
     customLogo: null as File | null,
-    colorPalette: ""
+    colorPalette: "",
+    landingPageType: "simples" as "simples" | "avancada" | "completa"
   });
 
   const colorPalettes = [
@@ -65,17 +66,25 @@ const BriefingTab = ({ onLandingPageGenerated }: BriefingTabProps) => {
   };
 
   const getBriefingPrompt = () => {
-    const { businessName, businessType, description, targetAudience, mainGoal, keyServices, contactInfo, whatsapp, address, specialOffers, customLogo, colorPalette } = briefingData;
+    const { businessName, businessType, description, targetAudience, mainGoal, keyServices, contactInfo, whatsapp, address, specialOffers, customLogo, colorPalette, landingPageType } = briefingData;
     
     const selectedPalette = colorPalettes.find(p => p.id === colorPalette);
     const logoInfo = customLogo ? `IMPORTANTE: O cliente enviou um logo personalizado (${customLogo.name}). Use EXATAMENTE o nome da empresa "${businessName}" e incorpore o logo enviado pelo cliente na landing page. NÃO gere uma imagem genérica no lugar do logo.` : '';
     const paletteInfo = selectedPalette ? `PALETA DE CORES OBRIGATÓRIA: Use exatamente estas cores - Primária: ${selectedPalette.colors[0]}, Secundária: ${selectedPalette.colors[1]}, Destaque: ${selectedPalette.colors[2]}. NÃO use outras cores.` : '';
+    
+    const lpTypeInfo = {
+      simples: `TIPO DE LANDING PAGE: SIMPLES (10 seções) - Cabeçalho minimalista, Hero Section, Benefícios rápidos (3-4 ícones), Depoimento/prova social, Sobre o produto/serviço, Comparação rápida, CTA destacado, Pricing simples, FAQ (3-4 perguntas), CTA final`,
+      avancada: `TIPO DE LANDING PAGE: AVANÇADA (20 seções) - Cabeçalho com CTA, Hero Section com vídeo, Problema x Solução, Benefícios com ícones, Prova social (logos), Sobre produto (mockup), Comparativo antes/depois, Depoimentos carrossel, Estatísticas animadas, CTA central, Recursos detalhados, Demonstração vídeo, Equipe/expert, Pricing Table (3 planos), Garantia, FAQ (5-6 perguntas), Oferta limitada, Download bônus, CTA final, Footer`,
+      completa: `TIPO DE LANDING PAGE: COMPLETA (30 seções) - Cabeçalho sticky, Hero com vídeo animado, Sub-headline, Problema x Solução visual, Benefícios cards, Storytelling, Prova social logos, Showcase produto, Comparativo slider, Recursos expandidos, Demonstração vídeo, Case sucesso, Depoimentos carrossel, Depoimentos vídeo, Estatísticas impacto, Equipe/expert, Awards/certificações, Pricing Table 3 opções, Garantia selo, Oferta especial, CTA intermediário, FAQ (7-8 perguntas), Evento/webinar, Comparativo concorrentes, Callout inspiracional, CTA secundário, Oferta limitada contador, Bônus digital, CTA final poderoso, Footer premium`
+    };
     
     return `BRIEFING DETALHADO - SIGA EXATAMENTE ESTAS INFORMAÇÕES:
 
 ${logoInfo}
 
 ${paletteInfo}
+
+${lpTypeInfo[landingPageType]}
 
 INFORMAÇÕES DO NEGÓCIO:
 - Nome da Empresa: ${businessName} (USE EXATAMENTE ESTE NOME)
@@ -98,6 +107,8 @@ INSTRUÇÕES CRÍTICAS:
 4. Personalizar todo conteúdo baseado nas informações fornecidas
 5. Incluir as ofertas especiais destacadamente se fornecidas
 6. Usar as informações de contato exatas fornecidas
+7. IMPORTANTE: TODOS os formulários e capturas de dados devem enviar informações diretamente para o WhatsApp ${whatsapp} - não usar envio por email ou banco de dados
+8. Seguir EXATAMENTE o tipo de LP selecionado: ${landingPageType}
 
 Crie uma landing page profissional e personalizada seguindo exatamente essas especificações.`;
   };
@@ -164,6 +175,64 @@ Crie uma landing page profissional e personalizada seguindo exatamente essas esp
           Personalizado
         </Badge>
       </div>
+
+      {/* Tipo de Landing Page */}
+      <Card className="p-4 bg-gradient-card">
+        <h4 className="font-medium text-sm mb-3 text-foreground">Tipo de Landing Page</h4>
+        
+        <div className="space-y-2">
+          <div 
+            className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+              briefingData.landingPageType === 'simples' 
+                ? 'border-primary bg-primary/10' 
+                : 'border-border/30 hover:border-border'
+            }`}
+            onClick={() => handleBriefingChange("landingPageType", "simples")}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium text-sm">🚀 Landing Page Simples</div>
+                <div className="text-xs text-muted-foreground">10 seções - Ideal para captura rápida</div>
+              </div>
+              <Badge variant="outline" className="text-xs">10 seções</Badge>
+            </div>
+          </div>
+          
+          <div 
+            className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+              briefingData.landingPageType === 'avancada' 
+                ? 'border-primary bg-primary/10' 
+                : 'border-border/30 hover:border-border'
+            }`}
+            onClick={() => handleBriefingChange("landingPageType", "avancada")}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium text-sm">⭐ Landing Page Avançada</div>
+                <div className="text-xs text-muted-foreground">20 seções - Confiança e conversão</div>
+              </div>
+              <Badge variant="outline" className="text-xs">20 seções</Badge>
+            </div>
+          </div>
+          
+          <div 
+            className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+              briefingData.landingPageType === 'completa' 
+                ? 'border-primary bg-primary/10' 
+                : 'border-border/30 hover:border-border'
+            }`}
+            onClick={() => handleBriefingChange("landingPageType", "completa")}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium text-sm">💎 Landing Page Completa</div>
+                <div className="text-xs text-muted-foreground">30 seções - Máxima persuasão</div>
+              </div>
+              <Badge variant="outline" className="text-xs">30 seções</Badge>
+            </div>
+          </div>
+        </div>
+      </Card>
 
       {/* Informações Básicas */}
       <Card className="p-4 bg-gradient-card">

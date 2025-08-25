@@ -83,9 +83,15 @@ const ContentTab = ({ businessData, onContentUpdate, onLandingPageGenerated }: C
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-medium text-foreground">Editor de Conteúdo</h3>
-        <Badge variant="secondary" className="text-xs">
-          {businessData.sections.length} seções
-        </Badge>
+        <div className="flex gap-2">
+          <Badge variant="secondary" className="text-xs">
+            {businessData.sections.length} seções
+          </Badge>
+          <Badge variant="outline" className="text-xs">
+            {businessData.sections.length <= 10 ? 'Simples' : 
+             businessData.sections.length <= 20 ? 'Avançada' : 'Completa'}
+          </Badge>
+        </div>
       </div>
 
       {/* Main Content */}
