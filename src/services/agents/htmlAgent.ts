@@ -35,11 +35,6 @@ export class HtmlAgent {
   }
 
   private buildHTMLTemplate(businessData: BusinessContent, images: any): string {
-    // Detectar tipo de LP do prompt (passado através do businessData.prompt se existir)
-    const prompt = businessData.heroText || '';
-    const lpType = prompt.includes('SIMPLES (10 seções)') ? 'simples' : 
-                   prompt.includes('AVANÇADA (20 seções)') ? 'avancada' : 'completa';
-    
     return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -51,8 +46,12 @@ export class HtmlAgent {
 </head>
 <body>
     ${this.generateNavigation(businessData, images)}
-    ${this.generateLandingPageByType(lpType, businessData, images)}
-    ${this.generateWhatsAppScript(businessData)}
+    ${this.generateHeroSection(businessData, images)}
+    ${this.generateFirstSectionWithBackground(businessData, images)}
+    ${this.generateContentSections(businessData, images)}
+    ${this.generateGallerySection(businessData, images)}
+    ${this.generateFooter(businessData, images)}
+    ${this.generateChatWidget(businessData)}
     ${this.generateJavaScript(businessData)}
 </body>
 </html>`;
@@ -1585,6 +1584,62 @@ Mensagem do cliente: "\${message}"\`
                 }
             });
         });
+
+        // Função para enviar dados via WhatsApp
+        function sendToWhatsApp(tipo, dados) {
+            const whatsappNumber = '${businessData.contact?.phone || businessData.contact?.socialMedia?.whatsapp || ''}';
+            const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '');
+            
+            let mensagem = '';
+            
+            switch(tipo) {
+                case 'newsletter':
+                    mensagem = \`🔔 *Novo cadastro Newsletter*\\n\\n📧 Email: \${dados.email}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\`;
+                    break;
+                case 'contato':
+                    mensagem = \`📞 *Nova mensagem de contato*\\n\\n👤 Nome: \${dados.nome}\\n📧 Email: \${dados.email}\\n💬 Mensagem: \${dados.mensagem}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\`;
+                    break;
+                case 'orcamento':
+                    mensagem = \`💰 *Solicitação de Orçamento*\\n\\n👤 Nome: \${dados.nome || 'Não informado'}\\n📧 Email: \${dados.email || 'Não informado'}\\n📱 Telefone: \${dados.telefone || 'Não informado'}\\n💬 Detalhes: \${dados.mensagem || dados.plano || 'Interesse em orçamento'}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\`;
+                    break;
+                case 'cta':
+                    mensagem = \`🎯 *Interesse via Landing Page*\\n\\n📍 Origem: \${dados.origem || 'CTA'}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\\n\\nOlá! Tenho interesse em saber mais sobre os serviços.\`;
+                    break;
+                case 'contato_final':
+                    mensagem = \`🚀 *Contato Final - Interesse Confirmado*\\n\\n📍 Origem: \${dados.origem || 'CTA Final'}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\\n\\nOlá! Quero começar agora mesmo!\`;
+                    break;
+                default:
+                    mensagem = \`📝 *Novo contato*\\n\\n\${JSON.stringify(dados, null, 2)}\\n\\n💼 Empresa: ${businessData.title}\\n🕒 Data: \${new Date().toLocaleString('pt-BR')}\`;
+            }
+            
+            if (!cleanNumber) {
+                alert('Número do WhatsApp não configurado. Entre em contato pelos outros meios disponíveis.');
+                return;
+            }
+            
+            const encodedMessage = encodeURIComponent(mensagem);
+            const whatsappUrl = \`https://wa.me/\${cleanNumber}?text=\${encodedMessage}\`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Função para toggle do FAQ
+        function toggleFAQ(index) {
+            const content = document.getElementById('faq-content-' + index);
+            const icon = document.getElementById('faq-icon-' + index);
+            
+            if (content && icon) {
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                    icon.textContent = '−';
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    content.style.display = 'none';
+                    icon.textContent = '+';
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
     </script>`;
   }
 }
