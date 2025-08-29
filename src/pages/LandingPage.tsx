@@ -17,9 +17,6 @@ const LandingPage = () => {
               alt="PageJet" 
               className="h-10 object-contain"
             />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-              PageJet
-            </h1>
           </div>
           <Link to="/login">
             <Button variant="outline" className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25">

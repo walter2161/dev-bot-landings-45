@@ -47,7 +47,7 @@ const PaymentModal = ({ children }: PaymentModalProps) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-md mx-auto bg-gradient-to-br from-card to-accent/30 border-border/50 backdrop-blur-sm">
+      <DialogContent className="max-w-md mx-auto bg-gradient-to-br from-card to-accent/30 border-border/50 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center text-foreground flex items-center justify-center gap-2">
             <CreditCard className="h-6 w-6 text-primary" />
