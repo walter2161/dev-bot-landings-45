@@ -2,13 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Check, Star, Zap, Target, TrendingUp, Shield, Clock, Users, Trophy, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
+import PaymentModal from "@/components/PaymentModal";
 
 const LandingPage = () => {
-  const handlePixPayment = () => {
-    // Simula redirecionamento para pagamento PIX
-    alert("Redirecionando para pagamento PIX - Chave CPF: 308.934.408-41 - Valor: R$ 39,00/mês");
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent to-primary/90">
       {/* Header */}
@@ -42,14 +38,15 @@ const LandingPage = () => {
             O PageJet é a ferramenta de IA que transforma suas ideias em landing pages de alta conversão automaticamente
           </p>
           <div className="space-y-6">
-            <Button 
-              onClick={handlePixPayment}
-              size="lg"
-              className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-primary-foreground text-2xl px-16 py-8 rounded-full shadow-[var(--shadow-primary)] hover:shadow-[var(--shadow-glow)] transform hover:scale-105 transition-all duration-500"
-            >
-              <Zap className="mr-4 h-8 w-8" />
-              Assinar por R$ 39/mês
-            </Button>
+            <PaymentModal>
+              <Button 
+                size="lg"
+                className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-primary-foreground text-2xl px-16 py-8 rounded-full shadow-[var(--shadow-primary)] hover:shadow-[var(--shadow-glow)] transform hover:scale-105 transition-all duration-500"
+              >
+                <Zap className="mr-4 h-8 w-8" />
+                Assinar por R$ 39/mês
+              </Button>
+            </PaymentModal>
             <div className="bg-gradient-to-r from-card to-accent/50 backdrop-blur-sm border border-border p-6 rounded-2xl max-w-md mx-auto">
               <p className="text-foreground font-semibold mb-2">💳 Pagamento via PIX</p>
               <p className="text-sm text-muted-foreground">Cancelamento gratuito • Acesso imediato</p>
@@ -284,13 +281,14 @@ const LandingPage = () => {
           <p className="text-xl text-gray-200 mb-8">
             Junte-se a mais de 1.000 empreendedores que já transformaram seus resultados
           </p>
-          <Button 
-            onClick={handlePixPayment}
-            className="bg-orange-500 hover:bg-orange-600 text-white text-2xl px-16 py-6 rounded-full shadow-2xl transform hover:scale-105 transition-all mb-4"
-          >
-            <Zap className="mr-3 h-8 w-8" />
-            QUERO COMEÇAR AGORA - R$ 39/mês
-          </Button>
+          <PaymentModal>
+            <Button 
+              className="bg-orange-500 hover:bg-orange-600 text-white text-2xl px-16 py-6 rounded-full shadow-2xl transform hover:scale-105 transition-all mb-4"
+            >
+              <Zap className="mr-3 h-8 w-8" />
+              QUERO COMEÇAR AGORA - R$ 39/mês
+            </Button>
+          </PaymentModal>
           <p className="text-gray-300 mb-4">💳 Pagamento via PIX • Acesso imediato após confirmação</p>
           <p className="text-sm text-gray-400">Chave PIX: 308.934.408-41 (CPF) • Cancelamento gratuito</p>
         </div>
