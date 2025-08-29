@@ -17,22 +17,32 @@ const detectLanguage = (): Language => {
     const browserLang = navigator.language.toLowerCase();
     
     // Se for português (Brasil) ou contém 'br'
-    if (browserLang.includes('pt') || browserLang.includes('br')) {
+    if (browserLang.startsWith('pt') || browserLang.includes('br')) {
       return 'pt';
     }
     
     // Se for espanhol
-    if (browserLang.includes('es')) {
+    if (browserLang.startsWith('es')) {
       return 'es';
     }
     
-    // Tentar detectar pelo timezone (aproximação)
+    // Tentar detectar pelo timezone (aproximação para Brasil)
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (timezone.includes('America/Sao_Paulo') || timezone.includes('America/Fortaleza')) {
+    if (timezone.includes('America/Sao_Paulo') || 
+        timezone.includes('America/Fortaleza') ||
+        timezone.includes('America/Recife') ||
+        timezone.includes('America/Manaus') ||
+        timezone.includes('America/Belem')) {
       return 'pt';
     }
     
-    // Padrão: inglês para qualquer outro lugar
+    // Detectar pelo locale se disponível
+    const locale = navigator.language || navigator.languages?.[0];
+    if (locale?.toLowerCase().startsWith('pt')) {
+      return 'pt'; 
+    }
+    
+    // Padrão: inglês para qualquer outro lugar (incluindo EUA com VPN)
     return 'en';
   } catch {
     // Fallback para inglês se houver erro na detecção
@@ -50,15 +60,15 @@ const translations = {
     'nav.contact': 'Contato',
     
     // Landing Page
-    'landing.hero.title': 'Crie Landing Pages Profissionais em Segundos',
-    'landing.hero.subtitle': 'Transforme suas ideias em páginas de vendas de alta conversão com IA',
+    'landing.hero.title': 'Crie Sites Profissionais em Segundos',
+    'landing.hero.subtitle': 'Transforme suas ideias em sites de vendas com chat IA integrado',
     'landing.hero.cta': 'Começar Grátis',
     'landing.features.title': 'Por que escolher o PageJet?',
     'landing.mascot.title': 'Conheça o JetBot',
-    'landing.mascot.subtitle': 'Seu assistente inteligente para criação de landing pages',
+    'landing.mascot.subtitle': 'Seu assistente inteligente para criação de sites com chat IA',
     'landing.video.title': 'Veja como funciona',
-    'landing.video.subtitle': 'Descubra como criar landing pages profissionais em minutos',
-    'landing.video.cta': 'Criar Minha Landing Page',
+    'landing.video.subtitle': 'Descubra como criar sites profissionais com chat IA em minutos',
+    'landing.video.cta': 'Criar Meu Site',
     'landing.nationality.brazil': '🇧🇷 Brasil',
     'landing.nationality.usa': '🇺🇸 Estados Unidos',
     'landing.nationality.spain': '🇪🇸 Espanha',
@@ -106,15 +116,15 @@ const translations = {
     'nav.contact': 'Contact',
     
     // Landing Page
-    'landing.hero.title': 'Create Professional Landing Pages in Seconds',
-    'landing.hero.subtitle': 'Transform your ideas into high-converting sales pages with AI',
+    'landing.hero.title': 'Create Professional Websites in Seconds',
+    'landing.hero.subtitle': 'Transform your ideas into sales websites with integrated AI chat',
     'landing.hero.cta': 'Start Free',
     'landing.features.title': 'Why choose PageJet?',
     'landing.mascot.title': 'Meet JetBot',
-    'landing.mascot.subtitle': 'Your smart assistant for creating landing pages',
+    'landing.mascot.subtitle': 'Your smart assistant for creating websites with AI chat',
     'landing.video.title': 'See how it works',
-    'landing.video.subtitle': 'Discover how to create professional landing pages in minutes',
-    'landing.video.cta': 'Create My Landing Page',
+    'landing.video.subtitle': 'Discover how to create professional websites with AI chat in minutes',
+    'landing.video.cta': 'Create My Website',
     'landing.nationality.brazil': '🇧🇷 Brazil',
     'landing.nationality.usa': '🇺🇸 United States',
     'landing.nationality.spain': '🇪🇸 Spain',
@@ -162,15 +172,15 @@ const translations = {
     'nav.contact': 'Contacto',
     
     // Landing Page
-    'landing.hero.title': 'Crea Landing Pages Profesionales en Segundos',
-    'landing.hero.subtitle': 'Transforma tus ideas en páginas de ventas de alta conversión con IA',
+    'landing.hero.title': 'Crea Sitios Web Profesionales en Segundos',
+    'landing.hero.subtitle': 'Transforma tus ideas en sitios de ventas con chat IA integrado',
     'landing.hero.cta': 'Comenzar Gratis',
     'landing.features.title': '¿Por qué elegir PageJet?',
     'landing.mascot.title': 'Conoce a JetBot',
-    'landing.mascot.subtitle': 'Tu asistente inteligente para crear landing pages',
+    'landing.mascot.subtitle': 'Tu asistente inteligente para crear sitios web con chat IA',
     'landing.video.title': 'Mira cómo funciona',
-    'landing.video.subtitle': 'Descubre cómo crear landing pages profesionales en minutos',
-    'landing.video.cta': 'Crear Mi Landing Page',
+    'landing.video.subtitle': 'Descubre cómo crear sitios web profesionales con chat IA en minutos',
+    'landing.video.cta': 'Crear Mi Sitio Web',
     'landing.nationality.brazil': '🇧🇷 Brasil',
     'landing.nationality.usa': '🇺🇸 Estados Unidos',
     'landing.nationality.spain': '🇪🇸 España',

@@ -162,18 +162,18 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="text-red-400 text-6xl mb-4">❌</div>
-              <h4 className="text-xl font-bold text-white mb-2">Landing Pages Caras</h4>
-              <p className="text-gray-300">Pagar R$ 3.000+ para um designer criar uma landing page</p>
+              <h4 className="text-xl font-bold text-white mb-2">Sites Caros</h4>
+              <p className="text-gray-300">Pagar R$ 3.000+ para um designer criar um site</p>
             </div>
             <div className="text-center">
               <div className="text-red-400 text-6xl mb-4">⏰</div>
               <h4 className="text-xl font-bold text-white mb-2">Demora Semanas</h4>
-              <p className="text-gray-300">Esperar 2-4 semanas para ter sua página pronta</p>
+              <p className="text-gray-300">Esperar 2-4 semanas para ter seu site pronto</p>
             </div>
             <div className="text-center">
               <div className="text-red-400 text-6xl mb-4">📉</div>
               <h4 className="text-xl font-bold text-white mb-2">Baixa Conversão</h4>
-              <p className="text-gray-300">Páginas genéricas que não vendem</p>
+              <p className="text-gray-300">Sites genéricos que não vendem</p>
             </div>
           </div>
         </div>
@@ -198,7 +198,7 @@ const LandingPage = () => {
                 {currentContent.mascotDescription}
               </p>
               <p className="text-lg text-gray-300">
-                Vou analisar seu produto, seu público e criar a página perfeita para maximizar suas conversões. 
+                Vou analisar seu produto, seu público e criar o site perfeito com chat IA para atender seus clientes. 
                 Tudo isso em menos de 2 minutos! 🚀
               </p>
             </div>
@@ -265,7 +265,7 @@ const LandingPage = () => {
             <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
               <div className="text-4xl mb-4">⚡</div>
               <h4 className="text-lg font-bold text-white mb-2">Criação em 2 Minutos</h4>
-              <p className="text-gray-300 text-sm">De briefing a página publicada automaticamente</p>
+              <p className="text-gray-300 text-sm">De briefing a site publicado automaticamente</p>
             </div>
             <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
               <div className="text-4xl mb-4">🎨</div>
@@ -289,7 +289,7 @@ const LandingPage = () => {
           </h3>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h4 className="text-2xl font-bold text-orange-400 mb-6">PageJet - IA Avançada</h4>
+              <h4 className="text-2xl font-bold text-orange-400 mb-6">PageJet - IA Avançada com Chat</h4>
               <ul className="space-y-4">
                 <li className="flex items-center text-white">
                   <Check className="text-green-400 mr-3 h-5 w-5" />
@@ -312,7 +312,7 @@ const LandingPage = () => {
             <div className="bg-white/10 p-8 rounded-lg">
               <div className="text-4xl mb-4">🚀</div>
               <h5 className="text-xl font-bold text-white mb-2">Resultado Garantido</h5>
-              <p className="text-gray-300">Aumente suas vendas em até 300% com landing pages que realmente convertem</p>
+              <p className="text-gray-300">Aumente suas vendas em até 300% com sites que realmente convertem e atendem clientes 24h</p>
             </div>
           </div>
         </div>
@@ -331,7 +331,7 @@ const LandingPage = () => {
                   {[1,2,3,4,5].map((i) => <Star key={i} className="h-5 w-5 fill-current" />)}
                 </div>
               </div>
-              <p className="text-white mb-4">"Criei minha landing page em 3 minutos e as vendas aumentaram 250%!"</p>
+              <p className="text-white mb-4">"Criei meu site em 3 minutos e as vendas aumentaram 250%!"</p>
               <p className="text-gray-300">- Maria Silva, E-commerce</p>
             </Card>
             <Card className="bg-white/10 border-white/20 p-6">
@@ -366,17 +366,17 @@ const LandingPage = () => {
             <div className="text-center">
               <Target className="h-12 w-12 text-orange-400 mx-auto mb-4" />
               <h4 className="text-lg font-bold text-white mb-2">Mais Conversões</h4>
-              <p className="text-gray-300">Aumente suas vendas com páginas otimizadas</p>
+              <p className="text-gray-300">Aumente suas vendas com sites otimizados e chat IA</p>
             </div>
             <div className="text-center">
               <Clock className="h-12 w-12 text-orange-400 mx-auto mb-4" />
               <h4 className="text-lg font-bold text-white mb-2">Economia de Tempo</h4>
-              <p className="text-gray-300">Crie páginas em minutos, não semanas</p>
+              <p className="text-gray-300">Crie sites em minutos, não semanas</p>
             </div>
             <div className="text-center">
               <Shield className="h-12 w-12 text-orange-400 mx-auto mb-4" />
               <h4 className="text-lg font-bold text-white mb-2">Economia de Dinheiro</h4>
-              <p className="text-gray-300">Pague apenas R$ 39/mês vs R$ 3.000+ por página</p>
+              <p className="text-gray-300">Pague apenas R$ 39/mês vs R$ 3.000+ por site</p>
             </div>
             <div className="text-center">
               <TrendingUp className="h-12 w-12 text-orange-400 mx-auto mb-4" />
@@ -397,7 +397,7 @@ const LandingPage = () => {
             <Card className="bg-white/5 border-white/20 p-6">
               <h4 className="text-xl font-bold text-gray-300 text-center mb-6">Freelancer</h4>
               <ul className="space-y-3">
-                <li className="text-red-400">❌ R$ 3.000+ por página</li>
+                <li className="text-red-400">❌ R$ 3.000+ por site</li>
                 <li className="text-red-400">❌ 2-4 semanas de espera</li>
                 <li className="text-red-400">❌ Sem garantia de conversão</li>
                 <li className="text-red-400">❌ Alterações custam extra</li>
@@ -407,7 +407,7 @@ const LandingPage = () => {
               <h4 className="text-xl font-bold text-orange-400 text-center mb-6">PageJet ⭐</h4>
               <ul className="space-y-3">
                 <li className="text-green-400">✅ R$ 39/mês ilimitado</li>
-                <li className="text-green-400">✅ Páginas em 2 minutos</li>
+                <li className="text-green-400">✅ Sites em 2 minutos</li>
                 <li className="text-green-400">✅ Otimizado para conversão</li>
                 <li className="text-green-400">✅ Alterações ilimitadas</li>
               </ul>
@@ -440,7 +440,7 @@ const LandingPage = () => {
             <div>
               <Users className="h-16 w-16 text-orange-400 mx-auto mb-4" />
               <h4 className="text-xl font-bold text-white mb-2">+100M</h4>
-              <p className="text-gray-300">Páginas analisadas pela IA</p>
+              <p className="text-gray-300">Sites analisados pela IA</p>
             </div>
             <div>
               <Rocket className="h-16 w-16 text-orange-400 mx-auto mb-4" />
@@ -451,16 +451,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Garantia */}
-      <section className="container mx-auto px-4 py-16">
-        <Card className="bg-green-600 border-green-500 p-8 text-center max-w-2xl mx-auto">
-          <Shield className="h-16 w-16 text-white mx-auto mb-6" />
-          <h3 className="text-2xl font-bold text-white mb-4">Garantia de 30 Dias</h3>
-          <p className="text-green-100 text-lg">
-            Se você não aumentar suas conversões em 30 dias, devolvemos 100% do seu dinheiro. Sem perguntas.
-          </p>
-        </Card>
-      </section>
 
       {/* CTA Final */}
       <section className="container mx-auto px-4 py-20 text-center">
@@ -473,10 +463,10 @@ const LandingPage = () => {
           </p>
           <PaymentModal>
             <Button 
-              className="bg-orange-500 hover:bg-orange-600 text-white text-lg md:text-2xl px-8 md:px-16 py-4 md:py-6 rounded-full shadow-2xl transform hover:scale-105 transition-all mb-4 w-full max-w-md mx-auto"
+              className="bg-orange-500 hover:bg-orange-600 text-white text-sm md:text-lg px-6 md:px-12 py-4 md:py-6 rounded-full shadow-2xl transform hover:scale-105 transition-all mb-4 w-full max-w-md mx-auto"
             >
-              <Zap className="mr-2 md:mr-3 h-6 w-6 md:h-8 md:w-8" />
-              QUERO COMEÇAR AGORA - R$ 39/mês
+              <Zap className="mr-2 h-5 w-5 md:h-6 md:w-6" />
+              COMEÇAR AGORA - R$ 39/mês
             </Button>
           </PaymentModal>
           <p className="text-gray-300 mb-4">💳 Pagamento via PIX • Acesso imediato após confirmação</p>
