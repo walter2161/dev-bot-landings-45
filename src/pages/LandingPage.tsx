@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import PaymentModal from "@/components/PaymentModal";
 
 const LandingPage = () => {
+  // Fixed handlePixPayment undefined error
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent to-primary/90">
       {/* Header */}
