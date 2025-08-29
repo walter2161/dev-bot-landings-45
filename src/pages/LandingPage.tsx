@@ -10,20 +10,22 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-orange-500">
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent to-primary/90">
       {/* Header */}
-      <header className="container mx-auto px-4 py-6">
+      <header className="container mx-auto px-4 py-6 backdrop-blur-sm bg-background/10">
         <nav className="flex justify-between items-center">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/f5de4620-c0b4-4faf-84c8-6c8733528789.png" 
               alt="PageJet" 
-              className="h-8 object-contain"
+              className="h-10 object-contain"
             />
-            <h1 className="text-2xl font-bold text-white">PageJet</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+              PageJet
+            </h1>
           </div>
           <Link to="/login">
-            <Button variant="outline" className="text-white border-white hover:bg-white hover:text-slate-900">
+            <Button variant="outline" className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25">
               Fazer Login
             </Button>
           </Link>
@@ -32,29 +34,37 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-5xl font-bold text-white mb-6">
-            Crie Landing Pages Profissionais em <span className="text-orange-400">Segundos</span>
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-6xl font-bold text-foreground mb-8 leading-tight">
+            Crie Landing Pages Profissionais em <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Segundos</span>
           </h2>
-          <p className="text-xl text-gray-200 mb-8">
+          <p className="text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
             O PageJet é a ferramenta de IA que transforma suas ideias em landing pages de alta conversão automaticamente
           </p>
-          <Button 
-            onClick={handlePixPayment}
-            className="bg-orange-500 hover:bg-orange-600 text-white text-xl px-12 py-4 rounded-full shadow-2xl transform hover:scale-105 transition-all"
-          >
-            <Zap className="mr-2 h-6 w-6" />
-            Assinar por R$ 39/mês
-          </Button>
-          <p className="text-gray-300 mt-4">💳 Pagamento via PIX • Cancelamento gratuito a qualquer momento</p>
+          <div className="space-y-6">
+            <Button 
+              onClick={handlePixPayment}
+              size="lg"
+              className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-primary-foreground text-2xl px-16 py-8 rounded-full shadow-[var(--shadow-primary)] hover:shadow-[var(--shadow-glow)] transform hover:scale-105 transition-all duration-500"
+            >
+              <Zap className="mr-4 h-8 w-8" />
+              Assinar por R$ 39/mês
+            </Button>
+            <div className="bg-gradient-to-r from-card to-accent/50 backdrop-blur-sm border border-border p-6 rounded-2xl max-w-md mx-auto">
+              <p className="text-foreground font-semibold mb-2">💳 Pagamento via PIX</p>
+              <p className="text-sm text-muted-foreground">Cancelamento gratuito • Acesso imediato</p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Urgência/Escassez */}
       <section className="container mx-auto px-4 py-16">
-        <Card className="bg-red-600 border-red-500 p-8 text-center">
-          <h3 className="text-2xl font-bold text-white mb-4">🔥 OFERTA LIMITADA - Apenas 100 Vagas!</h3>
-          <p className="text-red-100 text-lg">
+        <Card className="bg-gradient-to-r from-destructive to-destructive/80 border-destructive/50 p-8 text-center shadow-[var(--shadow-accent)] backdrop-blur-sm">
+          <h3 className="text-3xl font-bold text-destructive-foreground mb-4 flex items-center justify-center gap-3">
+            🔥 OFERTA LIMITADA - Apenas 100 Vagas!
+          </h3>
+          <p className="text-destructive-foreground/90 text-xl">
             Preço promocional de lançamento por tempo limitado. Valor normal: R$ 97/mês
           </p>
         </Card>
