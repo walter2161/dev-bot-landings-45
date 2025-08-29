@@ -97,7 +97,7 @@ const LandingPage = () => {
               <img 
                 src="/lovable-uploads/97010722-94c2-481f-89d5-a6c7f1b2afe2.png" 
                 alt="Mascote PageJet" 
-                className="h-64 w-auto mx-auto animate-bounce"
+                className="h-64 w-auto mx-auto"
               />
             </div>
             <div className="text-left">
@@ -118,40 +118,74 @@ const LandingPage = () => {
 
       {/* Vídeo Demonstração */}
       <section className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-3xl font-bold text-white mb-8">
-            Veja Como Funciona na Prática
-          </h3>
-          <p className="text-xl text-gray-200 mb-12">
-            Assista em apenas 2 minutos como criar uma landing page profissional
-          </p>
-          <div className="relative bg-gradient-to-br from-card/50 to-accent/30 rounded-2xl p-8 backdrop-blur-sm border border-border/50">
-            <div className="aspect-video bg-gradient-to-br from-muted to-accent rounded-xl flex items-center justify-center mb-6">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🎥</div>
-                <h4 className="text-2xl font-bold text-foreground mb-2">Demo do PageJet</h4>
-                <p className="text-muted-foreground">Vídeo de demonstração das funcionalidades</p>
-                <Button className="mt-6 bg-primary hover:bg-primary-glow text-primary-foreground">
-                  ▶ Assistir Demo
-                </Button>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-4xl font-bold text-white mb-4">
+              📹 Veja o PageJet em Ação!
+            </h3>
+            <p className="text-xl text-gray-200 mb-2">
+              Assista como criar uma landing page profissional em apenas 2 minutos
+            </p>
+            <p className="text-orange-400 font-semibold text-lg">
+              ⚡ Mais de 50.000 visualizações • 98% aprovação
+            </p>
+          </div>
+          
+          <div className="relative">
+            {/* YouTube Video Embed */}
+            <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
+              <div className="aspect-video">
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&showinfo=0&modestbranding=1"
+                  title="PageJet - Como Criar Landing Pages em 2 Minutos"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
               </div>
             </div>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl mb-2">⚡</div>
-                <h5 className="font-bold text-foreground mb-1">Criação Rápida</h5>
-                <p className="text-sm text-muted-foreground">De ideia a página em 2 minutos</p>
+            
+            {/* Overlay with Social Proof */}
+            <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-full shadow-lg">
+              <div className="flex items-center space-x-2">
+                <div className="flex text-yellow-300">
+                  {[1,2,3,4,5].map((i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+                </div>
+                <span className="font-semibold">4.9/5 • 1.247 reviews</span>
               </div>
-              <div className="text-center">
-                <div className="text-3xl mb-2">🎨</div>
-                <h5 className="font-bold text-foreground mb-1">Design Automático</h5>
-                <p className="text-sm text-muted-foreground">IA escolhe as cores e layout</p>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl mb-2">📈</div>
-                <h5 className="font-bold text-foreground mb-1">Otimização SEO</h5>
-                <p className="text-sm text-muted-foreground">Rankeamento automático</p>
-              </div>
+            </div>
+          </div>
+          
+          {/* CTA Logo após vídeo */}
+          <div className="text-center mt-12">
+            <PaymentModal>
+              <Button 
+                size="lg"
+                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-xl px-12 py-6 rounded-full shadow-xl transform hover:scale-105 transition-all duration-300"
+              >
+                🚀 SIM! QUERO CRIAR MINHA PÁGINA AGORA
+              </Button>
+            </PaymentModal>
+            <p className="text-gray-300 mt-4">💳 PIX • Acesso imediato • Apenas R$ 39/mês</p>
+          </div>
+
+          {/* Benefícios Visuais */}
+          <div className="grid md:grid-cols-3 gap-8 mt-16">
+            <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
+              <div className="text-4xl mb-4">⚡</div>
+              <h4 className="text-lg font-bold text-white mb-2">Criação em 2 Minutos</h4>
+              <p className="text-gray-300 text-sm">De briefing a página publicada automaticamente</p>
+            </div>
+            <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
+              <div className="text-4xl mb-4">🎨</div>
+              <h4 className="text-lg font-bold text-white mb-2">Design Automático</h4>
+              <p className="text-gray-300 text-sm">IA escolhe cores, fontes e layout otimizado</p>
+            </div>
+            <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
+              <div className="text-4xl mb-4">📈</div>
+              <h4 className="text-lg font-bold text-white mb-2">Alta Conversão</h4>
+              <p className="text-gray-300 text-sm">Otimizado para SEO e vendas</p>
             </div>
           </div>
         </div>
