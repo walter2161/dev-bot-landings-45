@@ -1,11 +1,58 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Check, Star, Zap, Target, TrendingUp, Shield, Clock, Users, Trophy, Rocket } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Check, Star, Zap, Target, TrendingUp, Shield, Clock, Users, Trophy, Rocket, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import PaymentModal from "@/components/PaymentModal";
 
 const LandingPage = () => {
-  // Fixed handlePixPayment undefined error
+  const [selectedCountry, setSelectedCountry] = useState<string>("brasil");
+
+  const countryContent = {
+    brasil: {
+      title: "Crie Landing Pages Profissionais em Segundos",
+      subtitle: "O PageJet é a ferramenta de IA que transforma suas ideias em landing pages de alta conversão automaticamente",
+      cta: "Assinar por R$ 39/mês",
+      paymentMethod: "💳 Pagamento via PIX",
+      paymentDetails: "Cancelamento gratuito • Acesso imediato",
+      urgency: "🔥 OFERTA LIMITADA - Apenas 100 Vagas!",
+      urgencyText: "Preço promocional de lançamento por tempo limitado. Valor normal: R$ 97/mês",
+      mascotText: "Olá! Eu sou o JetBot",
+      mascotDescription: "Sua inteligência artificial especialista em criar landing pages que vendem!",
+      videoTitle: "📹 Veja o PageJet em Ação!",
+      videoSubtitle: "Assista como criar uma landing page profissional em apenas 2 minutos"
+    },
+    eua: {
+      title: "Create Professional Landing Pages in Seconds",
+      subtitle: "PageJet is the AI tool that transforms your ideas into high-converting landing pages automatically",
+      cta: "Subscribe for $9.99/month",
+      paymentMethod: "💳 Payment via Card",
+      paymentDetails: "Free cancellation • Instant access",
+      urgency: "🔥 LIMITED OFFER - Only 100 Spots!",
+      urgencyText: "Launch promotional price for limited time. Regular price: $29.99/month",
+      mascotText: "Hi! I'm JetBot",
+      mascotDescription: "Your artificial intelligence expert in creating landing pages that sell!",
+      videoTitle: "📹 See PageJet in Action!",
+      videoSubtitle: "Watch how to create a professional landing page in just 2 minutes"
+    },
+    espanha: {
+      title: "Crea Páginas de Destino Profesionales en Segundos",
+      subtitle: "PageJet es la herramienta de IA que transforma tus ideas en páginas de destino de alta conversión automáticamente",
+      cta: "Suscribirse por €9.99/mes",
+      paymentMethod: "💳 Pago con Tarjeta",
+      paymentDetails: "Cancelación gratuita • Acceso inmediato",
+      urgency: "🔥 OFERTA LIMITADA - ¡Solo 100 Plazas!",
+      urgencyText: "Precio promocional de lanzamiento por tiempo limitado. Precio regular: €24.99/mes",
+      mascotText: "¡Hola! Soy JetBot",
+      mascotDescription: "¡Tu inteligencia artificial experta en crear páginas de destino que venden!",
+      videoTitle: "📹 ¡Ve PageJet en Acción!",
+      videoSubtitle: "Mira cómo crear una página de destino profesional en solo 2 minutos"
+    }
+  };
+
+  const currentContent = countryContent[selectedCountry as keyof typeof countryContent];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent to-primary/90">
       {/* Header */}
@@ -18,11 +65,29 @@ const LandingPage = () => {
               className="h-10 object-contain"
             />
           </div>
-          <Link to="/login">
-            <Button variant="outline" className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25">
-              Fazer Login
-            </Button>
-          </Link>
+          
+          {/* Seletor de País/Idioma */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Globe className="h-5 w-5 text-primary" />
+              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                <SelectTrigger className="w-[150px] bg-background/20 border-primary/30 text-foreground">
+                  <SelectValue placeholder="País" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="brasil">🇧🇷 Brasil</SelectItem>
+                  <SelectItem value="eua">🇺🇸 EUA</SelectItem>
+                  <SelectItem value="espanha">🇪🇸 Espanha</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <Link to="/login">
+              <Button variant="outline" className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25">
+                {selectedCountry === 'brasil' ? 'Fazer Login' : selectedCountry === 'eua' ? 'Login' : 'Iniciar Sesión'}
+              </Button>
+            </Link>
+          </div>
         </nav>
       </header>
 
@@ -30,10 +95,10 @@ const LandingPage = () => {
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-6xl font-bold text-foreground mb-8 leading-tight">
-            Crie Landing Pages Profissionais em <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Segundos</span>
+            {currentContent.title.split(' ').slice(0, -1).join(' ')} <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">{currentContent.title.split(' ').slice(-1)}</span>
           </h2>
           <p className="text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-            O PageJet é a ferramenta de IA que transforma suas ideias em landing pages de alta conversão automaticamente
+            {currentContent.subtitle}
           </p>
           <div className="space-y-6">
             <PaymentModal>
@@ -42,12 +107,12 @@ const LandingPage = () => {
                 className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-primary-foreground text-2xl px-16 py-8 rounded-full shadow-[var(--shadow-primary)] hover:shadow-[var(--shadow-glow)] transform hover:scale-105 transition-all duration-500"
               >
                 <Zap className="mr-4 h-8 w-8" />
-                Assinar por R$ 39/mês
+                {currentContent.cta}
               </Button>
             </PaymentModal>
             <div className="bg-gradient-to-r from-card to-accent/50 backdrop-blur-sm border border-border p-6 rounded-2xl max-w-md mx-auto">
-              <p className="text-foreground font-semibold mb-2">💳 Pagamento via PIX</p>
-              <p className="text-sm text-muted-foreground">Cancelamento gratuito • Acesso imediato</p>
+              <p className="text-foreground font-semibold mb-2">{currentContent.paymentMethod}</p>
+              <p className="text-sm text-muted-foreground">{currentContent.paymentDetails}</p>
             </div>
           </div>
         </div>
@@ -57,10 +122,10 @@ const LandingPage = () => {
       <section className="container mx-auto px-4 py-16">
         <Card className="bg-gradient-to-r from-destructive to-destructive/80 border-destructive/50 p-8 text-center shadow-[var(--shadow-accent)] backdrop-blur-sm">
           <h3 className="text-3xl font-bold text-destructive-foreground mb-4 flex items-center justify-center gap-3">
-            🔥 OFERTA LIMITADA - Apenas 100 Vagas!
+            {currentContent.urgency}
           </h3>
           <p className="text-destructive-foreground/90 text-xl">
-            Preço promocional de lançamento por tempo limitado. Valor normal: R$ 97/mês
+            {currentContent.urgencyText}
           </p>
         </Card>
       </section>
@@ -102,10 +167,10 @@ const LandingPage = () => {
             </div>
             <div className="text-left">
               <h3 className="text-4xl font-bold text-white mb-6">
-                Olá! Eu sou o <span className="text-orange-400">JetBot</span>
+                {currentContent.mascotText} <span className="text-orange-400">JetBot</span>
               </h3>
               <p className="text-xl text-gray-200 mb-6">
-                Sua inteligência artificial especialista em criar landing pages que vendem!
+                {currentContent.mascotDescription}
               </p>
               <p className="text-lg text-gray-300">
                 Vou analisar seu produto, seu público e criar a página perfeita para maximizar suas conversões. 
@@ -121,10 +186,10 @@ const LandingPage = () => {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <h3 className="text-4xl font-bold text-white mb-4">
-              📹 Veja o PageJet em Ação!
+              {currentContent.videoTitle}
             </h3>
             <p className="text-xl text-gray-200 mb-2">
-              Assista como criar uma landing page profissional em apenas 2 minutos
+              {currentContent.videoSubtitle}
             </p>
             <p className="text-orange-400 font-semibold text-lg">
               ⚡ Mais de 50.000 visualizações • 98% aprovação
