@@ -3,51 +3,76 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Check, Star, Zap, Target, TrendingUp, Shield, Clock, Users, Trophy, Rocket, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PaymentModal from "@/components/PaymentModal";
+import { useLanguage, Language } from "@/contexts/LanguageContext";
 
 const LandingPage = () => {
+  const { language, setLanguage, t } = useLanguage();
   const [selectedCountry, setSelectedCountry] = useState<string>("brasil");
+
+  // Mapear idioma para país no carregamento inicial
+  useEffect(() => {
+    const countryMap: Record<Language, string> = {
+      'pt': 'brasil',
+      'en': 'eua',
+      'es': 'espanha'
+    };
+    setSelectedCountry(countryMap[language]);
+  }, [language]);
+
+  const handleCountryChange = (country: string) => {
+    setSelectedCountry(country);
+    // Mapear países para idiomas e atualizar o contexto global
+    const languageMap: Record<string, Language> = {
+      'brasil': 'pt',
+      'eua': 'en', 
+      'espanha': 'es'
+    };
+    
+    const newLanguage = languageMap[country] || 'en';
+    setLanguage(newLanguage);
+  };
 
   const countryContent = {
     brasil: {
-      title: "Crie Landing Pages Profissionais em Segundos",
+      title: t('landing.hero.title'),
       subtitle: "O PageJet é a ferramenta de IA que transforma suas ideias em landing pages de alta conversão automaticamente",
       cta: "Assinar por R$ 39/mês",
       paymentMethod: "💳 Pagamento via PIX",
       paymentDetails: "Cancelamento gratuito • Acesso imediato",
       urgency: "🔥 OFERTA LIMITADA - Apenas 100 Vagas!",
       urgencyText: "Preço promocional de lançamento por tempo limitado. Valor normal: R$ 97/mês",
-      mascotText: "Olá! Eu sou o JetBot",
-      mascotDescription: "Sua inteligência artificial especialista em criar landing pages que vendem!",
-      videoTitle: "📹 Veja o PageJet em Ação!",
-      videoSubtitle: "Assista como criar uma landing page profissional em apenas 2 minutos"
+      mascotText: t('landing.mascot.title'),
+      mascotDescription: t('landing.mascot.subtitle'),
+      videoTitle: t('landing.video.title'),
+      videoSubtitle: t('landing.video.subtitle')
     },
     eua: {
-      title: "Create Professional Landing Pages in Seconds",
+      title: t('landing.hero.title'),
       subtitle: "PageJet is the AI tool that transforms your ideas into high-converting landing pages automatically",
       cta: "Subscribe for $9.99/month",
       paymentMethod: "💳 Payment via Card",
       paymentDetails: "Free cancellation • Instant access",
       urgency: "🔥 LIMITED OFFER - Only 100 Spots!",
       urgencyText: "Launch promotional price for limited time. Regular price: $29.99/month",
-      mascotText: "Hi! I'm JetBot",
-      mascotDescription: "Your artificial intelligence expert in creating landing pages that sell!",
-      videoTitle: "📹 See PageJet in Action!",
-      videoSubtitle: "Watch how to create a professional landing page in just 2 minutes"
+      mascotText: t('landing.mascot.title'),
+      mascotDescription: t('landing.mascot.subtitle'),
+      videoTitle: t('landing.video.title'),
+      videoSubtitle: t('landing.video.subtitle')
     },
     espanha: {
-      title: "Crea Páginas de Destino Profesionales en Segundos",
+      title: t('landing.hero.title'),
       subtitle: "PageJet es la herramienta de IA que transforma tus ideas en páginas de destino de alta conversión automáticamente",
       cta: "Suscribirse por €9.99/mes",
       paymentMethod: "💳 Pago con Tarjeta",
       paymentDetails: "Cancelación gratuita • Acceso inmediato",
       urgency: "🔥 OFERTA LIMITADA - ¡Solo 100 Plazas!",
       urgencyText: "Precio promocional de lanzamiento por tiempo limitado. Precio regular: €24.99/mes",
-      mascotText: "¡Hola! Soy JetBot",
-      mascotDescription: "¡Tu inteligencia artificial experta en crear páginas de destino que venden!",
-      videoTitle: "📹 ¡Ve PageJet en Acción!",
-      videoSubtitle: "Mira cómo crear una página de destino profesional en solo 2 minutos"
+      mascotText: t('landing.mascot.title'),
+      mascotDescription: t('landing.mascot.subtitle'),
+      videoTitle: t('landing.video.title'),
+      videoSubtitle: t('landing.video.subtitle')
     }
   };
 
@@ -70,21 +95,21 @@ const LandingPage = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Globe className="h-5 w-5 text-primary" />
-              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+              <Select value={selectedCountry} onValueChange={handleCountryChange}>
                 <SelectTrigger className="w-[150px] bg-background/20 border-primary/30 text-foreground">
                   <SelectValue placeholder="País" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="brasil">🇧🇷 Brasil</SelectItem>
-                  <SelectItem value="eua">🇺🇸 EUA</SelectItem>
-                  <SelectItem value="espanha">🇪🇸 Espanha</SelectItem>
+                  <SelectItem value="brasil">{t('landing.nationality.brazil')}</SelectItem>
+                  <SelectItem value="eua">{t('landing.nationality.usa')}</SelectItem>
+                  <SelectItem value="espanha">{t('landing.nationality.spain')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <Link to="/login">
               <Button variant="outline" className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25">
-                {selectedCountry === 'brasil' ? 'Fazer Login' : selectedCountry === 'eua' ? 'Login' : 'Iniciar Sesión'}
+                {language === 'pt' ? 'Fazer Login' : language === 'en' ? 'Login' : 'Iniciar Sesión'}
               </Button>
             </Link>
           </div>

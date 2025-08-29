@@ -17,6 +17,7 @@ import LayoutTab from "./SidebarTabs/LayoutTab";
 import BriefingTab from "./SidebarTabs/BriefingTab";
 import { BusinessContent } from "@/services/contentGenerator";
 import { landingPageBuilder } from "@/services/landingPageBuilder";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { 
   Layout, 
   Palette, 
@@ -77,6 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   isMobile = false
 }) => {
   const [internalActiveTab, setInternalActiveTab] = useState("chatbot");
+  const { t, language } = useLanguage();
   
   const activeTab = externalActiveTab || internalActiveTab;
   const setActiveTab = externalSetActiveTab || setInternalActiveTab;

@@ -1,10 +1,10 @@
 import { BusinessContent, SEOData } from './contentGenerator';
 
 export class LandingPageBuilder {
-  async generateHTML(businessData: BusinessContent): Promise<string> {
+  async generateHTML(businessData: BusinessContent, language: string = 'pt'): Promise<string> {
     // Usar o agente especializado em HTML
     const { htmlAgent } = await import('./agents/htmlAgent');
-    return await htmlAgent.generateHTML(businessData);
+    return await htmlAgent.generateHTML(businessData, language);
   }
 
   private generateSEOTags(businessData: BusinessContent, seo?: SEOData): string {

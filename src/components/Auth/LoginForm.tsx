@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { AuthService } from "@/services/authService";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LoginFormProps {
   onLogin: () => void;
@@ -13,12 +14,13 @@ interface LoginFormProps {
 export function LoginForm({ onLogin }: LoginFormProps) {
   const [accessKey, setAccessKey] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!accessKey || accessKey.length !== 6) {
-      toast.error("Chave de acesso deve ter 6 caracteres");
+      toast.error(t('login.error.length'));
       return;
     }
 
@@ -28,14 +30,14 @@ export function LoginForm({ onLogin }: LoginFormProps) {
       const isValid = AuthService.login(accessKey);
       
       if (isValid) {
-        toast.success("Login realizado com sucesso! Sessão válida por 24h");
+        toast.success(t('login.success'));
         onLogin();
       } else {
-        toast.error("Chave de acesso inválida");
+        toast.error(t('login.error.invalid'));
         setAccessKey("");
       }
     } catch (error) {
-      toast.error("Erro ao fazer login");
+      toast.error(t('login.error.general'));
     } finally {
       setIsLoading(false);
     }
@@ -59,9 +61,9 @@ export function LoginForm({ onLogin }: LoginFormProps) {
               className="h-12 object-contain"
             />
           </div>
-          <CardTitle className="text-2xl font-bold">Acesso PageJet</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('login.title')}</CardTitle>
           <CardDescription>
-            Digite sua chave de acesso de 6 caracteres
+            {t('login.subtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -69,7 +71,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             <div>
               <Input
                 type="text"
-                placeholder="••••••"
+                placeholder={t('login.placeholder')}
                 value={accessKey}
                 onChange={handleInputChange}
                 className="text-center text-lg font-mono tracking-widest"
@@ -82,16 +84,16 @@ export function LoginForm({ onLogin }: LoginFormProps) {
               className="w-full" 
               disabled={isLoading || accessKey.length !== 6}
             >
-              {isLoading ? "Verificando..." : "Acessar"}
+              {isLoading ? t('login.button.loading') : t('login.button')}
             </Button>
           </form>
           <div className="mt-6 text-center">
             <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
-              ← Voltar para página inicial
+              {t('login.back')}
             </Link>
           </div>
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            <p>Sessão válida por 24 horas após o login</p>
+            <p>{t('login.session')}</p>
           </div>
         </CardContent>
       </Card>

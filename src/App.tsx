@@ -9,6 +9,8 @@ import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
 import { LoginForm } from "@/components/Auth/LoginForm";
 import { AuthService } from "@/services/authService";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +41,7 @@ const AuthWrapper = () => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const checkAuth = () => {
@@ -105,7 +108,7 @@ const AuthWrapper = () => {
             alt="PageJet" 
             className="h-12 object-contain mx-auto mb-4"
           />
-          <div className="text-lg text-white">Carregando...</div>
+          <div className="text-lg text-white">{t('app.loading')}</div>
         </div>
       </div>
     );
@@ -128,13 +131,15 @@ const AuthWrapper = () => {
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 };

@@ -3,14 +3,14 @@ import { BusinessContent } from '../contentGenerator';
 const PICSUM_BASE_URL = "https://picsum.photos";
 
 export class HtmlAgent {
-  async generateLandingPage(businessData: BusinessContent): Promise<string> {
+  async generateLandingPage(businessData: BusinessContent, language: string = 'pt'): Promise<string> {
     const images = this.generateImageUrls(businessData);
-    return this.buildHTMLTemplate(businessData, images);
+    return this.buildHTMLTemplate(businessData, images, language);
   }
 
   // Método para compatibilidade com código antigo
-  async generateHTML(businessData: BusinessContent): Promise<string> {
-    return this.generateLandingPage(businessData);
+  async generateHTML(businessData: BusinessContent, language: string = 'pt'): Promise<string> {
+    return this.generateLandingPage(businessData, language);
   }
 
   private generateImageUrls(businessData: BusinessContent): any {
@@ -36,13 +36,15 @@ export class HtmlAgent {
     return imageUrls;
   }
 
-  private buildHTMLTemplate(businessData: BusinessContent, images: any): string {
+  private buildHTMLTemplate(businessData: BusinessContent, images: any, language: string = 'pt'): string {
     // Detectar tipo de LP do prompt
     const prompt = businessData.heroText || '';
     const landingPageType = this.detectLandingPageType(prompt);
     
+    const langAttribute = language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : 'en-US';
+    
     return `<!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="${langAttribute}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,7 +53,7 @@ export class HtmlAgent {
     ${this.generateCSS(businessData)}
 </head>
 <body>
-    ${this.generateDynamicLandingPage(landingPageType, businessData, images)}
+    ${this.generateDynamicLandingPage(landingPageType, businessData, images, language)}
     ${this.generateJavaScript(businessData)}
 </body>
 </html>`;
@@ -64,7 +66,7 @@ export class HtmlAgent {
     return 'avancada'; // default
   }
 
-  private generateDynamicLandingPage(type: 'simples' | 'avancada' | 'completa', businessData: BusinessContent, images: any): string {
+  private generateDynamicLandingPage(type: 'simples' | 'avancada' | 'completa', businessData: BusinessContent, images: any, language: string = 'pt'): string {
     const businessType = this.extractBusinessType(businessData.heroText || '');
     const sections = [];
     
