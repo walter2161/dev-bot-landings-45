@@ -89,6 +89,74 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Mascote Apresentação */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-12">
+            <div className="flex-shrink-0">
+              <img 
+                src="/lovable-uploads/97010722-94c2-481f-89d5-a6c7f1b2afe2.png" 
+                alt="Mascote PageJet" 
+                className="h-64 w-auto mx-auto animate-bounce"
+              />
+            </div>
+            <div className="text-left">
+              <h3 className="text-4xl font-bold text-white mb-6">
+                Olá! Eu sou o <span className="text-orange-400">JetBot</span>
+              </h3>
+              <p className="text-xl text-gray-200 mb-6">
+                Sua inteligência artificial especialista em criar landing pages que vendem!
+              </p>
+              <p className="text-lg text-gray-300">
+                Vou analisar seu produto, seu público e criar a página perfeita para maximizar suas conversões. 
+                Tudo isso em menos de 2 minutos! 🚀
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Vídeo Demonstração */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto text-center">
+          <h3 className="text-3xl font-bold text-white mb-8">
+            Veja Como Funciona na Prática
+          </h3>
+          <p className="text-xl text-gray-200 mb-12">
+            Assista em apenas 2 minutos como criar uma landing page profissional
+          </p>
+          <div className="relative bg-gradient-to-br from-card/50 to-accent/30 rounded-2xl p-8 backdrop-blur-sm border border-border/50">
+            <div className="aspect-video bg-gradient-to-br from-muted to-accent rounded-xl flex items-center justify-center mb-6">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🎥</div>
+                <h4 className="text-2xl font-bold text-foreground mb-2">Demo do PageJet</h4>
+                <p className="text-muted-foreground">Vídeo de demonstração das funcionalidades</p>
+                <Button className="mt-6 bg-primary hover:bg-primary-glow text-primary-foreground">
+                  ▶ Assistir Demo
+                </Button>
+              </div>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-3xl mb-2">⚡</div>
+                <h5 className="font-bold text-foreground mb-1">Criação Rápida</h5>
+                <p className="text-sm text-muted-foreground">De ideia a página em 2 minutos</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl mb-2">🎨</div>
+                <h5 className="font-bold text-foreground mb-1">Design Automático</h5>
+                <p className="text-sm text-muted-foreground">IA escolhe as cores e layout</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl mb-2">📈</div>
+                <h5 className="font-bold text-foreground mb-1">Otimização SEO</h5>
+                <p className="text-sm text-muted-foreground">Rankeamento automático</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Solução */}
       <section className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
