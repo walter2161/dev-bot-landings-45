@@ -37,7 +37,7 @@ const LandingPage = () => {
   const countryContent = {
     brasil: {
       title: t('landing.hero.title'),
-      subtitle: "O PageJet é a ferramenta de IA que transforma suas ideias em landing pages de alta conversão automaticamente",
+      subtitle: "O PageJet é a ferramenta de IA que cria sites simples com chat assistente de IA configurado para atender seus clientes automaticamente",
       cta: "Assinar por R$ 39/mês",
       paymentMethod: "💳 Pagamento via PIX",
       paymentDetails: "Cancelamento gratuito • Acesso imediato",
@@ -50,7 +50,7 @@ const LandingPage = () => {
     },
     eua: {
       title: t('landing.hero.title'),
-      subtitle: "PageJet is the AI tool that transforms your ideas into high-converting landing pages automatically",
+      subtitle: "PageJet is the AI tool that creates simple websites with AI chat assistant configured to serve your customers automatically",
       cta: "Subscribe for $9.99/month",
       paymentMethod: "💳 Payment via Card",
       paymentDetails: "Free cancellation • Instant access",
@@ -63,7 +63,7 @@ const LandingPage = () => {
     },
     espanha: {
       title: t('landing.hero.title'),
-      subtitle: "PageJet es la herramienta de IA que transforma tus ideas en páginas de destino de alta conversión automáticamente",
+      subtitle: "PageJet es la herramienta de IA que crea sitios web simples con chat asistente de IA configurado para atender a tus clientes automáticamente",
       cta: "Suscribirse por €9.99/mes",
       paymentMethod: "💳 Pago con Tarjeta",
       paymentDetails: "Cancelación gratuita • Acceso inmediato",
@@ -129,9 +129,9 @@ const LandingPage = () => {
             <PaymentModal>
               <Button 
                 size="lg"
-                className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-primary-foreground text-2xl px-16 py-8 rounded-full shadow-[var(--shadow-primary)] hover:shadow-[var(--shadow-glow)] transform hover:scale-105 transition-all duration-500"
+                className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-primary-foreground text-xl md:text-2xl px-8 md:px-16 py-6 md:py-8 rounded-full shadow-[var(--shadow-primary)] hover:shadow-[var(--shadow-glow)] transform hover:scale-105 transition-all duration-500 w-full max-w-md mx-auto"
               >
-                <Zap className="mr-4 h-8 w-8" />
+                <Zap className="mr-2 md:mr-4 h-6 w-6 md:h-8 md:w-8" />
                 {currentContent.cta}
               </Button>
             </PaymentModal>
@@ -224,11 +224,11 @@ const LandingPage = () => {
           <div className="relative">
             {/* YouTube Video Embed */}
             <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
-              <div className="aspect-video">
+              <div className="aspect-video md:aspect-video aspect-[9/16] md:aspect-video">
                 <iframe
                   className="w-full h-full"
                   src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&showinfo=0&modestbranding=1"
-                  title="PageJet - Como Criar Landing Pages em 2 Minutos"
+                  title="PageJet - Como Criar Sites com Chat IA em 2 Minutos"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -252,9 +252,9 @@ const LandingPage = () => {
             <PaymentModal>
               <Button 
                 size="lg"
-                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-xl px-12 py-6 rounded-full shadow-xl transform hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-lg md:text-xl px-6 md:px-12 py-4 md:py-6 rounded-full shadow-xl transform hover:scale-105 transition-all duration-300 w-full max-w-md mx-auto"
               >
-                🚀 SIM! QUERO CRIAR MINHA PÁGINA AGORA
+                🚀 SIM! QUERO CRIAR MEU SITE AGORA
               </Button>
             </PaymentModal>
             <p className="text-gray-300 mt-4">💳 PIX • Acesso imediato • Apenas R$ 39/mês</p>
@@ -293,7 +293,7 @@ const LandingPage = () => {
               <ul className="space-y-4">
                 <li className="flex items-center text-white">
                   <Check className="text-green-400 mr-3 h-5 w-5" />
-                  Cria landing pages em menos de 2 minutos
+                  Cria sites com chat IA em menos de 2 minutos
                 </li>
                 <li className="flex items-center text-white">
                   <Check className="text-green-400 mr-3 h-5 w-5" />
@@ -473,9 +473,9 @@ const LandingPage = () => {
           </p>
           <PaymentModal>
             <Button 
-              className="bg-orange-500 hover:bg-orange-600 text-white text-2xl px-16 py-6 rounded-full shadow-2xl transform hover:scale-105 transition-all mb-4"
+              className="bg-orange-500 hover:bg-orange-600 text-white text-lg md:text-2xl px-8 md:px-16 py-4 md:py-6 rounded-full shadow-2xl transform hover:scale-105 transition-all mb-4 w-full max-w-md mx-auto"
             >
-              <Zap className="mr-3 h-8 w-8" />
+              <Zap className="mr-2 md:mr-3 h-6 w-6 md:h-8 md:w-8" />
               QUERO COMEÇAR AGORA - R$ 39/mês
             </Button>
           </PaymentModal>
@@ -487,7 +487,7 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="bg-black/50 py-8">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400">© 2024 PageJet. Todos os direitos reservados.</p>
+          <p className="text-gray-400">© 2025 PageJet. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
