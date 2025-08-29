@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { AuthService } from "@/services/authService";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 interface LoginFormProps {
   onLogin: () => void;
@@ -84,7 +85,12 @@ export function LoginForm({ onLogin }: LoginFormProps) {
               {isLoading ? "Verificando..." : "Acessar"}
             </Button>
           </form>
-          <div className="mt-6 text-center text-sm text-muted-foreground">
+          <div className="mt-6 text-center">
+            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+              ← Voltar para página inicial
+            </Link>
+          </div>
+          <div className="mt-4 text-center text-sm text-muted-foreground">
             <p>Sessão válida por 24 horas após o login</p>
           </div>
         </CardContent>
