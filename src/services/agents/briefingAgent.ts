@@ -184,7 +184,13 @@ Retorne no formato JSON:
 IMPORTANTE: Seja específico e único para cada negócio. Evite termos genéricos.`;
 
       const response = await this.makeRequest(prompt);
-      const cleanedResponse = response.replace(/```json|```/g, '').trim();
+      // Remove markdown e sanitiza caracteres de controle inválidos
+      let cleanedResponse = response.replace(/```json|```/g, '').trim();
+      // Remove quebras de linha e tabs dentro de strings JSON
+      cleanedResponse = cleanedResponse.replace(/[\n\r\t]/g, ' ');
+      // Remove espaços múltiplos
+      cleanedResponse = cleanedResponse.replace(/\s+/g, ' ');
+      
       const parsedData = JSON.parse(cleanedResponse);
       
       return parsedData;
