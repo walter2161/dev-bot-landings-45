@@ -1,4 +1,4 @@
-import { BusinessContent } from '../contentGenerator';
+import { BusinessContent, ImageDescriptions } from '../contentGenerator';
 
 const PICSUM_BASE_URL = "https://picsum.photos";
 
@@ -15,20 +15,27 @@ export class HtmlAgent {
   private async generateImageUrls(businessData: BusinessContent): Promise<any> {
     const { imageService } = await import('../imageService');
     const customImages = businessData.customImages || {};
+    const images: ImageDescriptions = businessData.images;
     
-    // Cria URLs sem marca d'água
+    // Usa os prompts específicos do imageAgent para cada seção
     const imageUrls = {
-      logo: customImages.logo || await imageService.generateImageUrl(`logo ${businessData.title}`, 200, 200),
-      hero: customImages.hero || await imageService.generateImageUrl(`${businessData.title} hero image`, 1200, 600),
-      about: customImages.about || await imageService.generateImageUrl('professional team working together', 800, 600),
-      results: customImages.results || await imageService.generateImageUrl('growth charts and success metrics', 800, 600),
-      team1: customImages.team1 || await imageService.generateImageUrl('professional business person', 300, 300),
-      team2: customImages.team2 || await imageService.generateImageUrl('professional female executive', 300, 300),
-      team3: customImages.team3 || await imageService.generateImageUrl('professional team member', 300, 300)
+      logo: customImages.logo || await imageService.generateImageUrl(images.logo || `logo ${businessData.title}`, 200, 200),
+      hero: customImages.hero || await imageService.generateImageUrl(images.hero || `${businessData.title} hero image`, 1200, 600),
+      about: customImages.about || await imageService.generateImageUrl(images.motivation || 'professional team working together', 800, 600),
+      results: customImages.results || await imageService.generateImageUrl(images.results || 'growth charts and success metrics', 800, 600),
+      team1: customImages.team1 || await imageService.generateImageUrl(images.method || 'professional business person', 300, 300),
+      team2: customImages.team2 || await imageService.generateImageUrl(images.target || 'professional female executive', 300, 300),
+      team3: customImages.team3 || await imageService.generateImageUrl(images.access || 'professional team member', 300, 300),
+      gallery: images.gallery || 'gallery images'
     };
 
     // Converte todas as imagens para base64
     console.log('🖼️ Convertendo imagens para base64...');
+    console.log('📸 Usando prompts específicos:', {
+      hero: images.hero?.substring(0, 50),
+      about: images.motivation?.substring(0, 50),
+      results: images.results?.substring(0, 50)
+    });
     const base64Images = await imageService.convertAllImagesToBase64(imageUrls);
     console.log('✅ Imagens convertidas com sucesso!');
     
