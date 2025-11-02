@@ -277,7 +277,7 @@ export class HtmlAgent {
             </div>
             <div class="row mt-5">
                 <div class="col-lg-6 mx-auto">
-                    <img src="${businessData.customImages?.results || 'https://image.pollinations.ai/prompt/graficos%20de%20crescimento?width=800&height=600'}" class="img-fluid rounded shadow" alt="Gráficos de resultados">
+                    <img src="${businessData.customImages?.results || 'https://image.pollinations.ai/prompt/graficos%20de%20crescimento?width=800&height=600&nologo=true&enhance=true'}" class="img-fluid rounded shadow" alt="Gráficos de resultados">
                 </div>
             </div>
         </div>
@@ -651,7 +651,7 @@ export class HtmlAgent {
         }
         
         .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('${businessData.customImages?.hero || 'https://image.pollinations.ai/prompt/' + encodeURIComponent(businessData.title)}');
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('${businessData.customImages?.hero || 'https://image.pollinations.ai/prompt/' + encodeURIComponent(businessData.title) + '?width=1200&height=600&nologo=true&enhance=true'}');
             background-size: cover;
             background-position: center;
             color: white;
