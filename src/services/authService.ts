@@ -142,42 +142,43 @@ export class AuthService {
   }
 
   // Sistema de cadastro demo
-  static registerDemo(email: string, password: string, name: string): boolean {
+  static registerDemo(email: string, name: string): { success: boolean; key?: string } {
     try {
       const users = this.getDemoUsers();
       
       // Verifica se email já existe
       if (users.some(u => u.email === email)) {
-        return false;
+        return { success: false };
       }
+
+      // Atribui uma chave aleatória das disponíveis
+      const assignedKey = this.VALID_KEYS[Math.floor(Math.random() * this.VALID_KEYS.length)];
 
       const newUser = {
         email,
-        password, // Em produção real, isso seria hasheado
         name,
+        assignedKey,
         createdAt: Date.now()
       };
 
       users.push(newUser);
       localStorage.setItem(this.DEMO_USERS_KEY, JSON.stringify(users));
       
-      // Faz login automaticamente
-      return this.loginDemo(email, password);
+      // Faz login automaticamente com a chave atribuída
+      const loginSuccess = this.loginDemoWithKey(email, assignedKey, name);
+      
+      return { success: loginSuccess, key: assignedKey };
     } catch {
-      return false;
+      return { success: false };
     }
   }
 
-  static loginDemo(email: string, password: string): boolean {
+  static loginDemoWithKey(email: string, key: string, name: string): boolean {
     try {
-      const users = this.getDemoUsers();
-      const user = users.find(u => u.email === email && u.password === password);
-      
-      if (!user) return false;
-
       const session = {
-        email: user.email,
-        name: user.name,
+        email,
+        name,
+        key,
         isDemo: true,
         loginTime: Date.now(),
         expiresAt: Date.now() + this.DEMO_SESSION_DURATION
@@ -190,7 +191,7 @@ export class AuthService {
     }
   }
 
-  private static getDemoUsers(): Array<{ email: string; password: string; name: string; createdAt: number }> {
+  private static getDemoUsers(): Array<{ email: string; name: string; assignedKey: string; createdAt: number }> {
     try {
       const data = localStorage.getItem(this.DEMO_USERS_KEY);
       return data ? JSON.parse(data) : [];
