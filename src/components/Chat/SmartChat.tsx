@@ -264,11 +264,26 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
   };
 
   const quickPrompts = [
-    "Drones para eventos e inspeções",
-    "Estúdio de tatuagem artística",
-    "Produtos veganos orgânicos",
-    "Escola de dança urbana",
-    "Consultoria em sustentabilidade"
+    {
+      title: "Corretor de Imóveis",
+      prompt: "Crie uma landing page profissional para uma imobiliária moderna. Foco em imóveis residenciais e comerciais de alto padrão. Inclua: seção hero com busca de imóveis por tipo/localização/preço, galeria de imóveis em destaque com filtros interativos, depoimentos de clientes satisfeitos com fotos, calculadora de financiamento imobiliário, tour virtual 360°, mapa interativo dos imóveis, seção sobre a equipe de corretores especializados, certificações e prêmios do mercado, blog com dicas de investimento imobiliário, formulário de contato com WhatsApp direto. Cores: azul profissional #1e40af, branco #ffffff, cinza elegante #64748b. Transmita confiança, expertise e exclusividade no mercado imobiliário."
+    },
+    {
+      title: "Pizzaria",
+      prompt: "Desenvolva uma landing page irresistível para uma pizzaria artesanal com delivery. Estilo acolhedor e familiar com toque gourmet. Inclua: hero com promoção do dia e botão de pedido imediato, cardápio completo com fotos apetitosas das pizzas (tradicionais, especiais, doces), seção de ingredientes premium e massa artesanal fermentada 48h, depoimentos de clientes com avaliações 5 estrelas, sistema de combos e promoções, área de cobertura do delivery com tempo estimado, galeria do ambiente da pizzaria e forno a lenha, seção de drinks e acompanhamentos, programa de fidelidade, formulário de pedido integrado com WhatsApp. Cores: vermelho vibrante #dc2626, dourado #f59e0b, verde manjericão #16a34a, marrom madeira #92400e. Desperte o apetite e urgência de pedir agora!"
+    },
+    {
+      title: "Materiais de Construção",
+      prompt: "Construa uma landing page robusta para loja de materiais de construção com 20 anos de mercado. Foco em obras residenciais, comerciais e reformas. Inclua: hero destacando variedade de produtos e entrega rápida, catálogo organizado por categorias (cimento, ferragens, tintas, pisos, louças, ferramentas, elétrica, hidráulica), seção de marcas parceiras confiáveis, calculadora de materiais para obra, ofertas e condições especiais para construtores, área de serviços (entrega, orçamento, projeto), depoimentos de construtores e arquitetos parceiros, blog com tutoriais de construção e reforma, seção sobre a empresa e infraestrutura (estoque, frota), formulário de orçamento por WhatsApp. Cores: laranja construção #ea580c, cinza concreto #6b7280, azul industrial #0284c7, amarelo atenção #eab308. Transmita solidez, variedade e tradição no ramo."
+    },
+    {
+      title: "Oficina Mecânica",
+      prompt: "Elabore uma landing page profissional para oficina mecânica especializada multimarcas. Foco em manutenção preventiva, reparos e diagnóstico computadorizado. Inclua: hero com agendamento online e desconto primeira visita, serviços oferecidos com ícones (troca de óleo, freios, suspensão, injeção eletrônica, ar condicionado, alinhamento, balanceamento, diagnóstico), diferenciais (mecânicos certificados, peças originais, garantia dos serviços), depoimentos com fotos de clientes e veículos, galeria da oficina moderna e equipamentos de ponta, checklist de revisão gratuita, convênios com seguradoras, seção sobre a equipe técnica qualificada, blog com dicas de manutenção, promoções e pacotes, horário de funcionamento incluindo sábados, formulário de agendamento WhatsApp. Cores: preto profissional #000000, vermelho energia #dc2626, prata metálico #94a3b8, laranja #f97316. Transmita confiança, expertise técnica e cuidado com o veículo."
+    },
+    {
+      title: "Clínica Dentária",
+      prompt: "Projete uma landing page sofisticada para clínica odontológica moderna com foco em estética e saúde bucal. Ambiente acolhedor e tecnologia de ponta. Inclua: hero com agendamento online e primeira consulta com desconto, tratamentos oferecidos (clareamento, lentes de contato dental, implantes, ortodontia invisível, profilaxia, restaurações estéticas, próteses, periodontia), diferenciais (tecnologia 3D, sedação consciente, ambiente relaxante, música ambiente), antes e depois de casos reais, depoimentos de pacientes satisfeitos, seção sobre a equipe de dentistas especialistas com CRO, certificações e cursos internacionais, convênios aceitos, estrutura da clínica com fotos modernas, blog com dicas de saúde bucal, promoções e planos de tratamento facilitados, horários flexíveis, formulário WhatsApp. Cores: azul confiança #0ea5e9, branco higiene #ffffff, verde saúde #10b981, dourado premium #fbbf24. Transmita profissionalismo, cuidado e excelência em odontologia."
+    }
   ];
 
   if (isIntegrated) {
@@ -300,15 +315,15 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
                 Importar HTML
               </Button>
                 <div className="grid grid-cols-1 gap-1">
-                  {quickPrompts.slice(0, 6).map((prompt, index) => (
+                  {quickPrompts.slice(0, 6).map((item, index) => (
                     <Button
                       key={`mobile-prompt-${index}`}
                       variant="outline"
                       size="sm"
-                      onClick={() => setInputMessage(prompt)}
+                      onClick={() => setInputMessage(item.prompt)}
                       className="text-xs h-auto py-1 px-2 text-left justify-start hover:bg-primary/5 border-primary/30"
                     >
-                      {prompt}
+                      {item.title}
                     </Button>
                   ))}
                </div>
@@ -420,15 +435,15 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
             <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-sm mb-4">Descreva o negócio que você quer criar uma landing page:</p>
               <div className="grid grid-cols-1 gap-2">
-                {quickPrompts.map((prompt, index) => (
+                {quickPrompts.map((item, index) => (
                   <Button
                     key={`desktop-prompt-${index}`}
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage(prompt)}
+                    onClick={() => setInputMessage(item.prompt)}
                     className="text-xs h-auto py-2 px-3 text-left justify-start hover:bg-primary/5 border-primary/30"
                   >
-                    {prompt}
+                    {item.title}
                   </Button>
                 ))}
             </div>
