@@ -174,8 +174,13 @@ const MobileLayout = ({ onLogout }: MobileLayoutProps) => {
         </Sheet>
 
         {/* Welcome Screen */}
-        <div className="p-6 text-center space-y-8">
+        <div className="flex-1 p-6 text-center space-y-8 flex flex-col justify-center">
           <div className="space-y-3">
+            <img 
+              src="/lovable-uploads/97010722-94c2-481f-89d5-a6c7f1b2afe2.png" 
+              alt="PageJet Mascot" 
+              className="w-32 h-auto mx-auto mb-4"
+            />
             <h2 className="text-3xl font-bold text-foreground">
               Crie sua Landing Page
             </h2>

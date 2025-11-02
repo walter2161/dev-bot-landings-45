@@ -36,11 +36,7 @@ export const DemoRegisterForm = ({ onRegister, onBackToLogin }: DemoRegisterForm
       if (result.success && result.key) {
         setAssignedKey(result.key);
         toast.success(t('demo.success'));
-        
-        // Aguarda 3 segundos para mostrar a chave antes de redirecionar
-        setTimeout(() => {
-          onRegister();
-        }, 3000);
+        // Não redireciona automaticamente, espera o usuário confirmar
       } else {
         toast.error(t('demo.emailExists'));
         setIsLoading(false);
@@ -49,6 +45,17 @@ export const DemoRegisterForm = ({ onRegister, onBackToLogin }: DemoRegisterForm
       toast.error(t('demo.error'));
       setIsLoading(false);
     }
+  };
+
+  const handleCopyKey = () => {
+    if (assignedKey) {
+      navigator.clipboard.writeText(assignedKey);
+      toast.success(t('demo.keyCopied'));
+    }
+  };
+
+  const handleContinue = () => {
+    onRegister();
   };
 
   if (assignedKey) {
@@ -71,15 +78,30 @@ export const DemoRegisterForm = ({ onRegister, onBackToLogin }: DemoRegisterForm
             <AlertDescription className="ml-2">
               <div className="text-center">
                 <p className="text-sm mb-2">{t('demo.yourKey')}</p>
-                <p className="text-3xl font-bold font-mono tracking-widest">{assignedKey}</p>
+                <p className="text-3xl font-bold font-mono tracking-widest select-all">{assignedKey}</p>
                 <p className="text-xs text-muted-foreground mt-2">{t('demo.saveKey')}</p>
               </div>
             </AlertDescription>
           </Alert>
           
-          <p className="text-sm text-center text-muted-foreground">
-            {t('demo.redirecting')}
-          </p>
+          <div className="space-y-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleCopyKey}
+            >
+              {t('demo.copyKey')}
+            </Button>
+            
+            <Button
+              type="button"
+              className="w-full"
+              onClick={handleContinue}
+            >
+              {t('demo.continue')}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );

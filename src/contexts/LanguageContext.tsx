@@ -105,7 +105,9 @@ const translations = {
     'demo.keyDescription': 'Guarde esta chave para futuros acessos',
     'demo.yourKey': 'Sua chave de acesso:',
     'demo.saveKey': 'Guarde esta chave! Você precisará dela para acessar novamente',
-    'demo.redirecting': 'Redirecionando em 3 segundos...',
+    'demo.copyKey': 'Copiar Chave',
+    'demo.keyCopied': 'Chave copiada!',
+    'demo.continue': 'Continuar para o App',
     
     // App
     'app.loading': 'Carregando...',
@@ -182,7 +184,9 @@ const translations = {
     'demo.keyDescription': 'Save this key for future access',
     'demo.yourKey': 'Your access key:',
     'demo.saveKey': 'Save this key! You will need it to access again',
-    'demo.redirecting': 'Redirecting in 3 seconds...',
+    'demo.copyKey': 'Copy Key',
+    'demo.keyCopied': 'Key copied!',
+    'demo.continue': 'Continue to App',
     
     // App
     'app.loading': 'Loading...',
@@ -259,7 +263,9 @@ const translations = {
     'demo.keyDescription': 'Guarda esta clave para futuros accesos',
     'demo.yourKey': 'Tu clave de acceso:',
     'demo.saveKey': '¡Guarda esta clave! La necesitarás para acceder nuevamente',
-    'demo.redirecting': 'Redirigiendo en 3 segundos...',
+    'demo.copyKey': 'Copiar Clave',
+    'demo.keyCopied': '¡Clave copiada!',
+    'demo.continue': 'Continuar a la App',
     
     // App
     'app.loading': 'Cargando...',
