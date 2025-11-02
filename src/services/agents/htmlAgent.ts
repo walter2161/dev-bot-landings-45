@@ -302,63 +302,6 @@ export class HtmlAgent {
   }
 
 
-  private generateFAQSection(businessData: BusinessContent): string {
-    const faqs = [
-      { question: `Como funciona o ${businessData.title}?`, answer: 'Oferecemos um serviço personalizado e de alta qualidade, adaptado às suas necessidades específicas.' },
-      { question: 'Qual o prazo de atendimento?', answer: 'O prazo varia conforme o projeto, mas sempre priorizamos a qualidade e pontualidade.' },
-      { question: 'Vocês oferecem garantia?', answer: 'Sim, oferecemos garantia em todos os nossos serviços para sua total tranquilidade.' },
-      { question: 'Como posso entrar em contato?', answer: `Você pode nos contatar através do WhatsApp: ${businessData.contact?.phone || '(00) 00000-0000'}, e-mail: ${businessData.contact?.email || 'contato@empresa.com'} ou pelo formulário no site.` }
-    ];
-
-    return `
-    <!-- FAQ -->
-    <section class="section">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Perguntas Frequentes</h2>
-                <p class="lead">Tire suas dúvidas</p>
-            </div>
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    ${faqs.map((faq, i) => `
-                    <div class="faq-item">
-                        <div class="faq-question">${faq.question}</div>
-                        <div class="faq-answer">
-                            <p>${faq.answer}</p>
-                        </div>
-                    </div>
-                    `).join('')}
-                </div>
-            </div>
-        </div>
-    </section>
-    `;
-  }
-
-  private generatePricingSection(businessData: BusinessContent): string {
-    return `
-    <!-- Investimento (apenas para serviços) -->
-    <section class="section bg-light">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Investimento</h2>
-                <p class="lead">Planos personalizados para suas necessidades</p>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center p-4">
-                            <h3 class="mb-4">Consulte</h3>
-                            <p class="mb-4">Valores personalizados de acordo com suas necessidades</p>
-                            <a href="javascript:sendToWhatsApp('orcamento', {origem: 'Pricing'})" class="btn btn-primary">Solicitar Orçamento</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    `;
-  }
 
   private generateCTASection(businessData: BusinessContent): string {
     return `
@@ -1158,7 +1101,7 @@ export class HtmlAgent {
       ${this.generateAboutCompanySection(businessData, images)}
       ${this.generateServicesSection(businessData)}
       ${this.generateCasesSection(businessData, images)}
-      ${this.generateTeamSection(businessData, images)}
+      ${this.generateResultsSection(businessData, images)}
       ${this.generateDifferentialsSection(businessData)}
       ${this.generatePartnersSection(businessData)}
       ${this.generateCTAQuote(businessData)}
@@ -1468,6 +1411,25 @@ export class HtmlAgent {
           </div>
           <div class="col-lg-6">
             <img src="${images.target}" class="img-fluid rounded shadow" alt="Público-alvo">
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateResultsSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Resultados</h2>
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <img src="${images.results}" class="img-fluid rounded shadow" alt="Resultados">
+          </div>
+          <div class="col-lg-6">
+            <h3>Resultados Comprovados</h3>
+            <p class="lead">Nossa equipe entrega resultados excepcionais para empresas de todos os portes.</p>
           </div>
         </div>
       </div>
