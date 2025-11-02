@@ -13,7 +13,9 @@ export class AuthService {
   ];
 
   private static readonly SESSION_KEY = 'pagejet_session';
+  private static readonly DEMO_USERS_KEY = 'pagejet_demo_users';
   private static readonly SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 horas em ms
+  private static readonly DEMO_SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 horas em ms
 
   static validateKey(key: string): boolean {
     return this.VALID_KEYS.includes(key.toUpperCase());
@@ -137,5 +139,87 @@ export class AuthService {
       }
     }
     return false;
+  }
+
+  // Sistema de cadastro demo
+  static registerDemo(email: string, password: string, name: string): boolean {
+    try {
+      const users = this.getDemoUsers();
+      
+      // Verifica se email já existe
+      if (users.some(u => u.email === email)) {
+        return false;
+      }
+
+      const newUser = {
+        email,
+        password, // Em produção real, isso seria hasheado
+        name,
+        createdAt: Date.now()
+      };
+
+      users.push(newUser);
+      localStorage.setItem(this.DEMO_USERS_KEY, JSON.stringify(users));
+      
+      // Faz login automaticamente
+      return this.loginDemo(email, password);
+    } catch {
+      return false;
+    }
+  }
+
+  static loginDemo(email: string, password: string): boolean {
+    try {
+      const users = this.getDemoUsers();
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      if (!user) return false;
+
+      const session = {
+        email: user.email,
+        name: user.name,
+        isDemo: true,
+        loginTime: Date.now(),
+        expiresAt: Date.now() + this.DEMO_SESSION_DURATION
+      };
+      
+      localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private static getDemoUsers(): Array<{ email: string; password: string; name: string; createdAt: number }> {
+    try {
+      const data = localStorage.getItem(this.DEMO_USERS_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  static isDemoSession(): boolean {
+    try {
+      const sessionData = localStorage.getItem(this.SESSION_KEY);
+      if (!sessionData) return false;
+      
+      const session = JSON.parse(sessionData);
+      return session.isDemo === true;
+    } catch {
+      return false;
+    }
+  }
+
+  static getDemoUserName(): string | null {
+    try {
+      const sessionData = localStorage.getItem(this.SESSION_KEY);
+      if (!sessionData) return null;
+      
+      const session = JSON.parse(sessionData);
+      return session.isDemo ? session.name : null;
+    } catch {
+      return null;
+    }
   }
 }

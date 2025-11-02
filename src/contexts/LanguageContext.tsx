@@ -85,6 +85,23 @@ const translations = {
     'login.error.invalid': 'Chave de acesso inválida',
     'login.error.general': 'Erro ao fazer login',
     'login.success': 'Login realizado com sucesso! Sessão válida por 24h',
+    'login.or': 'ou',
+    'login.demo': 'Testar Grátis - 2h Demo',
+    
+    // Demo Registration
+    'demo.title': 'Conta Demo - 2 Horas Grátis',
+    'demo.subtitle': 'Experimente o PageJet sem compromisso',
+    'demo.name': 'Nome completo',
+    'demo.email': 'E-mail',
+    'demo.password': 'Senha',
+    'demo.createAccount': 'Criar conta demo',
+    'demo.backToLogin': 'Já tenho uma chave de acesso',
+    'demo.emailExists': 'Este e-mail já está cadastrado',
+    'demo.error': 'Erro ao criar conta',
+    'demo.success': 'Conta criada! Você tem 2 horas de acesso gratuito',
+    'demo.namePlaceholder': 'Seu nome',
+    'demo.emailPlaceholder': 'seu@email.com',
+    'demo.passwordPlaceholder': 'Mínimo 6 caracteres',
     
     // App
     'app.loading': 'Carregando...',
@@ -141,6 +158,23 @@ const translations = {
     'login.error.invalid': 'Invalid access key',
     'login.error.general': 'Login error',
     'login.success': 'Login successful! Session valid for 24h',
+    'login.or': 'or',
+    'login.demo': 'Try Free - 2h Demo',
+    
+    // Demo Registration
+    'demo.title': 'Demo Account - 2 Free Hours',
+    'demo.subtitle': 'Try PageJet with no commitment',
+    'demo.name': 'Full name',
+    'demo.email': 'Email',
+    'demo.password': 'Password',
+    'demo.createAccount': 'Create demo account',
+    'demo.backToLogin': 'I have an access key',
+    'demo.emailExists': 'This email is already registered',
+    'demo.error': 'Error creating account',
+    'demo.success': 'Account created! You have 2 hours of free access',
+    'demo.namePlaceholder': 'Your name',
+    'demo.emailPlaceholder': 'your@email.com',
+    'demo.passwordPlaceholder': 'Minimum 6 characters',
     
     // App
     'app.loading': 'Loading...',
@@ -197,6 +231,23 @@ const translations = {
     'login.error.invalid': 'Clave de acceso inválida',
     'login.error.general': 'Error al iniciar sesión',
     'login.success': '¡Login exitoso! Sesión válida por 24h',
+    'login.or': 'o',
+    'login.demo': 'Probar Gratis - Demo 2h',
+    
+    // Demo Registration
+    'demo.title': 'Cuenta Demo - 2 Horas Gratis',
+    'demo.subtitle': 'Prueba PageJet sin compromiso',
+    'demo.name': 'Nombre completo',
+    'demo.email': 'Correo electrónico',
+    'demo.password': 'Contraseña',
+    'demo.createAccount': 'Crear cuenta demo',
+    'demo.backToLogin': 'Ya tengo una clave de acceso',
+    'demo.emailExists': 'Este correo ya está registrado',
+    'demo.error': 'Error al crear cuenta',
+    'demo.success': '¡Cuenta creada! Tienes 2 horas de acceso gratuito',
+    'demo.namePlaceholder': 'Tu nombre',
+    'demo.emailPlaceholder': 'tu@correo.com',
+    'demo.passwordPlaceholder': 'Mínimo 6 caracteres',
     
     // App
     'app.loading': 'Cargando...',
