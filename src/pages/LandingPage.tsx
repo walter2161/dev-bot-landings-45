@@ -126,15 +126,29 @@ const LandingPage = () => {
             {currentContent.subtitle}
           </p>
           <div className="space-y-6">
-            <PaymentModal>
-              <Button 
-                size="lg"
-                className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-primary-foreground text-xl md:text-2xl px-8 md:px-16 py-6 md:py-8 rounded-full shadow-[var(--shadow-primary)] hover:shadow-[var(--shadow-glow)] transform hover:scale-105 transition-all duration-500 w-full max-w-md mx-auto"
-              >
-                <Zap className="mr-2 md:mr-4 h-6 w-6 md:h-8 md:w-8" />
-                {currentContent.cta}
-              </Button>
-            </PaymentModal>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <PaymentModal>
+                <Button 
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-primary-foreground text-xl md:text-2xl px-8 md:px-16 py-6 md:py-8 rounded-full shadow-[var(--shadow-primary)] hover:shadow-[var(--shadow-glow)] transform hover:scale-105 transition-all duration-500 w-full sm:w-auto max-w-md"
+                >
+                  <Zap className="mr-2 md:mr-4 h-6 w-6 md:h-8 md:w-8" />
+                  {currentContent.cta}
+                </Button>
+              </PaymentModal>
+              
+              <Link to="/test-gratis">
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-primary/50 text-primary hover:bg-primary/10 text-xl md:text-2xl px-8 md:px-16 py-6 md:py-8 rounded-full shadow-lg transform hover:scale-105 transition-all duration-500 w-full sm:w-auto max-w-md"
+                >
+                  <Rocket className="mr-2 md:mr-4 h-6 w-6 md:h-8 md:w-8" />
+                  {language === 'pt' ? 'Testar Grátis' : language === 'en' ? 'Try Free' : 'Probar Gratis'}
+                </Button>
+              </Link>
+            </div>
+            
             <div className="bg-gradient-to-r from-card to-accent/50 backdrop-blur-sm border border-border p-6 rounded-2xl max-w-md mx-auto">
               <p className="text-foreground font-semibold mb-2">{currentContent.paymentMethod}</p>
               <p className="text-sm text-muted-foreground">{currentContent.paymentDetails}</p>
@@ -206,80 +220,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Vídeo Demonstração */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
-            <h3 className="text-4xl font-bold text-white mb-4">
-              {currentContent.videoTitle}
-            </h3>
-            <p className="text-xl text-gray-200 mb-2">
-              {currentContent.videoSubtitle}
-            </p>
-            <p className="text-orange-400 font-semibold text-lg">
-              ⚡ Mais de 50.000 visualizações • 98% aprovação
-            </p>
-          </div>
-          
-          <div className="relative">
-            {/* YouTube Video Embed */}
-            <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
-              <div className="aspect-video md:aspect-video aspect-[9/16] md:aspect-video">
-                <iframe
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&showinfo=0&modestbranding=1"
-                  title="PageJet - Como Criar Sites com Chat IA em 2 Minutos"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-            
-            {/* Overlay with Social Proof */}
-            <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-full shadow-lg">
-              <div className="flex items-center space-x-2">
-                <div className="flex text-yellow-300">
-                  {[1,2,3,4,5].map((i) => <Star key={i} className="h-4 w-4 fill-current" />)}
-                </div>
-                <span className="font-semibold">4.9/5 • 1.247 reviews</span>
-              </div>
-            </div>
-          </div>
-          
-          {/* CTA Logo após vídeo */}
-          <div className="text-center mt-12">
-            <PaymentModal>
-              <Button 
-                size="lg"
-                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-lg md:text-xl px-6 md:px-12 py-4 md:py-6 rounded-full shadow-xl transform hover:scale-105 transition-all duration-300 w-full max-w-md mx-auto"
-              >
-                🚀 SIM! QUERO CRIAR MEU SITE AGORA
-              </Button>
-            </PaymentModal>
-            <p className="text-gray-300 mt-4">💳 PIX • Acesso imediato • Apenas R$ 39/mês</p>
-          </div>
-
-          {/* Benefícios Visuais */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
-              <div className="text-4xl mb-4">⚡</div>
-              <h4 className="text-lg font-bold text-white mb-2">Criação em 2 Minutos</h4>
-              <p className="text-gray-300 text-sm">De briefing a site publicado automaticamente</p>
-            </div>
-            <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
-              <div className="text-4xl mb-4">🎨</div>
-              <h4 className="text-lg font-bold text-white mb-2">Design Automático</h4>
-              <p className="text-gray-300 text-sm">IA escolhe cores, fontes e layout otimizado</p>
-            </div>
-            <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
-              <div className="text-4xl mb-4">📈</div>
-              <h4 className="text-lg font-bold text-white mb-2">Alta Conversão</h4>
-              <p className="text-gray-300 text-sm">Otimizado para SEO e vendas</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Solução */}
       <section className="container mx-auto px-4 py-16">
