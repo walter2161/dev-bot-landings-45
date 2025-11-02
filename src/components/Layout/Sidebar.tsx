@@ -15,6 +15,7 @@ import SellerbotTab from "./SidebarTabs/SellerbotTab";
 import SEOTab from "./SidebarTabs/SEOTab";
 import LayoutTab from "./SidebarTabs/LayoutTab";
 import BriefingTab from "./SidebarTabs/BriefingTab";
+import ConfigTab from "./SidebarTabs/ConfigTab";
 import { BusinessContent } from "@/services/contentGenerator";
 import { landingPageBuilder } from "@/services/landingPageBuilder";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -127,9 +128,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   const tabs = [
     { id: "chatbot", label: "Chat", icon: MessageCircle },
     { id: "briefing", label: "Briefing", icon: FileText },
+    { id: "config", label: "Config", icon: Settings },
     { id: "content", label: "Conteúdo", icon: Type },
     { id: "sellerbot", label: "Sellerbot", icon: Bot },
-    { id: "seo", label: "SEO", icon: Settings },
+    { id: "seo", label: "SEO", icon: Eye },
     { id: "design", label: "Design", icon: Palette },
     { id: "layout", label: "Layouts", icon: Layout },
     { id: "images", label: "Imagens", icon: Image },
@@ -283,6 +285,14 @@ const Sidebar: React.FC<SidebarProps> = ({
           <SEOTab 
             businessData={businessData}
             onLandingPageGenerated={onLandingPageGenerated}
+          />
+        )}
+
+        {activeTab === "config" && (
+          <ConfigTab 
+            businessData={businessData}
+            onContentUpdate={setBusinessData}
+            onLandingPageGenerated={handleLandingPageGeneratedInternal}
           />
         )}
       </div>

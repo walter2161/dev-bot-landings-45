@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState, useRef } from "react";
-import { BusinessContent } from "@/services/contentGenerator";
+import { BusinessContent, GalleryItem } from "@/services/contentGenerator";
 import { Image, Upload, Wand2, RotateCcw, Download, Grid3X3 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -47,8 +47,14 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
     setIsGenerating(true);
     try {
       if (businessData) {
-        const updatedGalleryImages = [...galleryImages];
-        updatedGalleryImages[imageIndex] = galleryPrompt;
+        const updatedGalleryImages: GalleryItem[] = [...galleryImages];
+        updatedGalleryImages[imageIndex] = {
+          ...updatedGalleryImages[imageIndex],
+          imagePrompt: galleryPrompt,
+          title: updatedGalleryImages[imageIndex]?.title || `Imagem ${imageIndex + 1}`,
+          description: updatedGalleryImages[imageIndex]?.description || 'Descrição da imagem',
+          id: updatedGalleryImages[imageIndex]?.id || `gallery-${imageIndex + 1}`
+        };
         
         const updatedBusinessData = {
           ...businessData,
@@ -329,7 +335,7 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
                     <div className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
                       {galleryImages[index] ? (
                         <img
-                          src={generateImageUrl(galleryImages[index])}
+                          src={generateImageUrl(galleryImages[index].imagePrompt)}
                           alt={`Galeria ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
@@ -379,7 +385,7 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
                         variant="outline"
                         onClick={() => {
                           setEditingGalleryImage(index);
-                          setGalleryPrompt(galleryImages[index] || '');
+                          setGalleryPrompt(galleryImages[index]?.imagePrompt || '');
                         }}
                         className="w-full text-xs"
                       >
@@ -398,7 +404,7 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
             <div key={index} className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
               {galleryImages[index] ? (
                 <img
-                  src={generateImageUrl(galleryImages[index])}
+                  src={generateImageUrl(galleryImages[index].imagePrompt)}
                   alt={`Galeria ${index + 1}`}
                   className="w-full h-full object-cover"
                 />
@@ -432,9 +438,9 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
                 document.body.removeChild(a);
               }
               // Baixar imagens da galeria
-              galleryImages.forEach((desc, index) => {
-                if (desc) {
-                  const imageUrl = generateImageUrl(desc);
+              galleryImages.forEach((item, index) => {
+                if (item?.imagePrompt) {
+                  const imageUrl = generateImageUrl(item.imagePrompt);
                   const a = document.createElement('a');
                   a.href = imageUrl;
                   a.download = `Galeria-${index + 1}.jpg`;
@@ -472,7 +478,10 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
                 const updatedBusinessData = {
                   ...businessData,
                   images: updatedImages,
-                  galleryImages: galleryImages.map(img => img ? `${img} - refresh ${timestamp}` : img)
+                  galleryImages: galleryImages.map(item => item ? {
+                    ...item,
+                    imagePrompt: `${item.imagePrompt} - refresh ${timestamp}`
+                  } : item)
                 };
                 
                 const { landingPageBuilder } = await import("@/services/landingPageBuilder");

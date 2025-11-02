@@ -7,6 +7,8 @@ import { imageAgent, ImagePrompts } from './imageAgent';
 import { copyAgent, CopyStructure } from './copyAgent';
 import { htmlAgent } from './htmlAgent';
 import { briefingAgent, ProcessedBriefing } from './briefingAgent';
+import { dataStructureAgent } from './dataStructureAgent';
+import { selectTemplateForBusiness } from './landingPageTemplates';
 import { BusinessContent } from '../contentGenerator';
 
 export class AgentOrchestrator {
@@ -58,7 +60,18 @@ export class AgentOrchestrator {
       const copyInstructions = briefingAgent.generateInstructionsForAgent(briefing, 'copy');
       const copyData = await copyAgent.generateCopy(copyInstructions, briefing.businessName, content);
       
-      // Etapa 7: Combinar tudo
+      // Etapa 7: Selecionar template baseado no tipo de negócio
+      console.log('📐 Selecionando template apropriado...');
+      const template = selectTemplateForBusiness(briefing.businessType);
+      
+      // Etapa 8: Gerar estruturas de dados baseadas no template
+      console.log('📊 Gerando estruturas de dados...');
+      const testimonials = dataStructureAgent.generateTestimonials(briefing.businessName, briefing.businessType, 3);
+      const galleryItems = dataStructureAgent.generateGalleryItems(briefing.businessName, briefing.businessType, 6);
+      const products = dataStructureAgent.generateProducts(briefing.businessName, briefing.businessType, 6);
+      const teamMembers = dataStructureAgent.generateTeamMembers(briefing.businessName, briefing.businessType, 3);
+      
+      // Etapa 9: Combinar tudo
       console.log('🔧 Combinando resultados...');
       // Aplicar copy persuasivo às seções
       const enhancedSections = content.sections.map(section => ({
@@ -69,13 +82,12 @@ export class AgentOrchestrator {
 
       const businessData: BusinessContent = {
         ...content,
-        title: briefing.businessName, // Forçar o nome correto da empresa
+        title: briefing.businessName,
         heroText: copyData.heroText,
         sections: enhancedSections,
-        colors: briefing.colorPalette, // Usar cores do briefing
+        colors: briefing.colorPalette,
         images: {
           ...design.images,
-          // Sobrescrever com prompts detalhados do imageAgent
           logo: imagePrompts.logo,
           hero: imagePrompts.hero,
           motivation: imagePrompts.motivation,
@@ -86,7 +98,6 @@ export class AgentOrchestrator {
           investment: imagePrompts.investment,
           gallery: imagePrompts.gallery
         },
-        // Adicionar informações de contato do briefing
         contact: {
           email: briefing.contactInfo.other?.includes('@') ? briefing.contactInfo.other.split(' ')[0] : `contato@${briefing.businessName.toLowerCase().replace(/\s+/g, '')}.com`,
           phone: briefing.contactInfo.other?.match(/\([0-9]{2}\)\s?[0-9-]+/)?.[0] || "(11) 3333-3333",
@@ -97,15 +108,11 @@ export class AgentOrchestrator {
             facebook: `facebook.com/${briefing.businessName.toLowerCase().replace(/\s+/g, '')}`
           }
         },
-        // Criar array de imagens da galeria (6 imagens)
-        galleryImages: [
-          `${briefing.businessName} - ambiente interno profissional e bem iluminado`,
-          `${briefing.businessName} - cliente satisfeito utilizando o serviço de qualidade`,
-          `${briefing.businessName} - equipe profissional trabalhando com dedicação`,
-          `${briefing.businessName} - detalhes do produto ou serviço sendo executado`,
-          `${briefing.businessName} - ambiente de atendimento ao cliente acolhedor`,
-          `${briefing.businessName} - resultado final do trabalho realizado com excelência`
-        ],
+        galleryImages: galleryItems,
+        testimonials: testimonials,
+        products: products,
+        teamMembers: teamMembers,
+        templateId: template.id,
         sellerbot,
         seo: {
           title: seoData.title,
@@ -127,7 +134,7 @@ export class AgentOrchestrator {
         }
       };
       
-      // Etapa 8: Gerar HTML
+      // Etapa 10: Gerar HTML
       console.log('🏗️ Agente de HTML trabalhando...');
       const html = await htmlAgent.generateHTML(businessData);
       

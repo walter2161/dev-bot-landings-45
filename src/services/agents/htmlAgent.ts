@@ -1154,10 +1154,10 @@ export class HtmlAgent {
       <div class="container">
         <h2 class="section-title text-center mb-5">Galeria de Projetos</h2>
         <div class="row g-3">
-          ${galleryImages.slice(0, 6).map((img, i) => `
+          ${galleryImages.slice(0, 6).map((item, i) => `
             <div class="col-md-4">
-              <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(img)}?width=600&height=400&nologo=true&enhance=true" 
-                   class="img-fluid rounded shadow" alt="Projeto ${i+1}">
+              <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(item.imagePrompt)}?width=600&height=400&nologo=true&enhance=true" 
+                   class="img-fluid rounded shadow" alt="${item.title || 'Projeto ' + (i+1)}">
             </div>
           `).join('')}
         </div>
@@ -1755,14 +1755,14 @@ export class HtmlAgent {
       <div class="container">
         <h2 class="section-title text-center mb-5">Portfólio de Projetos</h2>
         <div class="row g-4">
-          ${galleryImages.slice(0, 6).map((img, i) => `
+          ${galleryImages.slice(0, 6).map((item, i) => `
             <div class="col-md-4">
               <div class="card h-100">
-                <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(img)}?width=600&height=400&nologo=true&enhance=true" 
-                     class="card-img-top" alt="Projeto ${i+1}">
+                <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(item.imagePrompt)}?width=600&height=400&nologo=true&enhance=true" 
+                     class="card-img-top" alt="${item.title || 'Projeto ' + (i+1)}">
                 <div class="card-body">
-                  <h5 class="card-title">Projeto ${i+1}</h5>
-                  <p class="card-text">Obra executada com excelência e qualidade</p>
+                  <h5 class="card-title">${item.title || 'Projeto ' + (i+1)}</h5>
+                  <p class="card-text">${item.description || 'Obra executada com excelência e qualidade'}</p>
                 </div>
               </div>
             </div>

@@ -1,6 +1,40 @@
 const MISTRAL_API_KEY = "aynCSftAcQBOlxmtmpJqVzco8K4aaTDQ";
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 
+export interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+  rating: number;
+  image?: string;
+}
+
+export interface GalleryItem {
+  id: string;
+  title: string;
+  description: string;
+  imagePrompt: string;
+  category?: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  imagePrompt: string;
+  category?: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  description: string;
+  imagePrompt: string;
+}
+
 export interface BusinessContent {
   title: string;
   subtitle: string;
@@ -10,10 +44,14 @@ export interface BusinessContent {
   colors: ColorScheme;
   images: ImageDescriptions;
   customImages?: { [key: string]: string };
-  galleryImages?: string[];
+  galleryImages?: GalleryItem[];
+  testimonials?: Testimonial[];
+  products?: Product[];
+  teamMembers?: TeamMember[];
   sellerbot: SellerbotConfig;
   contact: ContactInfo;
   seo?: SEOData;
+  templateId?: string;
 }
 
 export interface SEOData {
