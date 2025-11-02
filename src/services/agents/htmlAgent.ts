@@ -21,11 +21,16 @@ export class HtmlAgent {
     const imageUrls = {
       logo: customImages.logo || await imageService.generateImageUrl(images.logo || `logo ${businessData.title}`, 200, 200),
       hero: customImages.hero || await imageService.generateImageUrl(images.hero || `${businessData.title} hero image`, 1200, 600),
-      about: customImages.about || await imageService.generateImageUrl(images.motivation || 'professional team working together', 800, 600),
-      results: customImages.results || await imageService.generateImageUrl(images.results || 'growth charts and success metrics', 800, 600),
-      team1: customImages.team1 || await imageService.generateImageUrl(images.method || 'professional business person', 300, 300),
-      team2: customImages.team2 || await imageService.generateImageUrl(images.target || 'professional female executive', 300, 300),
-      team3: customImages.team3 || await imageService.generateImageUrl(images.access || 'professional team member', 300, 300),
+      motivation: customImages.motivation || await imageService.generateImageUrl(images.motivation || `${businessData.title} contexto real do nicho`, 1000, 600),
+      target: customImages.target || await imageService.generateImageUrl(images.target || `público-alvo real de ${businessData.title}`, 1000, 600),
+      method: customImages.method || await imageService.generateImageUrl(images.method || `processo de trabalho do nicho ${businessData.title}`, 1000, 600),
+      results: customImages.results || await imageService.generateImageUrl(images.results || 'resultados concretos do trabalho', 1000, 600),
+      access: customImages.access || await imageService.generateImageUrl(images.access || 'localização/atendimento real', 1000, 600),
+      investment: customImages.investment || await imageService.generateImageUrl(images.investment || 'transparência de preços e valor', 1000, 600),
+      // Equipe (opcional)
+      team1: customImages.team1 || await imageService.generateImageUrl(images.method || 'profissional do nicho em ação', 300, 300),
+      team2: customImages.team2 || await imageService.generateImageUrl(images.target || 'cliente real do nicho', 300, 300),
+      team3: customImages.team3 || await imageService.generateImageUrl(images.access || 'ambiente de atendimento real', 300, 300),
       gallery: images.gallery || 'gallery images'
     };
 
@@ -115,15 +120,7 @@ export class HtmlAgent {
     return `
       ${this.generateHeaderSection(businessData, images)}
       ${this.generateHeroSection(businessData, images)}
-      ${this.generateAboutSection(businessData, images)}
-      ${this.generateServicesSection(businessData)}
-      ${this.generateResultsSection(businessData)}
-      ${this.generateTestimonialsSection(businessData)}
-      ${this.generateProcessSection(businessData)}
-      ${this.generateTeamSection(businessData, images)}
-      ${this.generateFAQSection(businessData)}
-      ${isService ? this.generatePricingSection(businessData) : ''}
-      ${this.generateCTASection(businessData)}
+      ${this.generateContentSections(businessData, images)}
       ${this.generateFooterSection(businessData)}
       ${this.generateFloatingChat(businessData)}
     `;
@@ -148,24 +145,11 @@ export class HtmlAgent {
                 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
+                      ${businessData.sections.map(s => `
                         <li class="nav-item">
-                            <a class="nav-link" href="#home">Início</a>
+                          <a class="nav-link" href="#sec-${s.type}">${s.title || s.type}</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#sobre">Sobre</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#servicos">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#resultados">Resultados</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#depoimentos">Depoimentos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contato">Contato</a>
-                        </li>
+                      `).join('')}
                     </ul>
                     <a href="#contato" class="btn btn-primary ms-3">${businessData.ctaText || 'Entre em Contato'}</a>
                 </div>
@@ -215,6 +199,38 @@ export class HtmlAgent {
         </div>
     </section>
     `;
+  }
+
+  // Gera seções com base em businessData.sections para alinhar com o editor de conteúdo
+  private generateContentSections(businessData: BusinessContent, images: any): string {
+    const imageByType: Record<string, string> = {
+      intro: images.hero,
+      motivation: images.motivation,
+      target: images.target,
+      method: images.method,
+      results: images.results,
+      access: images.access,
+      investment: images.investment,
+    };
+
+    return businessData.sections.map((section, idx) => {
+      const img = imageByType[section.type] || images.hero;
+      const reverse = idx % 2 === 1 ? 'flex-row-reverse' : '';
+      return `
+      <section id="sec-${section.type}" class="section">
+        <div class="container">
+          <div class="row align-items-center ${reverse}">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <h2 class="section-title">${section.title}</h2>
+              <p class="section-text">${section.content}</p>
+            </div>
+            <div class="col-lg-6">
+              <img src="${img}" class="img-fluid rounded shadow" alt="${section.title}">
+            </div>
+          </div>
+        </div>
+      </section>`;
+    }).join('');
   }
 
   private generateServicesSection(businessData: BusinessContent): string {
