@@ -4,7 +4,7 @@ const PICSUM_BASE_URL = "https://picsum.photos";
 
 export class HtmlAgent {
   async generateLandingPage(businessData: BusinessContent, language: string = 'pt'): Promise<string> {
-    const images = this.generateImageUrls(businessData);
+    const images = await this.generateImageUrls(businessData);
     return this.buildHTMLTemplate(businessData, images, language);
   }
 
@@ -12,21 +12,27 @@ export class HtmlAgent {
     return this.generateLandingPage(businessData, language);
   }
 
-  private generateImageUrls(businessData: BusinessContent): any {
-    const baseUrl = `${PICSUM_BASE_URL}/800/600?random=`;
-    const imageParams = `&blur=0&grayscale=0`;
-    
+  private async generateImageUrls(businessData: BusinessContent): Promise<any> {
+    const { imageService } = await import('../imageService');
     const customImages = businessData.customImages || {};
     
-    return {
-      logo: customImages.logo || `${baseUrl}logo${imageParams}`,
-      hero: customImages.hero || `https://image.pollinations.ai/prompt/${encodeURIComponent(businessData.title)}?width=1200&height=600`,
-      about: customImages.about || `https://image.pollinations.ai/prompt/equipe%20profissional%20trabalhando?width=800&height=600`,
-      results: customImages.results || `https://image.pollinations.ai/prompt/graficos%20de%20crescimento?width=800&height=600`,
-      team1: customImages.team1 || `https://image.pollinations.ai/prompt/profissional%20homem?width=300&height=300`,
-      team2: customImages.team2 || `https://image.pollinations.ai/prompt/profissional%20mulher?width=300&height=300`,
-      team3: customImages.team3 || `https://image.pollinations.ai/prompt/profissional%20pessoa?width=300&height=300`
+    // Cria URLs sem marca d'água
+    const imageUrls = {
+      logo: customImages.logo || await imageService.generateImageUrl(`logo ${businessData.title}`, 200, 200),
+      hero: customImages.hero || await imageService.generateImageUrl(`${businessData.title} hero image`, 1200, 600),
+      about: customImages.about || await imageService.generateImageUrl('professional team working together', 800, 600),
+      results: customImages.results || await imageService.generateImageUrl('growth charts and success metrics', 800, 600),
+      team1: customImages.team1 || await imageService.generateImageUrl('professional business person', 300, 300),
+      team2: customImages.team2 || await imageService.generateImageUrl('professional female executive', 300, 300),
+      team3: customImages.team3 || await imageService.generateImageUrl('professional team member', 300, 300)
     };
+
+    // Converte todas as imagens para base64
+    console.log('🖼️ Convertendo imagens para base64...');
+    const base64Images = await imageService.convertAllImagesToBase64(imageUrls);
+    console.log('✅ Imagens convertidas com sucesso!');
+    
+    return base64Images;
   }
 
   private buildHTMLTemplate(businessData: BusinessContent, images: any, language: string = 'pt'): string {

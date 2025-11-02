@@ -1,9 +1,9 @@
 export class ImageService {
-  async generateImageUrl(prompt: string): Promise<string> {
+  async generateImageUrl(prompt: string, width: number = 800, height: number = 600): Promise<string> {
     // Encode the prompt for URL
     const encodedPrompt = encodeURIComponent(prompt);
-    // Dimensões padronizadas para as imagens
-    return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=720&height=480&model=flux&nologo=true&quality=80`;
+    // Gera URL sem marca d'água e com qualidade otimizada
+    return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&model=flux&nologo=true&enhance=false&safe=true`;
   }
 
   async convertImageToBase64(imageUrl: string): Promise<string> {
@@ -48,12 +48,12 @@ export class ImageService {
 
   async generateLandingPageImages(imagePrompts: { hero: string; features: string[] }): Promise<{ hero: string; features: string[] }> {
     try {
-      const heroImageUrl = await this.generateImageUrl(imagePrompts.hero);
+      const heroImageUrl = await this.generateImageUrl(imagePrompts.hero, 1200, 600);
       const heroBase64 = await this.convertImageToBase64(heroImageUrl);
 
       const featureImages = await Promise.all(
         imagePrompts.features.map(async (prompt) => {
-          const imageUrl = await this.generateImageUrl(prompt);
+          const imageUrl = await this.generateImageUrl(prompt, 800, 600);
           return await this.convertImageToBase64(imageUrl);
         })
       );
@@ -69,6 +69,30 @@ export class ImageService {
         features: []
       };
     }
+  }
+
+  async convertAllImagesToBase64(images: any): Promise<any> {
+    const convertedImages: any = {};
+    
+    for (const [key, value] of Object.entries(images)) {
+      if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+        try {
+          console.log(`Convertendo imagem ${key}...`);
+          convertedImages[key] = await this.convertImageToBase64(value);
+        } catch (error) {
+          console.error(`Erro ao converter ${key}:`, error);
+          convertedImages[key] = this.getPlaceholderBase64();
+        }
+      } else {
+        convertedImages[key] = value;
+      }
+    }
+    
+    return convertedImages;
+  }
+
+  private getPlaceholderBase64(): string {
+    return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDgwMCA2MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MDAgMzAwTDQ2MCAyNDBINDYwTDQ2MCAzNjBINDAwVjMwMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+";
   }
 }
 
