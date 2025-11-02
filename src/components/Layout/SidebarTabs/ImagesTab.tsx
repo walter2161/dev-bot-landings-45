@@ -76,9 +76,12 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
     }
   };
 
-  const generateImageUrl = (prompt: string) => {
+  const generateImageUrl = (prompt: string, isGallery: boolean = false) => {
     const baseUrl = 'https://image.pollinations.ai/prompt/';
-    const imageParams = '?width=720&height=480&enhance=true&nologo=true';
+    // Imagens de galeria são menores para otimizar carregamento
+    const imageParams = isGallery 
+      ? '?width=400&height=300&enhance=true&nologo=true'
+      : '?width=720&height=480&enhance=true&nologo=true';
     return `${baseUrl}${encodeURIComponent(prompt)}${imageParams}`;
   };
 
@@ -335,9 +338,10 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
                     <div className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
                       {galleryImages[index] ? (
                         <img
-                          src={generateImageUrl(galleryImages[index].imagePrompt)}
+                          src={generateImageUrl(galleryImages[index].imagePrompt, true)}
                           alt={`Galeria ${index + 1}`}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="flex flex-col items-center justify-center text-muted-foreground">
@@ -404,9 +408,10 @@ const ImagesTab = ({ businessData, onLandingPageGenerated }: ImagesTabProps) => 
             <div key={index} className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
               {galleryImages[index] ? (
                 <img
-                  src={generateImageUrl(galleryImages[index].imagePrompt)}
+                  src={generateImageUrl(galleryImages[index].imagePrompt, true)}
                   alt={`Galeria ${index + 1}`}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center text-muted-foreground">

@@ -145,6 +145,42 @@ export class HtmlAgent {
     }
   }
 
+  private getSimpleMenuLabel(sectionType: string): string {
+    const menuLabels: Record<string, string> = {
+      'intro': 'Início',
+      'motivation': 'Sobre',
+      'target': 'Público',
+      'method': 'Como Funciona',
+      'results': 'Resultados',
+      'access': 'Localização',
+      'investment': 'Valores',
+      'services': 'Serviços',
+      'testimonials': 'Depoimentos',
+      'gallery': 'Galeria',
+      'products': 'Produtos',
+      'team': 'Equipe',
+      'faq': 'Dúvidas',
+      'contact': 'Contato',
+      'portfolio': 'Portfolio',
+      'process': 'Processo',
+      'benefits': 'Benefícios',
+      'about': 'Sobre',
+      'cases': 'Casos',
+      'differentials': 'Diferenciais',
+      'partners': 'Parceiros',
+      'stages': 'Etapas',
+      'materials': 'Materiais',
+      'warranty': 'Garantia',
+      'pricing': 'Preços',
+      'appointment': 'Agendamento',
+      'location': 'Local',
+      'hours': 'Horários',
+      'beforeafter': 'Antes/Depois'
+    };
+    
+    return menuLabels[sectionType] || sectionType;
+  }
+
   private generateHeaderSection(businessData: BusinessContent, images: any): string {
     return `
     <!-- Header Navigation -->
@@ -166,11 +202,11 @@ export class HtmlAgent {
                     <ul class="navbar-nav ms-auto">
                       ${businessData.sections.map(s => `
                         <li class="nav-item">
-                          <a class="nav-link" href="#sec-${s.type}">${s.title || s.type}</a>
+                          <a class="nav-link" href="#sec-${s.type}">${this.getSimpleMenuLabel(s.type)}</a>
                         </li>
                       `).join('')}
                     </ul>
-                    <a href="#contato" class="btn btn-primary ms-3">${businessData.ctaText || 'Entre em Contato'}</a>
+                    <a href="#contato" class="btn btn-primary ms-3">${businessData.ctaText || 'Contato'}</a>
                 </div>
             </div>
         </nav>
@@ -1156,8 +1192,8 @@ export class HtmlAgent {
         <div class="row g-3">
           ${galleryImages.slice(0, 6).map((item, i) => `
             <div class="col-md-4">
-              <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(item.imagePrompt)}?width=600&height=400&nologo=true&enhance=true" 
-                   class="img-fluid rounded shadow" alt="${item.title || 'Projeto ' + (i+1)}">
+              <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(item.imagePrompt)}?width=400&height=300&nologo=true&enhance=true" 
+                   class="img-fluid rounded shadow" alt="${item.title || 'Projeto ' + (i+1)}" loading="lazy">
             </div>
           `).join('')}
         </div>
@@ -1758,8 +1794,8 @@ export class HtmlAgent {
           ${galleryImages.slice(0, 6).map((item, i) => `
             <div class="col-md-4">
               <div class="card h-100">
-                <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(item.imagePrompt)}?width=600&height=400&nologo=true&enhance=true" 
-                     class="card-img-top" alt="${item.title || 'Projeto ' + (i+1)}">
+                <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(item.imagePrompt)}?width=400&height=300&nologo=true&enhance=true" 
+                     class="card-img-top" alt="${item.title || 'Projeto ' + (i+1)}" loading="lazy">
                 <div class="card-body">
                   <h5 class="card-title">${item.title || 'Projeto ' + (i+1)}</h5>
                   <p class="card-text">${item.description || 'Obra executada com excelência e qualidade'}</p>
