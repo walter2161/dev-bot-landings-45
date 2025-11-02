@@ -100,6 +100,7 @@ export class HtmlAgent {
 
   private generateStructuredLandingPage(businessData: BusinessContent, images: any, isService: boolean, language: string): string {
     return `
+      ${this.generateHeaderSection(businessData, images)}
       ${this.generateHeroSection(businessData, images)}
       ${this.generateAboutSection(businessData, images)}
       ${this.generateServicesSection(businessData)}
@@ -115,10 +116,56 @@ export class HtmlAgent {
     `;
   }
 
+  private generateHeaderSection(businessData: BusinessContent, images: any): string {
+    return `
+    <!-- Header Navigation -->
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="#home">
+                    <div class="header-logo-container">
+                        <img src="${images.logo}" alt="${businessData.title}" class="header-logo">
+                    </div>
+                    <span class="ms-2 fw-bold">${businessData.title}</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#home">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sobre">Sobre</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#servicos">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#resultados">Resultados</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#depoimentos">Depoimentos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contato">Contato</a>
+                        </li>
+                    </ul>
+                    <a href="#contato" class="btn btn-primary ms-3">${businessData.ctaText || 'Entre em Contato'}</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    `;
+  }
+
   private generateHeroSection(businessData: BusinessContent, images: any): string {
     return `
     <!-- Hero Section -->
-    <section class="hero">
+    <section id="home" class="hero">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 mx-auto">
@@ -138,7 +185,7 @@ export class HtmlAgent {
   private generateAboutSection(businessData: BusinessContent, images: any): string {
     return `
     <!-- Sobre Nós -->
-    <section class="section">
+    <section id="sobre" class="section">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
@@ -198,7 +245,7 @@ export class HtmlAgent {
   private generateResultsSection(businessData: BusinessContent): string {
     return `
     <!-- Resultados -->
-    <section class="section">
+    <section id="resultados" class="section">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title">Resultados Comprovados</h2>
@@ -241,7 +288,7 @@ export class HtmlAgent {
 
     return `
     <!-- Depoimentos -->
-    <section class="section bg-light">
+    <section id="depoimentos" class="section bg-light">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title">O Que Nossos Clientes Dizem</h2>
@@ -512,6 +559,89 @@ export class HtmlAgent {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
             overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        /* Header Styles */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .site-header .navbar {
+            padding: 0.75rem 0;
+        }
+
+        .site-header .navbar-brand {
+            font-size: 1.5rem;
+            color: white !important;
+            transition: all 0.3s;
+        }
+
+        .site-header .navbar-brand:hover {
+            color: var(--primary) !important;
+        }
+
+        .header-logo-container {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .site-header .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .site-header .nav-link:hover {
+            color: white !important;
+        }
+
+        .site-header .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .site-header .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .site-header .btn-primary {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
         }
         
         .hero {

@@ -426,7 +426,7 @@ const PreviewFrame = ({ generatedHTML, businessData }: PreviewFrameProps) => {
                 srcDoc={currentHTML}
                 className="w-full h-full border-0"
                 title="Landing Page Preview"
-                key={generatedHTML ? generatedHTML.slice(0, 100) : 'empty'}
+                key={`preview-${Date.now()}-${generatedHTML ? generatedHTML.slice(0, 50) : 'empty'}`}
               />
             </div>
           </div>
