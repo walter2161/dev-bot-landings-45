@@ -1,4 +1,5 @@
 import { BusinessContent, ImageDescriptions } from '../contentGenerator';
+import { landingPageTemplates, selectTemplateForBusiness, type LandingPageTemplate } from './landingPageTemplates';
 
 const PICSUM_BASE_URL = "https://picsum.photos";
 
@@ -117,13 +118,31 @@ export class HtmlAgent {
   }
 
   private generateStructuredLandingPage(businessData: BusinessContent, images: any, isService: boolean, language: string): string {
-    return `
-      ${this.generateHeaderSection(businessData, images)}
-      ${this.generateHeroSection(businessData, images)}
-      ${this.generateContentSections(businessData, images)}
-      ${this.generateFooterSection(businessData)}
-      ${this.generateFloatingChat(businessData)}
-    `;
+    // Detectar o template baseado no tipo de negócio
+    const template = selectTemplateForBusiness(businessData.title);
+    console.log(`🎨 Usando template: ${template.name} (${template.totalSections} seções)`);
+    
+    // Gerar HTML baseado no template específico
+    return this.generateTemplateBasedHTML(businessData, images, template, language);
+  }
+  
+  private generateTemplateBasedHTML(businessData: BusinessContent, images: any, template: LandingPageTemplate, language: string): string {
+    switch (template.id) {
+      case 'visual-gallery':
+        return this.generateVisualGalleryTemplate(businessData, images);
+      case 'catalog-ecommerce':
+        return this.generateCatalogEcommerceTemplate(businessData, images);
+      case 'services-testimonials':
+        return this.generateServicesTestimonialsTemplate(businessData, images);
+      case 'corporate-b2b':
+        return this.generateCorporateB2BTemplate(businessData, images);
+      case 'local-proximity':
+        return this.generateLocalProximityTemplate(businessData, images);
+      case 'projects-construction':
+        return this.generateProjectsConstructionTemplate(businessData, images);
+      default:
+        return this.generateCorporateB2BTemplate(businessData, images);
+    }
   }
 
   private generateHeaderSection(businessData: BusinessContent, images: any): string {
@@ -179,26 +198,75 @@ export class HtmlAgent {
     `;
   }
 
+
   private generateAboutSection(businessData: BusinessContent, images: any): string {
     return `
-    <!-- Sobre Nós -->
     <section id="sobre" class="section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h2 class="section-title">Sobre ${businessData.title}</h2>
-                    <p class="lead">${businessData.subtitle}</p>
-                    <p>${businessData.heroText || 'Nossa equipe é especializada em oferecer soluções de alta qualidade.'}</p>
-                    <p>Entendemos os desafios únicos do mercado e criamos estratégias personalizadas que geram resultados mensuráveis.</p>
-                    <a href="#contato" class="btn btn-primary mt-3">Saiba Mais</a>
-                </div>
-                <div class="col-lg-6">
-                    <img src="${images.about}" class="img-fluid rounded shadow" alt="Sobre ${businessData.title}">
-                </div>
-            </div>
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4">
+            <h2 class="section-title">Sobre ${businessData.title}</h2>
+            <p class="lead">${businessData.subtitle}</p>
+            <p>${businessData.heroText || 'Nossa equipe é especializada em oferecer soluções de alta qualidade.'}</p>
+          </div>
+          <div class="col-lg-6">
+            <img src="${images.motivation}" class="img-fluid rounded shadow" alt="Sobre">
+          </div>
         </div>
-    </section>
-    `;
+      </div>
+    </section>`;
+  }
+
+  private generateServicesSection(businessData: BusinessContent): string {
+    return `
+    <section id="servicos" class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Nossos Serviços</h2>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+              <div class="service-icon"><i class="fas fa-star"></i></div>
+              <h4>Qualidade Premium</h4>
+              <p>Serviços de alta qualidade</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+  }
+
+  private generateTestimonialsSection(businessData: BusinessContent): string {
+    return `
+    <section id="depoimentos" class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Depoimentos</h2>
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="testimonial">
+              <p>"Excelente serviço!"</p>
+              <h5>Cliente Satisfeito</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+  }
+
+  private generateProcessSection(businessData: BusinessContent): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Como Funciona</h2>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="process-step">
+              <div class="step-number">1</div>
+              <h4>Consulta</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>`;
   }
 
   // Gera seções com base em businessData.sections para alinhar com o editor de conteúdo
@@ -233,190 +301,6 @@ export class HtmlAgent {
     }).join('');
   }
 
-  private generateServicesSection(businessData: BusinessContent): string {
-    const services = [
-      { icon: 'fa-star', title: 'Qualidade Premium', description: 'Serviços de alta qualidade com foco na excelência' },
-      { icon: 'fa-users', title: 'Atendimento Personalizado', description: 'Suporte dedicado para suas necessidades específicas' },
-      { icon: 'fa-chart-line', title: 'Resultados Garantidos', description: 'Compromisso com sua satisfação e sucesso' },
-      { icon: 'fa-clock', title: 'Agilidade', description: 'Processos eficientes para resultados rápidos' },
-      { icon: 'fa-shield-alt', title: 'Segurança', description: 'Protocolos rigorosos de qualidade e segurança' },
-      { icon: 'fa-headset', title: 'Suporte Contínuo', description: 'Atendimento disponível quando você precisar' }
-    ];
-
-    return `
-    <!-- Serviços -->
-    <section id="servicos" class="section bg-light">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Nossos Serviços Especializados</h2>
-                <p class="lead">Soluções completas para suas necessidades</p>
-            </div>
-            <div class="row g-4">
-                ${services.map(service => `
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <div class="service-icon">
-                                <i class="fas ${service.icon}"></i>
-                            </div>
-                            <h4>${service.title}</h4>
-                            <p>${service.description}</p>
-                        </div>
-                    </div>
-                </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-    `;
-  }
-
-  private generateResultsSection(businessData: BusinessContent): string {
-    return `
-    <!-- Resultados -->
-    <section id="resultados" class="section">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Resultados Comprovados</h2>
-                <p class="lead">Números que falam por si só</p>
-            </div>
-            <div class="row text-center">
-                <div class="col-md-3 mb-4">
-                    <div class="counter" data-target="500">0</div>
-                    <h5>Clientes Satisfeitos</h5>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="counter" data-target="98">0</div>
-                    <h5>Taxa de Satisfação (%)</h5>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="counter" data-target="1000">0</div>
-                    <h5>Projetos Concluídos</h5>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="counter" data-target="24">0</div>
-                    <h5>Suporte 24/7</h5>
-                </div>
-            </div>
-            <div class="row mt-5">
-                <div class="col-lg-6 mx-auto">
-                    <img src="${businessData.customImages?.results || 'https://image.pollinations.ai/prompt/graficos%20de%20crescimento?width=800&height=600&nologo=true&enhance=true'}" class="img-fluid rounded shadow" alt="Gráficos de resultados">
-                </div>
-            </div>
-        </div>
-    </section>
-    `;
-  }
-
-  private generateTestimonialsSection(businessData: BusinessContent): string {
-    const testimonials = [
-      { name: 'Maria Silva', role: 'Cliente', text: `${businessData.title} transformou completamente minha experiência. Recomendo para todos!`, initial: 'M' },
-      { name: 'João Santos', role: 'Empresário', text: 'Profissionalismo e qualidade em todos os detalhes. Estou muito satisfeito.', initial: 'J' },
-      { name: 'Ana Costa', role: 'Gerente', text: 'Atendimento excepcional e resultados que superaram minhas expectativas.', initial: 'A' }
-    ];
-
-    return `
-    <!-- Depoimentos -->
-    <section id="depoimentos" class="section bg-light">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">O Que Nossos Clientes Dizem</h2>
-                <p class="lead">Histórias de sucesso reais</p>
-            </div>
-            <div class="row">
-                ${testimonials.map(t => `
-                <div class="col-lg-4 mb-4">
-                    <div class="testimonial">
-                        <p class="mb-4">"${t.text}"</p>
-                        <div class="d-flex align-items-center">
-                            <div class="testimonial-avatar me-3">
-                                ${t.initial}
-                            </div>
-                            <div>
-                                <h5 class="mb-0">${t.name}</h5>
-                                <small>${t.role}</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-    `;
-  }
-
-  private generateProcessSection(businessData: BusinessContent): string {
-    return `
-    <!-- Processo -->
-    <section class="section">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Como Funciona</h2>
-                <p class="lead">Nosso processo simplificado em 3 etapas</p>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="step-number">1</div>
-                        <h4>Consulta Inicial</h4>
-                        <p>Entendemos suas necessidades e objetivos específicos.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="step-number">2</div>
-                        <h4>Estratégia Personalizada</h4>
-                        <p>Criamos um plano de ação exclusivo para você.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="step-number">3</div>
-                        <h4>Resultados</h4>
-                        <p>Implementamos e acompanhamos para garantir o sucesso.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    `;
-  }
-
-  private generateTeamSection(businessData: BusinessContent, images: any): string {
-    const team = [
-      { name: 'Especialista 1', role: 'Diretor', image: images.team1 },
-      { name: 'Especialista 2', role: 'Coordenador', image: images.team2 },
-      { name: 'Especialista 3', role: 'Consultor', image: images.team3 }
-    ];
-
-    return `
-    <!-- Equipe -->
-    <section class="section bg-light">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Nossa Equipe Especializada</h2>
-                <p class="lead">Profissionais dedicados ao seu sucesso</p>
-            </div>
-            <div class="row">
-                ${team.map(member => `
-                <div class="col-md-4">
-                    <div class="team-member">
-                        <img src="${member.image}" alt="${member.name}">
-                        <h4>${member.name}</h4>
-                        <p>${member.role}</p>
-                        <div class="social-icons">
-                            <a href="#"><i class="fab fa-linkedin"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-    `;
-  }
 
   private generateFAQSection(businessData: BusinessContent): string {
     const faqs = [
@@ -1210,6 +1094,870 @@ export class HtmlAgent {
             if (e.key === 'Enter') sendChatMessage();
         });
     </script>
+    `;
+  }
+
+  // ==================== TEMPLATES ESPECÍFICOS POR NICHO ====================
+  
+  // Template 1: Visual/Galeria (Imobiliária, Fotografia, Arquitetura)
+  private generateVisualGalleryTemplate(businessData: BusinessContent, images: any): string {
+    return `
+      ${this.generateHeaderSection(businessData, images)}
+      ${this.generateHeroSection(businessData, images)}
+      ${this.generateGalleryShowcase(businessData, images)}
+      ${this.generateAboutSection(businessData, images)}
+      ${this.generateRecentProjectsSection(businessData, images)}
+      ${this.generateProcessSection(businessData)}
+      ${this.generateTestimonialsSection(businessData)}
+      ${this.generateContactSection(businessData)}
+      ${this.generateFooterSection(businessData)}
+      ${this.generateFloatingChat(businessData)}
+    `;
+  }
+  
+  // Template 2: Catálogo/E-commerce (Restaurante, Pizzaria, Loja)
+  private generateCatalogEcommerceTemplate(businessData: BusinessContent, images: any): string {
+    return `
+      ${this.generateHeaderSection(businessData, images)}
+      ${this.generateHeroSection(businessData, images)}
+      ${this.generateProductCatalog(businessData, images)}
+      ${this.generateFeaturedProducts(businessData, images)}
+      ${this.generateAboutSection(businessData, images)}
+      ${this.generateSpecialOffers(businessData, images)}
+      ${this.generateTestimonialsSection(businessData)}
+      ${this.generateDeliveryInfo(businessData)}
+      ${this.generateCTAOrder(businessData)}
+      ${this.generateFooterSection(businessData)}
+      ${this.generateFloatingChat(businessData)}
+    `;
+  }
+  
+  // Template 3: Serviços/Depoimentos (Coach, Cursos, Consultoria)
+  private generateServicesTestimonialsTemplate(businessData: BusinessContent, images: any): string {
+    return `
+      ${this.generateHeaderSection(businessData, images)}
+      ${this.generateHeroSection(businessData, images)}
+      ${this.generateAboutMethodSection(businessData, images)}
+      ${this.generateBenefitsSection(businessData)}
+      ${this.generateVideoTestimonials(businessData)}
+      ${this.generateResultsCasesSection(businessData, images)}
+      ${this.generateWhoIsForSection(businessData, images)}
+      ${this.generateInvestmentSection(businessData, images)}
+      ${this.generateFAQSection(businessData)}
+      ${this.generateCTASignup(businessData)}
+      ${this.generateFooterSection(businessData)}
+      ${this.generateFloatingChat(businessData)}
+    `;
+  }
+  
+  // Template 4: Corporativo/B2B (Empresas, Serviços B2B)
+  private generateCorporateB2BTemplate(businessData: BusinessContent, images: any): string {
+    return `
+      ${this.generateHeaderSection(businessData, images)}
+      ${this.generateHeroSection(businessData, images)}
+      ${this.generateAboutCompanySection(businessData, images)}
+      ${this.generateServicesSection(businessData)}
+      ${this.generateCasesSection(businessData, images)}
+      ${this.generateTeamSection(businessData, images)}
+      ${this.generateDifferentialsSection(businessData)}
+      ${this.generatePartnersSection(businessData)}
+      ${this.generateCTAQuote(businessData)}
+      ${this.generateFooterSection(businessData)}
+      ${this.generateFloatingChat(businessData)}
+    `;
+  }
+  
+  // Template 5: Local/Proximidade (Salão, Clínica, Oficina)
+  private generateLocalProximityTemplate(businessData: BusinessContent, images: any): string {
+    return `
+      ${this.generateHeaderSection(businessData, images)}
+      ${this.generateHeroSection(businessData, images)}
+      ${this.generateAboutSection(businessData, images)}
+      ${this.generateServicesSection(businessData)}
+      ${this.generateBeforeAfterSection(businessData, images)}
+      ${this.generateLocationSection(businessData)}
+      ${this.generateHoursSection(businessData)}
+      ${this.generatePricingSection(businessData)}
+      ${this.generateTestimonialsSection(businessData)}
+      ${this.generateCTAAppointment(businessData)}
+      ${this.generateFooterSection(businessData)}
+      ${this.generateFloatingChat(businessData)}
+    `;
+  }
+  
+  // Template 6: Projetos/Construção (Construção Civil, Reformas)
+  private generateProjectsConstructionTemplate(businessData: BusinessContent, images: any): string {
+    return `
+      ${this.generateHeaderSection(businessData, images)}
+      ${this.generateHeroSection(businessData, images)}
+      ${this.generatePortfolioSection(businessData, images)}
+      ${this.generateOurProcessSection(businessData, images)}
+      ${this.generateStagesSection(businessData)}
+      ${this.generateMaterialsSection(businessData, images)}
+      ${this.generateWarrantySection(businessData)}
+      ${this.generateTestimonialsSection(businessData)}
+      ${this.generateCTAQuote(businessData)}
+      ${this.generateFooterSection(businessData)}
+      ${this.generateFloatingChat(businessData)}
+    `;
+  }
+  
+  // ==================== SEÇÕES ESPECÍFICAS PARA OS TEMPLATES ====================
+  
+  private generateGalleryShowcase(businessData: BusinessContent, images: any): string {
+    const galleryImages = businessData.galleryImages || [];
+    return `
+    <section id="galeria" class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Galeria de Projetos</h2>
+        <div class="row g-3">
+          ${galleryImages.slice(0, 6).map((img, i) => `
+            <div class="col-md-4">
+              <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(img)}?width=600&height=400&nologo=true&enhance=true" 
+                   class="img-fluid rounded shadow" alt="Projeto ${i+1}">
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateRecentProjectsSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Projetos Recentes</h2>
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4">
+            <img src="${images.results}" class="img-fluid rounded shadow" alt="Projetos">
+          </div>
+          <div class="col-lg-6">
+            <h3>Excelência em Cada Detalhe</h3>
+            <p class="lead">Nossos projetos recentes demonstram nosso compromisso com a qualidade e inovação.</p>
+            <ul>
+              <li>Projetos personalizados</li>
+              <li>Alta qualidade de execução</li>
+              <li>Prazos cumpridos</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateProductCatalog(businessData: BusinessContent, images: any): string {
+    const products = [
+      { name: 'Produto Premium 1', price: 'R$ 99,90', img: images.motivation },
+      { name: 'Produto Premium 2', price: 'R$ 149,90', img: images.target },
+      { name: 'Produto Premium 3', price: 'R$ 199,90', img: images.method },
+    ];
+    
+    return `
+    <section id="catalogo" class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Nosso Cardápio/Catálogo</h2>
+        <div class="row g-4">
+          ${products.map(p => `
+            <div class="col-md-4">
+              <div class="card h-100 shadow-sm">
+                <img src="${p.img}" class="card-img-top" alt="${p.name}">
+                <div class="card-body">
+                  <h5 class="card-title">${p.name}</h5>
+                  <p class="card-text fs-4 text-primary fw-bold">${p.price}</p>
+                  <a href="#contato" class="btn btn-primary w-100">Pedir Agora</a>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateFeaturedProducts(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Destaques da Semana</h2>
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <img src="${images.results}" class="img-fluid rounded shadow" alt="Destaques">
+          </div>
+          <div class="col-lg-6">
+            <h3>Produtos Especiais</h3>
+            <p class="lead">Confira nossas ofertas exclusivas desta semana!</p>
+            <a href="#catalogo" class="btn btn-primary">Ver Mais</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateSpecialOffers(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section">
+      <div class="container text-center">
+        <h2 class="section-title mb-4">Ofertas Especiais</h2>
+        <p class="lead mb-4">${businessData.contact?.socialMedia?.whatsapp ? 'Entre em contato pelo WhatsApp e aproveite condições exclusivas!' : 'Confira nossas promoções!'}</p>
+        <div class="alert alert-success mx-auto" style="max-width: 600px;">
+          <h4>🎉 Promoção da Semana!</h4>
+          <p>Desconto especial em produtos selecionados</p>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateDeliveryInfo(businessData: BusinessContent): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Como Fazer seu Pedido</h2>
+        <div class="row">
+          <div class="col-md-4 text-center mb-4">
+            <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
+            <h4>1. Escolha</h4>
+            <p>Navegue pelo nosso catálogo</p>
+          </div>
+          <div class="col-md-4 text-center mb-4">
+            <div class="service-icon"><i class="fas fa-whatsapp"></i></div>
+            <h4>2. Entre em Contato</h4>
+            <p>Fale conosco pelo WhatsApp</p>
+          </div>
+          <div class="col-md-4 text-center mb-4">
+            <div class="service-icon"><i class="fas fa-shipping-fast"></i></div>
+            <h4>3. Receba</h4>
+            <p>Entregamos rapidamente</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateCTAOrder(businessData: BusinessContent): string {
+    const whatsapp = businessData.contact?.socialMedia?.whatsapp || '';
+    return `
+    <section class="section cta-section">
+      <div class="container text-center">
+        <h2 class="text-white mb-4">Faça seu Pedido Agora!</h2>
+        <a href="https://wa.me/${whatsapp.replace(/\D/g, '')}" class="btn btn-light btn-lg">
+          <i class="fab fa-whatsapp me-2"></i>Pedir pelo WhatsApp
+        </a>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateAboutMethodSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section id="metodo" class="section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <img src="${images.method}" class="img-fluid rounded shadow" alt="Método">
+          </div>
+          <div class="col-lg-6">
+            <h2 class="section-title">Nosso Método Exclusivo</h2>
+            <p class="lead">Uma abordagem comprovada que transforma resultados.</p>
+            <p>Com anos de experiência e centenas de casos de sucesso, desenvolvemos um método único que garante resultados extraordinários.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateBenefitsSection(businessData: BusinessContent): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Benefícios que Você Vai Conquistar</h2>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+              <div class="service-icon"><i class="fas fa-rocket"></i></div>
+              <h4>Resultados Rápidos</h4>
+              <p>Veja mudanças significativas em pouco tempo</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+              <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+              <h4>Crescimento Contínuo</h4>
+              <p>Desenvolvimento progressivo e sustentável</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+              <div class="service-icon"><i class="fas fa-trophy"></i></div>
+              <h4>Alcance seus Objetivos</h4>
+              <p>Realize suas metas com suporte especializado</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateVideoTestimonials(businessData: BusinessContent): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Depoimentos em Vídeo</h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="ratio ratio-16x9 mb-4">
+              <div class="bg-secondary d-flex align-items-center justify-content-center text-white">
+                <div class="text-center">
+                  <i class="fas fa-play-circle fa-5x mb-3"></i>
+                  <p class="lead">Vídeos de depoimentos dos nossos clientes</p>
+                </div>
+              </div>
+            </div>
+            <p class="text-center lead">Veja como transformamos a vida de nossos clientes</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateResultsCasesSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Casos de Sucesso</h2>
+        <div class="row">
+          <div class="col-lg-6 mb-4">
+            <img src="${images.results}" class="img-fluid rounded shadow" alt="Resultados">
+          </div>
+          <div class="col-lg-6">
+            <h3>Resultados Comprovados</h3>
+            <ul class="list-unstyled">
+              <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>+ de 500 clientes transformados</li>
+              <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>98% de satisfação</li>
+              <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Resultados em média de 30 dias</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateWhoIsForSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Para Quem é Este Serviço</h2>
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <h3>Este serviço é perfeito para você que:</h3>
+            <ul class="list-unstyled">
+              <li class="mb-3">✓ Busca transformação real e duradoura</li>
+              <li class="mb-3">✓ Está comprometido com seu desenvolvimento</li>
+              <li class="mb-3">✓ Quer resultados comprovados</li>
+              <li class="mb-3">✓ Procura acompanhamento profissional</li>
+            </ul>
+          </div>
+          <div class="col-lg-6">
+            <img src="${images.target}" class="img-fluid rounded shadow" alt="Público-alvo">
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateInvestmentSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Investimento</h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card shadow-lg">
+              <div class="card-body p-5 text-center">
+                <h3 class="mb-4">Invista no seu Sucesso</h3>
+                <p class="lead mb-4">Planos personalizados para suas necessidades</p>
+                <a href="#contato" class="btn btn-primary btn-lg">Consultar Valores</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateFAQSection(businessData: BusinessContent): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Perguntas Frequentes</h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="accordion" id="faqAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                    Como funciona o processo?
+                  </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    O processo é simples e eficiente. Entre em contato, faça uma avaliação inicial e começamos juntos sua jornada de transformação.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                    Quanto tempo para ver resultados?
+                  </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    A maioria dos nossos clientes observa mudanças significativas nas primeiras semanas, com resultados consolidados em 30 a 90 dias.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateCTASignup(businessData: BusinessContent): string {
+    return `
+    <section class="section cta-section">
+      <div class="container text-center">
+        <h2 class="text-white mb-4">Pronto para Começar sua Transformação?</h2>
+        <p class="text-white lead mb-4">Entre em contato agora e dê o primeiro passo!</p>
+        <a href="#contato" class="btn btn-light btn-lg">Inscreva-se Agora</a>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateAboutCompanySection(businessData: BusinessContent, images: any): string {
+    return `
+    <section id="sobre" class="section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4">
+            <h2 class="section-title">Sobre ${businessData.title}</h2>
+            <p class="lead">${businessData.subtitle}</p>
+            <p>Somos uma empresa comprometida com a excelência e inovação, oferecendo soluções de alta qualidade para nossos clientes corporativos.</p>
+          </div>
+          <div class="col-lg-6">
+            <img src="${images.motivation}" class="img-fluid rounded shadow" alt="Sobre a empresa">
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateCasesSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Cases de Sucesso</h2>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card h-100">
+              <img src="${images.results}" class="card-img-top" alt="Case 1">
+              <div class="card-body">
+                <h5 class="card-title">Projeto Enterprise</h5>
+                <p class="card-text">Implementação completa de solução corporativa com resultados extraordinários.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card h-100">
+              <img src="${images.method}" class="card-img-top" alt="Case 2">
+              <div class="card-body">
+                <h5 class="card-title">Transformação Digital</h5>
+                <p class="card-text">Modernização de processos com aumento de 200% na eficiência.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateDifferentialsSection(businessData: BusinessContent): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Nossos Diferenciais</h2>
+        <div class="row g-4">
+          <div class="col-md-3 text-center">
+            <div class="service-icon"><i class="fas fa-award"></i></div>
+            <h5>Certificações</h5>
+            <p>Padrões internacionais de qualidade</p>
+          </div>
+          <div class="col-md-3 text-center">
+            <div class="service-icon"><i class="fas fa-users"></i></div>
+            <h5>Equipe Especializada</h5>
+            <p>Profissionais altamente qualificados</p>
+          </div>
+          <div class="col-md-3 text-center">
+            <div class="service-icon"><i class="fas fa-clock"></i></div>
+            <h5>Agilidade</h5>
+            <p>Processos otimizados</p>
+          </div>
+          <div class="col-md-3 text-center">
+            <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
+            <h5>Segurança</h5>
+            <p>Máxima proteção de dados</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generatePartnersSection(businessData: BusinessContent): string {
+    return `
+    <section class="section bg-light">
+      <div class="container text-center">
+        <h2 class="section-title mb-5">Parceiros e Certificações</h2>
+        <p class="lead mb-4">Trabalhamos com as principais empresas do mercado</p>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="alert alert-info">
+              <i class="fas fa-handshake fa-3x mb-3"></i>
+              <p>Parcerias estratégicas com líderes do setor</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateCTAQuote(businessData: BusinessContent): string {
+    return `
+    <section class="section cta-section">
+      <div class="container text-center">
+        <h2 class="text-white mb-4">Solicite um Orçamento</h2>
+        <p class="text-white lead mb-4">Entre em contato e descubra como podemos ajudar sua empresa</p>
+        <a href="#contato" class="btn btn-light btn-lg">Solicitar Orçamento</a>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateBeforeAfterSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Antes e Depois</h2>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card">
+              <img src="${images.motivation}" class="card-img-top" alt="Antes">
+              <div class="card-body text-center">
+                <h5>Antes</h5>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <img src="${images.results}" class="card-img-top" alt="Depois">
+              <div class="card-body text-center">
+                <h5>Depois</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateLocationSection(businessData: BusinessContent): string {
+    const address = businessData.contact?.address || 'Endereço a definir';
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Nossa Localização</h2>
+        <div class="row">
+          <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h4><i class="fas fa-map-marker-alt text-primary me-2"></i>Endereço</h4>
+                <p class="lead">${address}</p>
+                <h5 class="mt-4">Como Chegar:</h5>
+                <p>Fácil acesso por transporte público e com estacionamento disponível.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="ratio ratio-4x3">
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.0!2d-46.6!3d-23.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMwJzAwLjAiUyA0NsKwMzYnMDAuMCJX!5e0!3m2!1spt-BR!2sbr!4v1234567890" 
+                      style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateHoursSection(businessData: BusinessContent): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Horário de Funcionamento</h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-6">
+            <div class="card shadow">
+              <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                  <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Segunda a Sexta</span>
+                    <strong>08:00 - 18:00</strong>
+                  </li>
+                  <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Sábado</span>
+                    <strong>09:00 - 13:00</strong>
+                  </li>
+                  <li class="d-flex justify-content-between py-2">
+                    <span>Domingo</span>
+                    <strong>Fechado</strong>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generatePricingSection(businessData: BusinessContent): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Tabela de Preços</h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-body">
+                <p class="lead text-center">Entre em contato para conhecer nossos preços e promoções especiais.</p>
+                <div class="text-center mt-4">
+                  <a href="#contato" class="btn btn-primary btn-lg">Consultar Preços</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateCTAAppointment(businessData: BusinessContent): string {
+    const whatsapp = businessData.contact?.socialMedia?.whatsapp || '';
+    return `
+    <section class="section cta-section">
+      <div class="container text-center">
+        <h2 class="text-white mb-4">Agende sua Visita</h2>
+        <p class="text-white lead mb-4">Entre em contato e marque seu horário!</p>
+        <a href="https://wa.me/${whatsapp.replace(/\D/g, '')}" class="btn btn-light btn-lg">
+          <i class="fab fa-whatsapp me-2"></i>Agendar pelo WhatsApp
+        </a>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generatePortfolioSection(businessData: BusinessContent, images: any): string {
+    const galleryImages = businessData.galleryImages || [];
+    return `
+    <section id="portfolio" class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Portfólio de Projetos</h2>
+        <div class="row g-4">
+          ${galleryImages.slice(0, 6).map((img, i) => `
+            <div class="col-md-4">
+              <div class="card h-100">
+                <img src="https://image.pollinations.ai/prompt/${encodeURIComponent(img)}?width=600&height=400&nologo=true&enhance=true" 
+                     class="card-img-top" alt="Projeto ${i+1}">
+                <div class="card-body">
+                  <h5 class="card-title">Projeto ${i+1}</h5>
+                  <p class="card-text">Obra executada com excelência e qualidade</p>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateOurProcessSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Nosso Processo de Trabalho</h2>
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4">
+            <img src="${images.method}" class="img-fluid rounded shadow" alt="Processo">
+          </div>
+          <div class="col-lg-6">
+            <h3>Metodologia Comprovada</h3>
+            <p class="lead">Seguimos processos rigorosos para garantir a máxima qualidade em cada projeto.</p>
+            <ul>
+              <li>Planejamento detalhado</li>
+              <li>Execução com acompanhamento</li>
+              <li>Controle de qualidade</li>
+              <li>Entrega no prazo</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateStagesSection(businessData: BusinessContent): string {
+    return `
+    <section class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Etapas do Trabalho</h2>
+        <div class="row">
+          <div class="col-md-3 text-center mb-4">
+            <div class="process-step">
+              <div class="step-number">1</div>
+              <h5>Orçamento</h5>
+              <p>Análise e proposta detalhada</p>
+            </div>
+          </div>
+          <div class="col-md-3 text-center mb-4">
+            <div class="process-step">
+              <div class="step-number">2</div>
+              <h5>Planejamento</h5>
+              <p>Definição do projeto</p>
+            </div>
+          </div>
+          <div class="col-md-3 text-center mb-4">
+            <div class="process-step">
+              <div class="step-number">3</div>
+              <h5>Execução</h5>
+              <p>Realização da obra</p>
+            </div>
+          </div>
+          <div class="col-md-3 text-center mb-4">
+            <div class="process-step">
+              <div class="step-number">4</div>
+              <h5>Entrega</h5>
+              <p>Finalização e vistoria</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateMaterialsSection(businessData: BusinessContent, images: any): string {
+    return `
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Materiais e Qualidade</h2>
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <h3>Excelência em Cada Detalhe</h3>
+            <p class="lead">Utilizamos apenas materiais de primeira linha, garantindo durabilidade e acabamento perfeito.</p>
+            <ul>
+              <li>Fornecedores certificados</li>
+              <li>Materiais de alta qualidade</li>
+              <li>Garantia estendida</li>
+            </ul>
+          </div>
+          <div class="col-lg-6">
+            <img src="${images.results}" class="img-fluid rounded shadow" alt="Materiais">
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateWarrantySection(businessData: BusinessContent): string {
+    return `
+    <section class="section bg-light">
+      <div class="container text-center">
+        <h2 class="section-title mb-4">Garantia de Qualidade</h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card shadow-lg">
+              <div class="card-body p-5">
+                <i class="fas fa-shield-alt fa-4x text-primary mb-4"></i>
+                <h3>Garantia Total</h3>
+                <p class="lead">Todos os nossos serviços incluem garantia completa, assegurando sua tranquilidade e satisfação.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    `;
+  }
+  
+  private generateContactSection(businessData: BusinessContent): string {
+    return `
+    <section id="contato" class="section bg-light">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">Entre em Contato</h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card shadow">
+              <div class="card-body p-5">
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <h5><i class="fas fa-phone text-primary me-2"></i>Telefone</h5>
+                    <p>${businessData.contact?.phone || 'A definir'}</p>
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    <h5><i class="fas fa-envelope text-primary me-2"></i>Email</h5>
+                    <p>${businessData.contact?.email || 'A definir'}</p>
+                  </div>
+                  <div class="col-12 mb-4">
+                    <h5><i class="fas fa-map-marker-alt text-primary me-2"></i>Endereço</h5>
+                    <p>${businessData.contact?.address || 'A definir'}</p>
+                  </div>
+                  ${businessData.contact?.socialMedia?.whatsapp ? `
+                  <div class="col-12 text-center">
+                    <a href="https://wa.me/${businessData.contact.socialMedia.whatsapp.replace(/\D/g, '')}" 
+                       class="btn btn-success btn-lg">
+                      <i class="fab fa-whatsapp me-2"></i>Fale pelo WhatsApp
+                    </a>
+                  </div>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     `;
   }
 

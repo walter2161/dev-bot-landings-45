@@ -22,6 +22,7 @@ export interface ProcessedBriefing {
     accent: string;
   };
   briefingPrompt: string;
+  templateId?: string; // ID do template a ser usado
 }
 
 export class BriefingAgent {
@@ -55,6 +56,8 @@ export class BriefingAgent {
 
   async processBriefing(rawBriefing: string): Promise<ProcessedBriefing> {
     try {
+      const { selectTemplateForBusiness } = await import('./landingPageTemplates');
+      
       // Primeiro, tentar extrair informações estruturadas do briefing
       const businessNameMatch = rawBriefing.match(/Nome da Empresa:\s*([^\n]+)/);
       const businessTypeMatch = rawBriefing.match(/Tipo de Negócio:\s*([^\n]+)/);
@@ -85,9 +88,12 @@ export class BriefingAgent {
           .trim();
       };
 
+      const businessType = cleanText(businessTypeMatch?.[1]) || inferredData?.businessType || "Negócio";
+      const selectedTemplate = selectTemplateForBusiness(businessType);
+      
       const processedBriefing: ProcessedBriefing = {
         businessName: cleanText(businessNameMatch?.[1]) || inferredData?.businessName || "Empresa",
-        businessType: cleanText(businessTypeMatch?.[1]) || inferredData?.businessType || "Negócio",
+        businessType,
         description: cleanText(descriptionMatch?.[1]) || inferredData?.description || "",
         targetAudience: cleanText(targetAudienceMatch?.[1]) || inferredData?.targetAudience || "",
         mainGoal: cleanText(mainGoalMatch?.[1]) || inferredData?.mainGoal || "",
@@ -109,7 +115,8 @@ export class BriefingAgent {
           secondary: "#1e40af",
           accent: "#f59e0b"
         },
-        briefingPrompt: rawBriefing
+        briefingPrompt: rawBriefing,
+        templateId: selectedTemplate.id
       };
 
       console.log('📋 Briefing processado:', processedBriefing);
