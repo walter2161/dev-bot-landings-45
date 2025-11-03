@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitPower - Academia Premium</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://pollinations.ai/p/modern-gym-interior-equipment-people-training'); background-size: cover; background-position: center; color: white; padding: 150px 0; text-align: center; }
+        header h1 { font-size: 4em; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 3px; }
+        header p { font-size: 1.4em; margin-bottom: 30px; }
+        .cta-button { background: #ff6b35; color: white; padding: 18px 50px; border: none; border-radius: 50px; font-size: 1.2em; cursor: pointer; font-weight: bold; transition: all 0.3s; text-transform: uppercase; }
+        .cta-button:hover { background: #e55a2b; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255,107,53,0.4); }
+        section { padding: 80px 0; }
+        .benefits { background: #f8f9fa; }
+        .benefits h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #ff6b35; text-transform: uppercase; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .benefit-card { background: white; padding: 40px 30px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .benefit-card:hover { transform: translateY(-10px); }
+        .benefit-icon { font-size: 4em; margin-bottom: 20px; }
+        .classes { }
+        .classes h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #ff6b35; text-transform: uppercase; }
+        .classes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .class-card { position: relative; height: 400px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: transform 0.3s; }
+        .class-card:hover { transform: scale(1.05); }
+        .class-card img { width: 100%; height: 100%; object-fit: cover; }
+        .class-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; padding: 30px; }
+        .plans { background: #f8f9fa; }
+        .plans h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #ff6b35; text-transform: uppercase; }
+        .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .plan-card { background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .plan-card:hover { transform: translateY(-10px); }
+        .plan-featured { border: 3px solid #ff6b35; position: relative; }
+        .plan-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #ff6b35; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.9em; font-weight: bold; }
+        .plan-price { font-size: 3em; color: #ff6b35; font-weight: bold; margin: 20px 0; }
+        .plan-features { list-style: none; margin: 30px 0; text-align: left; }
+        .plan-features li { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .trainers { }
+        .trainers h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #ff6b35; text-transform: uppercase; }
+        .trainers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .trainer-card { text-align: center; }
+        .trainer-card img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 5px solid #ff6b35; margin-bottom: 20px; }
+        .gallery { background: #f8f9fa; }
+        .gallery h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #ff6b35; text-transform: uppercase; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .gallery-item { height: 250px; overflow: hidden; border-radius: 10px; cursor: pointer; transition: transform 0.3s; }
+        .gallery-item:hover { transform: scale(1.05); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .testimonials { }
+        .testimonials h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #ff6b35; text-transform: uppercase; }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .testimonial { background: #f8f9fa; padding: 30px; border-radius: 15px; }
+        .cta-section { background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%); color: white; text-align: center; }
+        .cta-section h2 { font-size: 3em; margin-bottom: 30px; text-transform: uppercase; }
+        footer { background: #2c3e50; color: white; text-align: center; padding: 40px 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>💪 FITPOWER</h1>
+            <p>Transforme Seu Corpo, Transforme Sua Vida</p>
+            <button class="cta-button">Aula Experimental Grátis</button>
+        </div>
+    </header>
+
+    <section class="benefits">
+        <div class="container">
+            <h2>Por Que Escolher a FitPower?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">🏋️</div>
+                    <h3>Equipamentos</h3>
+                    <p>Tecnologia de ponta</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">👨‍🏫</div>
+                    <h3>Professores</h3>
+                    <p>Equipe especializada</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">⏰</div>
+                    <h3>Horários</h3>
+                    <p>Flexíveis 24/7</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🎯</div>
+                    <h3>Resultados</h3>
+                    <p>Garantidos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="classes">
+        <div class="container">
+            <h2>Nossas Modalidades</h2>
+            <div class="classes-grid">
+                <div class="class-card">
+                    <img src="https://pollinations.ai/p/people-doing-crossfit-training" alt="CrossFit">
+                    <div class="class-overlay">
+                        <h3>CrossFit</h3>
+                        <p>Treinamento funcional intenso</p>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <img src="https://pollinations.ai/p/yoga-class-people-exercising" alt="Yoga">
+                    <div class="class-overlay">
+                        <h3>Yoga</h3>
+                        <p>Equilíbrio corpo e mente</p>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <img src="https://pollinations.ai/p/spinning-bike-class-indoor-cycling" alt="Spinning">
+                    <div class="class-overlay">
+                        <h3>Spinning</h3>
+                        <p>Cardio de alta performance</p>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <img src="https://pollinations.ai/p/boxing-training-punching-bag" alt="Boxe">
+                    <div class="class-overlay">
+                        <h3>Boxe</h3>
+                        <p>Técnica e condicionamento</p>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <img src="https://pollinations.ai/p/pilates-exercises-mat-workout" alt="Pilates">
+                    <div class="class-overlay">
+                        <h3>Pilates</h3>
+                        <p>Fortalecimento e postura</p>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <img src="https://pollinations.ai/p/weightlifting-gym-training" alt="Musculação">
+                    <div class="class-overlay">
+                        <h3>Musculação</h3>
+                        <p>Hipertrofia e força</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="plans">
+        <div class="container">
+            <h2>Planos e Preços</h2>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <h3>BÁSICO</h3>
+                    <div class="plan-price">R$99</div>
+                    <p>/mês</p>
+                    <ul class="plan-features">
+                        <li>✓ Acesso à musculação</li>
+                        <li>✓ Vestiário</li>
+                        <li>✓ Avaliação física</li>
+                        <li>✓ App de treinos</li>
+                    </ul>
+                    <button class="cta-button" style="margin-top: 20px;">Assinar</button>
+                </div>
+                <div class="plan-card plan-featured">
+                    <span class="plan-badge">MAIS POPULAR</span>
+                    <h3>PREMIUM</h3>
+                    <div class="plan-price">R$149</div>
+                    <p>/mês</p>
+                    <ul class="plan-features">
+                        <li>✓ Tudo do Básico</li>
+                        <li>✓ Aulas coletivas ilimitadas</li>
+                        <li>✓ Nutricionista online</li>
+                        <li>✓ Treino personalizado</li>
+                    </ul>
+                    <button class="cta-button" style="margin-top: 20px;">Assinar</button>
+                </div>
+                <div class="plan-card">
+                    <h3>VIP</h3>
+                    <div class="plan-price">R$249</div>
+                    <p>/mês</p>
+                    <ul class="plan-features">
+                        <li>✓ Tudo do Premium</li>
+                        <li>✓ Personal trainer</li>
+                        <li>✓ Acesso 24/7</li>
+                        <li>✓ Spa e sauna</li>
+                    </ul>
+                    <button class="cta-button" style="margin-top: 20px;">Assinar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trainers">
+        <div class="container">
+            <h2>Nossa Equipe</h2>
+            <div class="trainers-grid">
+                <div class="trainer-card">
+                    <img src="https://pollinations.ai/p/fitness-trainer-male-professional-1" alt="Professor">
+                    <h3>Carlos Silva</h3>
+                    <p>Musculação</p>
+                </div>
+                <div class="trainer-card">
+                    <img src="https://pollinations.ai/p/fitness-trainer-female-professional-1" alt="Professora">
+                    <h3>Ana Costa</h3>
+                    <p>Yoga & Pilates</p>
+                </div>
+                <div class="trainer-card">
+                    <img src="https://pollinations.ai/p/fitness-trainer-male-professional-2" alt="Professor">
+                    <h3>Bruno Alves</h3>
+                    <p>CrossFit</p>
+                </div>
+                <div class="trainer-card">
+                    <img src="https://pollinations.ai/p/fitness-trainer-female-professional-2" alt="Professora">
+                    <h3>Juliana Lima</h3>
+                    <p>Spinning</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery">
+        <div class="container">
+            <h2>Nossa Academia</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://pollinations.ai/p/gym-free-weights-section" alt="Musculação">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://pollinations.ai/p/gym-cardio-equipment-area" alt="Cardio">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://pollinations.ai/p/gym-functional-training-area" alt="Funcional">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://pollinations.ai/p/gym-locker-room-clean" alt="Vestiário">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>Resultados Reais</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <p>"Perdi 15kg em 4 meses! A equipe é sensacional e sempre motivada."</p>
+                    <strong>- Marina Santos</strong>
+                </div>
+                <div class="testimonial">
+                    <p>"Melhor academia que já treinei. Equipamentos novos e ambiente incrível!"</p>
+                    <strong>- Ricardo Oliveira</strong>
+                </div>
+                <div class="testimonial">
+                    <p>"Conquistei o shape dos meus sonhos com o suporte dos professores."</p>
+                    <strong>- Fernanda Costa</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Comece Hoje Sua Transformação</h2>
+            <p style="font-size: 1.3em; margin-bottom: 30px;">Primeira semana grátis para novos alunos</p>
+            <button class="cta-button">Quero Começar Agora</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 FitPower Academia. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

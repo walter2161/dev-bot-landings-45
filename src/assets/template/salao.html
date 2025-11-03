@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beleza Pura - Salão de Beleza</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: linear-gradient(135deg, #e91e63 0%, #9c27b0 100%); color: white; padding: 100px 0; text-align: center; }
+        header h1 { font-size: 4em; margin-bottom: 20px; }
+        header p { font-size: 1.3em; margin-bottom: 30px; }
+        .cta-button { background: #fff; color: #e91e63; padding: 18px 50px; border: none; border-radius: 50px; font-size: 1.2em; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(233,30,99,0.3); }
+        section { padding: 80px 0; }
+        .about { background: #f8f9fa; }
+        .about-content { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .about img { width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .services { }
+        .services h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e91e63; }
+        .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .service-card { background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; border: 3px solid transparent; }
+        .service-card:hover { transform: translateY(-10px); border-color: #e91e63; }
+        .service-icon { font-size: 4em; margin-bottom: 20px; }
+        .service-price { color: #e91e63; font-size: 1.8em; font-weight: bold; margin: 15px 0; }
+        .portfolio { background: #f8f9fa; }
+        .portfolio h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e91e63; }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .portfolio-item { height: 300px; border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.3s; }
+        .portfolio-item:hover { transform: scale(1.05); }
+        .portfolio-item img { width: 100%; height: 100%; object-fit: cover; }
+        .team { }
+        .team h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e91e63; }
+        .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .team-member { text-align: center; }
+        .team-member img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 5px solid #e91e63; margin-bottom: 20px; }
+        .packages { background: #f8f9fa; }
+        .packages h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e91e63; }
+        .packages-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .package-card { background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .package-price { font-size: 3em; color: #e91e63; font-weight: bold; margin: 20px 0; }
+        .package-features { list-style: none; margin: 30px 0; text-align: left; }
+        .package-features li { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .testimonials { }
+        .testimonials h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e91e63; }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .testimonial { background: #f8f9fa; padding: 30px; border-radius: 15px; }
+        .testimonial img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; }
+        .instagram { background: linear-gradient(135deg, #e91e63 0%, #9c27b0 100%); color: white; text-align: center; }
+        .instagram h2 { font-size: 2.8em; margin-bottom: 30px; }
+        footer { background: #2c3e50; color: white; text-align: center; padding: 40px 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>✨ Beleza Pura</h1>
+            <p>Onde a beleza encontra a perfeição</p>
+            <button class="cta-button">Agende Seu Horário</button>
+        </div>
+    </header>
+
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <img src="https://pollinations.ai/p/luxury-beauty-salon-interior" alt="Salão">
+                <div>
+                    <h2 style="color: #e91e63; font-size: 2.5em; margin-bottom: 30px;">Sobre Nós</h2>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Há mais de 10 anos, o Beleza Pura é referência em beleza e bem-estar. Nossa equipe de profissionais altamente qualificados está sempre atualizada com as últimas tendências.
+                    </p>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Oferecemos um ambiente acolhedor, produtos de alta qualidade e atendimento personalizado para realçar sua beleza natural.
+                    </p>
+                    <p style="font-size: 1.1em;">
+                        Venha nos visitar e descubra por que somos o salão preferido da cidade!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="container">
+            <h2>Nossos Serviços</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💇</div>
+                    <h3>Corte e Penteado</h3>
+                    <p>Cortes modernos e penteados para todas ocasiões</p>
+                    <div class="service-price">R$ 80</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🎨</div>
+                    <h3>Coloração</h3>
+                    <p>Coloração profissional com produtos premium</p>
+                    <div class="service-price">R$ 150</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💅</div>
+                    <h3>Manicure & Pedicure</h3>
+                    <p>Unhas perfeitas com esmaltação de longa duração</p>
+                    <div class="service-price">R$ 60</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💆</div>
+                    <h3>Tratamentos Capilares</h3>
+                    <p>Hidratação, cauterização e reconstrução</p>
+                    <div class="service-price">R$ 120</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🌟</div>
+                    <h3>Maquiagem</h3>
+                    <p>Maquiagem profissional para festas e eventos</p>
+                    <div class="service-price">R$ 150</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👁️</div>
+                    <h3>Design de Sobrancelhas</h3>
+                    <p>Sobrancelhas perfeitas com fio a fio</p>
+                    <div class="service-price">R$ 50</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="portfolio">
+        <div class="container">
+            <h2>Nossos Trabalhos</h2>
+            <div class="portfolio-grid">
+                <div class="portfolio-item">
+                    <img src="https://pollinations.ai/p/beautiful-hair-coloring-result" alt="Coloração">
+                </div>
+                <div class="portfolio-item">
+                    <img src="https://pollinations.ai/p/professional-makeup-result-glamour" alt="Maquiagem">
+                </div>
+                <div class="portfolio-item">
+                    <img src="https://pollinations.ai/p/perfect-manicure-nail-art" alt="Manicure">
+                </div>
+                <div class="portfolio-item">
+                    <img src="https://pollinations.ai/p/modern-haircut-styling" alt="Corte">
+                </div>
+                <div class="portfolio-item">
+                    <img src="https://pollinations.ai/p/wedding-hairstyle-elegant" alt="Penteado">
+                </div>
+                <div class="portfolio-item">
+                    <img src="https://pollinations.ai/p/eyebrow-design-perfect-shape" alt="Sobrancelhas">
+                </div>
+                <div class="portfolio-item">
+                    <img src="https://pollinations.ai/p/hair-treatment-shine-result" alt="Tratamento">
+                </div>
+                <div class="portfolio-item">
+                    <img src="https://pollinations.ai/p/ombre-hair-color-technique" alt="Ombré">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="team">
+        <div class="container">
+            <h2>Nossa Equipe</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="https://pollinations.ai/p/professional-hairstylist-female-1" alt="Profissional">
+                    <h3>Carla Silva</h3>
+                    <p>Cabeleireira Sênior</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://pollinations.ai/p/professional-makeup-artist-female" alt="Profissional">
+                    <h3>Juliana Costa</h3>
+                    <p>Maquiadora</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://pollinations.ai/p/professional-manicurist-female" alt="Profissional">
+                    <h3>Amanda Souza</h3>
+                    <p>Manicure</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://pollinations.ai/p/professional-hairstylist-female-2" alt="Profissional">
+                    <h3>Fernanda Lima</h3>
+                    <p>Colorista</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="packages">
+        <div class="container">
+            <h2>Pacotes Especiais</h2>
+            <div class="packages-grid">
+                <div class="package-card">
+                    <h3>DIA DE BELEZA</h3>
+                    <div class="package-price">R$ 350</div>
+                    <ul class="package-features">
+                        <li>✓ Corte completo</li>
+                        <li>✓ Hidratação profunda</li>
+                        <li>✓ Manicure e pedicure</li>
+                        <li>✓ Design de sobrancelhas</li>
+                    </ul>
+                    <button class="cta-button" style="margin-top: 20px;">Agendar</button>
+                </div>
+                <div class="package-card">
+                    <h3>NOIVA COMPLETA</h3>
+                    <div class="package-price">R$ 800</div>
+                    <ul class="package-features">
+                        <li>✓ Penteado de noiva</li>
+                        <li>✓ Maquiagem especial</li>
+                        <li>✓ Manicure francesa</li>
+                        <li>✓ Teste prévio</li>
+                        <li>✓ Acompanhamento no local</li>
+                    </ul>
+                    <button class="cta-button" style="margin-top: 20px;">Agendar</button>
+                </div>
+                <div class="package-card">
+                    <h3>TRANSFORMAÇÃO</h3>
+                    <div class="package-price">R$ 500</div>
+                    <ul class="package-features">
+                        <li>✓ Coloração premium</li>
+                        <li>✓ Corte e escova</li>
+                        <li>✓ Tratamento capilar</li>
+                        <li>✓ Reconstrução</li>
+                    </ul>
+                    <button class="cta-button" style="margin-top: 20px;">Agendar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>O Que Nossas Clientes Dizem</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <img src="https://pollinations.ai/p/happy-client-portrait-female-1" alt="Cliente">
+                    <p>"Melhor salão da cidade! Sempre saio de lá me sentindo linda e renovada."</p>
+                    <strong>- Marina Santos</strong>
+                </div>
+                <div class="testimonial">
+                    <img src="https://pollinations.ai/p/happy-client-portrait-female-2" alt="Cliente">
+                    <p>"Profissionais incríveis! Meu cabelo nunca ficou tão bonito e saudável."</p>
+                    <strong>- Camila Oliveira</strong>
+                </div>
+                <div class="testimonial">
+                    <img src="https://pollinations.ai/p/happy-client-portrait-female-3" alt="Cliente">
+                    <p>"Ambiente maravilhoso e atendimento impecável. Super recomendo!"</p>
+                    <strong>- Rafaela Costa</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="instagram">
+        <div class="container">
+            <h2>Siga-nos no Instagram</h2>
+            <p style="font-size: 1.2em; margin-bottom: 30px;">@belezapurasalao</p>
+            <button class="cta-button">Seguir</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Beleza Pura Salão. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

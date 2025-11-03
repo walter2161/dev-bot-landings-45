@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clínica Saúde+ - Cuidando de Você</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); color: white; padding: 100px 0; text-align: center; }
+        header h1 { font-size: 3.5em; margin-bottom: 20px; }
+        header p { font-size: 1.3em; margin-bottom: 30px; }
+        .cta-button { background: #fff; color: #4a90e2; padding: 18px 50px; border: none; border-radius: 50px; font-size: 1.2em; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        section { padding: 80px 0; }
+        .about { background: #f8f9fa; }
+        .about-content { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .about img { width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .services { }
+        .services h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #4a90e2; }
+        .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .service-card { background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; border-top: 4px solid #4a90e2; }
+        .service-card:hover { transform: translateY(-10px); }
+        .service-icon { font-size: 4em; margin-bottom: 20px; color: #4a90e2; }
+        .specialists { background: #f8f9fa; }
+        .specialists h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #4a90e2; }
+        .specialists-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .specialist-card { background: white; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .specialist-card:hover { transform: translateY(-5px); }
+        .specialist-card img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 20px; border: 4px solid #4a90e2; }
+        .infrastructure { }
+        .infrastructure h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #4a90e2; }
+        .infrastructure-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .infrastructure-card img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .testimonials { background: #f8f9fa; }
+        .testimonials h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #4a90e2; }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        .testimonial { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .insurance { text-align: center; }
+        .insurance h2 { font-size: 2.5em; margin-bottom: 50px; color: #4a90e2; }
+        .insurance-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 30px; align-items: center; }
+        .insurance-logo { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .contact { background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); color: white; text-align: center; }
+        .contact h2 { font-size: 2.5em; margin-bottom: 30px; }
+        .contact-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 50px; }
+        .contact-item { padding: 30px; }
+        .contact-icon { font-size: 3em; margin-bottom: 20px; }
+        footer { background: #2c3e50; color: white; text-align: center; padding: 40px 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🏥 Clínica Saúde+</h1>
+            <p>Excelência em saúde e bem-estar para toda família</p>
+            <button class="cta-button">Agende Sua Consulta</button>
+        </div>
+    </header>
+
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <div>
+                    <h2 style="color: #4a90e2; font-size: 2.5em; margin-bottom: 30px;">Sobre Nós</h2>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Há mais de 15 anos cuidando da saúde da sua família com profissionalismo, tecnologia de ponta e atendimento humanizado.
+                    </p>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Nossa equipe é formada por médicos especialistas altamente qualificados, comprometidos em oferecer o melhor atendimento em diversas áreas da medicina.
+                    </p>
+                    <p style="font-size: 1.1em;">
+                        Contamos com equipamentos modernos, infraestrutura completa e convênios com os principais planos de saúde.
+                    </p>
+                </div>
+                <img src="https://pollinations.ai/p/modern-medical-clinic-interior-reception" alt="Clínica">
+            </div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="container">
+            <h2>Nossas Especialidades</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">❤️</div>
+                    <h3>Cardiologia</h3>
+                    <p>Cuidados completos para seu coração</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🦴</div>
+                    <h3>Ortopedia</h3>
+                    <p>Tratamento de ossos e articulações</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👶</div>
+                    <h3>Pediatria</h3>
+                    <p>Saúde e bem-estar dos pequenos</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👩</div>
+                    <h3>Ginecologia</h3>
+                    <p>Saúde integral da mulher</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🧠</div>
+                    <h3>Neurologia</h3>
+                    <p>Cuidados com o sistema nervoso</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👁️</div>
+                    <h3>Oftalmologia</h3>
+                    <p>Saúde dos seus olhos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="specialists">
+        <div class="container">
+            <h2>Nossa Equipe Médica</h2>
+            <div class="specialists-grid">
+                <div class="specialist-card">
+                    <img src="https://pollinations.ai/p/professional-doctor-portrait-male-1" alt="Médico">
+                    <h3>Dr. João Silva</h3>
+                    <p>Cardiologista</p>
+                    <small>CRM 12345</small>
+                </div>
+                <div class="specialist-card">
+                    <img src="https://pollinations.ai/p/professional-doctor-portrait-female-1" alt="Médica">
+                    <h3>Dra. Maria Santos</h3>
+                    <p>Pediatra</p>
+                    <small>CRM 54321</small>
+                </div>
+                <div class="specialist-card">
+                    <img src="https://pollinations.ai/p/professional-doctor-portrait-male-2" alt="Médico">
+                    <h3>Dr. Carlos Oliveira</h3>
+                    <p>Ortopedista</p>
+                    <small>CRM 67890</small>
+                </div>
+                <div class="specialist-card">
+                    <img src="https://pollinations.ai/p/professional-doctor-portrait-female-2" alt="Médica">
+                    <h3>Dra. Ana Costa</h3>
+                    <p>Ginecologista</p>
+                    <small>CRM 98765</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="infrastructure">
+        <div class="container">
+            <h2>Nossa Estrutura</h2>
+            <div class="infrastructure-grid">
+                <div class="infrastructure-card">
+                    <img src="https://pollinations.ai/p/modern-hospital-waiting-room" alt="Recepção">
+                    <h3 style="margin-top: 20px;">Recepção Moderna</h3>
+                </div>
+                <div class="infrastructure-card">
+                    <img src="https://pollinations.ai/p/medical-consultation-room-equipment" alt="Consultório">
+                    <h3 style="margin-top: 20px;">Consultórios Equipados</h3>
+                </div>
+                <div class="infrastructure-card">
+                    <img src="https://pollinations.ai/p/hospital-laboratory-equipment" alt="Laboratório">
+                    <h3 style="margin-top: 20px;">Laboratório Completo</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>Depoimentos</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <p style="font-size: 1.1em; font-style: italic; margin-bottom: 20px;">
+                        "Atendimento excepcional! Os médicos são muito atenciosos e a clínica é super moderna. Recomendo!"
+                    </p>
+                    <strong>- Patricia Alves</strong>
+                </div>
+                <div class="testimonial">
+                    <p style="font-size: 1.1em; font-style: italic; margin-bottom: 20px;">
+                        "Faço acompanhamento há anos. Equipe profissional e sempre pontual nos atendimentos."
+                    </p>
+                    <strong>- Roberto Lima</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="insurance">
+        <div class="container">
+            <h2>Convênios Aceitos</h2>
+            <div class="insurance-grid">
+                <div class="insurance-logo">Unimed</div>
+                <div class="insurance-logo">Bradesco Saúde</div>
+                <div class="insurance-logo">Amil</div>
+                <div class="insurance-logo">SulAmérica</div>
+                <div class="insurance-logo">Porto Seguro</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact">
+        <div class="container">
+            <h2>Entre em Contato</h2>
+            <p style="font-size: 1.2em;">Agende sua consulta agora mesmo</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <h3>Telefone</h3>
+                    <p>(11) 1234-5678</p>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <h3>E-mail</h3>
+                    <p>contato@saudemais.com.br</p>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <h3>Endereço</h3>
+                    <p>Av. Principal, 123 - Centro</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Clínica Saúde+. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

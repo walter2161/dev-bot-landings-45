@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Sua Loja de Tecnologia</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; padding: 80px 0; text-align: center; }
+        header h1 { font-size: 3.5em; margin-bottom: 20px; }
+        header p { font-size: 1.3em; margin-bottom: 30px; }
+        .cta-button { background: #fff; color: #6a11cb; padding: 18px 50px; border: none; border-radius: 50px; font-size: 1.2em; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        section { padding: 80px 0; }
+        .benefits { background: #f8f9fa; }
+        .benefits h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #6a11cb; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .benefit-card { background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .benefit-icon { font-size: 3em; margin-bottom: 15px; }
+        .featured { }
+        .featured h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #6a11cb; }
+        .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .product-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; }
+        .product-card:hover { transform: translateY(-10px); }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; }
+        .product-info { padding: 20px; }
+        .product-price { color: #6a11cb; font-size: 1.5em; font-weight: bold; margin: 10px 0; }
+        .product-old-price { text-decoration: line-through; color: #999; font-size: 1em; }
+        .product-badge { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; font-weight: bold; }
+        .categories { background: #f8f9fa; }
+        .categories h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #6a11cb; }
+        .categories-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; }
+        .category-card { background: white; padding: 30px 20px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; }
+        .category-card:hover { background: #6a11cb; color: white; transform: scale(1.05); }
+        .category-icon { font-size: 3em; margin-bottom: 15px; }
+        .deals { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; text-align: center; }
+        .deals h2 { font-size: 2.8em; margin-bottom: 30px; }
+        .countdown { display: flex; justify-content: center; gap: 30px; margin: 40px 0; }
+        .countdown-item { background: rgba(255,255,255,0.2); padding: 20px 30px; border-radius: 10px; }
+        .countdown-number { font-size: 3em; font-weight: bold; }
+        .reviews { }
+        .reviews h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #6a11cb; }
+        .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .review { background: #f8f9fa; padding: 30px; border-radius: 10px; }
+        .stars { color: #ffd700; font-size: 1.2em; margin-bottom: 15px; }
+        .newsletter { background: #f8f9fa; text-align: center; }
+        .newsletter h2 { font-size: 2.5em; margin-bottom: 20px; color: #6a11cb; }
+        .newsletter-form { display: flex; justify-content: center; gap: 15px; margin-top: 30px; max-width: 600px; margin: 30px auto 0; }
+        .newsletter-form input { flex: 1; padding: 15px; border: 2px solid #ddd; border-radius: 5px; font-size: 1em; }
+        footer { background: #2c3e50; color: white; padding: 60px 0; }
+        .footer-content { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🛒 TechStore</h1>
+            <p>Os melhores produtos de tecnologia com os melhores preços</p>
+            <button class="cta-button">Ver Ofertas</button>
+        </div>
+    </header>
+
+    <section class="benefits">
+        <div class="container">
+            <h2>Por Que Comprar Conosco?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">🚚</div>
+                    <h3>Frete Grátis</h3>
+                    <p>Acima de R$ 200</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔒</div>
+                    <h3>Compra Segura</h3>
+                    <p>Proteção total</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">💳</div>
+                    <h3>Parcelamento</h3>
+                    <p>Em até 12x sem juros</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">↩️</div>
+                    <h3>Troca Fácil</h3>
+                    <p>Até 30 dias</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured">
+        <div class="container">
+            <h2>Produtos em Destaque</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div style="position: relative;">
+                        <span class="product-badge">-20%</span>
+                        <img src="https://pollinations.ai/p/modern-smartphone-latest-model" alt="Smartphone">
+                    </div>
+                    <div class="product-info">
+                        <h3>Smartphone X Pro</h3>
+                        <div class="product-old-price">R$ 3.999</div>
+                        <div class="product-price">R$ 3.199</div>
+                        <button class="cta-button" style="width: 100%; margin-top: 10px;">Comprar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div style="position: relative;">
+                        <img src="https://pollinations.ai/p/wireless-headphones-premium" alt="Fone">
+                    </div>
+                    <div class="product-info">
+                        <h3>Fone Bluetooth Pro</h3>
+                        <div class="product-price">R$ 799</div>
+                        <button class="cta-button" style="width: 100%; margin-top: 10px;">Comprar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div style="position: relative;">
+                        <span class="product-badge">-30%</span>
+                        <img src="https://pollinations.ai/p/laptop-notebook-modern" alt="Notebook">
+                    </div>
+                    <div class="product-info">
+                        <h3>Notebook Ultra</h3>
+                        <div class="product-old-price">R$ 4.999</div>
+                        <div class="product-price">R$ 3.499</div>
+                        <button class="cta-button" style="width: 100%; margin-top: 10px;">Comprar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div style="position: relative;">
+                        <img src="https://pollinations.ai/p/smartwatch-fitness-tracker" alt="Smartwatch">
+                    </div>
+                    <div class="product-info">
+                        <h3>Smartwatch Fit</h3>
+                        <div class="product-price">R$ 1.299</div>
+                        <button class="cta-button" style="width: 100%; margin-top: 10px;">Comprar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="categories">
+        <div class="container">
+            <h2>Categorias</h2>
+            <div class="categories-grid">
+                <div class="category-card">
+                    <div class="category-icon">📱</div>
+                    <h3>Smartphones</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">💻</div>
+                    <h3>Notebooks</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🎧</div>
+                    <h3>Áudio</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">⌚</div>
+                    <h3>Wearables</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🖥️</div>
+                    <h3>Informática</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🎮</div>
+                    <h3>Games</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="deals">
+        <div class="container">
+            <h2>Oferta Relâmpago</h2>
+            <p style="font-size: 1.3em;">Termina em:</p>
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number">12</div>
+                    <div>Horas</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number">34</div>
+                    <div>Minutos</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number">56</div>
+                    <div>Segundos</div>
+                </div>
+            </div>
+            <button class="cta-button">Ver Ofertas</button>
+        </div>
+    </section>
+
+    <section class="reviews">
+        <div class="container">
+            <h2>O Que Nossos Clientes Dizem</h2>
+            <div class="reviews-grid">
+                <div class="review">
+                    <div class="stars">★★★★★</div>
+                    <p>"Excelente loja! Produto chegou rápido e bem embalado. Super recomendo!"</p>
+                    <strong>- Lucas Mendes</strong>
+                </div>
+                <div class="review">
+                    <div class="stars">★★★★★</div>
+                    <p>"Melhor preço que encontrei. Atendimento impecável e entrega antes do prazo."</p>
+                    <strong>- Carla Santos</strong>
+                </div>
+                <div class="review">
+                    <div class="stars">★★★★★</div>
+                    <p>"Compro sempre aqui! Produtos originais e com garantia. Muito confiável!"</p>
+                    <strong>- Pedro Oliveira</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <div class="container">
+            <h2>Receba Ofertas Exclusivas</h2>
+            <p>Cadastre-se e ganhe 10% de desconto na primeira compra</p>
+            <div class="newsletter-form">
+                <input type="email" placeholder="Seu e-mail">
+                <button class="cta-button">Cadastrar</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h3>Sobre</h3>
+                    <p>A TechStore é sua loja online de tecnologia com os melhores produtos e preços.</p>
+                </div>
+                <div>
+                    <h3>Contato</h3>
+                    <p>📞 (11) 1234-5678</p>
+                    <p>📧 contato@techstore.com.br</p>
+                </div>
+                <div>
+                    <h3>Institucional</h3>
+                    <p>Sobre Nós</p>
+                    <p>Política de Privacidade</p>
+                    <p>Termos de Uso</p>
+                </div>
+                <div>
+                    <h3>Redes Sociais</h3>
+                    <p>Instagram | Facebook | Twitter</p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 40px;">&copy; 2024 TechStore. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

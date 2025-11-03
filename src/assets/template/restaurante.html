@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante Sabor & Arte - Gastronomia de Alto Nível</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://pollinations.ai/p/elegant-restaurant-interior-fine-dining'); background-size: cover; background-position: center; color: white; padding: 150px 0; text-align: center; }
+        header h1 { font-size: 4em; margin-bottom: 20px; font-family: serif; }
+        header p { font-size: 1.4em; margin-bottom: 30px; font-style: italic; }
+        .cta-button { background: #c89d5c; color: white; padding: 18px 50px; border: none; border-radius: 5px; font-size: 1.2em; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .cta-button:hover { background: #b08847; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(200,157,92,0.3); }
+        section { padding: 80px 0; }
+        .about { background: #f8f9fa; }
+        .about-content { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .about img { width: 100%; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .menu { }
+        .menu h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #c89d5c; font-family: serif; }
+        .menu-categories { display: grid; grid-template-columns: repeat(2, 1fr); gap: 50px; }
+        .menu-category h3 { color: #c89d5c; font-size: 2em; margin-bottom: 30px; font-family: serif; border-bottom: 2px solid #c89d5c; padding-bottom: 10px; }
+        .menu-item { display: flex; justify-content: space-between; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .menu-item-info h4 { color: #333; margin-bottom: 10px; }
+        .menu-item-info p { color: #666; font-size: 0.9em; }
+        .menu-item-price { color: #c89d5c; font-size: 1.3em; font-weight: bold; }
+        .chef { background: #f8f9fa; }
+        .chef h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #c89d5c; font-family: serif; }
+        .chef-content { display: grid; grid-template-columns: 1fr 2fr; gap: 50px; align-items: center; }
+        .chef img { width: 100%; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .gallery { }
+        .gallery h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #c89d5c; font-family: serif; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .gallery-item { height: 250px; border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.3s; }
+        .gallery-item:hover { transform: scale(1.05); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .features { background: #f8f9fa; }
+        .features h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #c89d5c; font-family: serif; }
+        .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .feature-card { background: white; padding: 40px 30px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .feature-icon { font-size: 4em; margin-bottom: 20px; }
+        .testimonials { }
+        .testimonials h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #c89d5c; font-family: serif; }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .testimonial { background: #f8f9fa; padding: 30px; border-radius: 10px; }
+        .reservation { background: linear-gradient(135deg, #c89d5c 0%, #b08847 100%); color: white; text-align: center; }
+        .reservation h2 { font-size: 2.8em; margin-bottom: 30px; font-family: serif; }
+        footer { background: #2c3e50; color: white; padding: 60px 0; }
+        .footer-content { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; text-align: center; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🍽️ Sabor & Arte</h1>
+            <p>Uma experiência gastronômica inesquecível</p>
+            <button class="cta-button">Reserve Sua Mesa</button>
+        </div>
+    </header>
+
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <img src="https://pollinations.ai/p/gourmet-food-plating-fine-dining" alt="Prato">
+                <div>
+                    <h2 style="color: #c89d5c; font-size: 2.5em; margin-bottom: 30px; font-family: serif;">Nossa História</h2>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Desde 2005, o Restaurante Sabor & Arte tem sido sinônimo de alta gastronomia na cidade. Nossa culinária contemporânea une técnicas clássicas com toques modernos.
+                    </p>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Cada prato é uma obra de arte criada com ingredientes selecionados, frescos e de produtores locais. Nossa paixão é proporcionar momentos memoráveis através dos sabores.
+                    </p>
+                    <p style="font-size: 1.1em;">
+                        Venha viver uma experiência única em um ambiente sofisticado e acolhedor.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="menu">
+        <div class="container">
+            <h2>Nosso Cardápio</h2>
+            <div class="menu-categories">
+                <div class="menu-category">
+                    <h3>Entradas</h3>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <h4>Carpaccio de Salmão</h4>
+                            <p>Com alcaparras, limão siciliano e azeite trufado</p>
+                        </div>
+                        <div class="menu-item-price">R$ 58</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <h4>Bruschetta de Tomate</h4>
+                            <p>Pão italiano, tomates frescos e manjericão</p>
+                        </div>
+                        <div class="menu-item-price">R$ 42</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <h4>Risoto de Cogumelos</h4>
+                            <p>Mix de cogumelos nobres e parmesão</p>
+                        </div>
+                        <div class="menu-item-price">R$ 68</div>
+                    </div>
+                </div>
+                <div class="menu-category">
+                    <h3>Pratos Principais</h3>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <h4>Filé Mignon ao Molho Madeira</h4>
+                            <p>Com batatas rústicas e legumes grelhados</p>
+                        </div>
+                        <div class="menu-item-price">R$ 98</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <h4>Salmão Grelhado</h4>
+                            <p>Com purê de mandioquinha e aspargos</p>
+                        </div>
+                        <div class="menu-item-price">R$ 89</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <h4>Massa Fresca ao Pesto</h4>
+                            <p>Com tomates confit e burrata</p>
+                        </div>
+                        <div class="menu-item-price">R$ 78</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="chef">
+        <div class="container">
+            <h2>Nosso Chef</h2>
+            <div class="chef-content">
+                <img src="https://pollinations.ai/p/professional-chef-cooking-restaurant-kitchen" alt="Chef">
+                <div>
+                    <h3 style="color: #c89d5c; font-size: 2em; margin-bottom: 20px;">Chef Alexandre Duarte</h3>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Com mais de 20 anos de experiência em restaurantes estrelados na Europa e Brasil, o Chef Alexandre traz sua expertise e criatividade para cada prato.
+                    </p>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Formado pela renomada Le Cordon Bleu, trabalhou em estabelecimentos premiados em Paris, Londres e São Paulo.
+                    </p>
+                    <p style="font-size: 1.1em;">
+                        "Minha filosofia é simples: respeitar os ingredientes e surpreender o paladar."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery">
+        <div class="container">
+            <h2>Galeria</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://pollinations.ai/p/gourmet-appetizer-fine-dining" alt="Prato 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://pollinations.ai/p/elegant-main-course-restaurant" alt="Prato 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://pollinations.ai/p/dessert-plating-professional" alt="Sobremesa">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://pollinations.ai/p/wine-glasses-fine-dining-table" alt="Vinhos">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Diferenciais</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🍳</div>
+                    <h3>Chef Premiado</h3>
+                    <p>Reconhecimento internacional</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🍷</div>
+                    <h3>Carta de Vinhos</h3>
+                    <p>Mais de 200 rótulos</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌿</div>
+                    <h3>Ingredientes Frescos</h3>
+                    <p>Fornecedores selecionados</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>Ambiente Elegante</h3>
+                    <p>Experiência completa</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>Avaliações</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <p>"Sem dúvida o melhor restaurante da cidade. Cada prato é uma experiência única!"</p>
+                    <strong>- Roberto Almeida</strong>
+                </div>
+                <div class="testimonial">
+                    <p>"Ambiente sofisticado, atendimento impecável e comida divina. Vale cada centavo!"</p>
+                    <strong>- Daniela Costa</strong>
+                </div>
+                <div class="testimonial">
+                    <p>"Comemoramos nosso aniversário de casamento aqui. Perfeito em todos os aspectos!"</p>
+                    <strong>- Marcos e Juliana</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="reservation">
+        <div class="container">
+            <h2>Reserve Sua Mesa</h2>
+            <p style="font-size: 1.2em; margin-bottom: 30px;">Aberto de terça a domingo, das 12h às 15h e das 19h às 23h</p>
+            <button class="cta-button">Fazer Reserva</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h3>Contato</h3>
+                    <p>📞 (11) 3456-7890</p>
+                    <p>📧 reservas@saborearte.com.br</p>
+                </div>
+                <div>
+                    <h3>Endereço</h3>
+                    <p>Rua Gourmet, 123</p>
+                    <p>Jardins - São Paulo/SP</p>
+                </div>
+                <div>
+                    <h3>Horário</h3>
+                    <p>Terça a Domingo</p>
+                    <p>12h-15h | 19h-23h</p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 40px;">&copy; 2024 Restaurante Sabor & Arte. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
