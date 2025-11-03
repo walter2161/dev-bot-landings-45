@@ -143,62 +143,9 @@ export class HtmlAgent {
   }
 
   private injectHeaderAndChat(html: string, businessData: BusinessContent): string {
-    const logoUrl = businessData.images.logo || 'https://pollinations.ai/p/modern-business-logo';
-    
-    const headerHTML = `
+    // Apenas adicionar o chat IA (template já tem header completo)
+    const chatHTML = `
       <style>
-        .pagejet-header {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          z-index: 1000;
-          padding: 1rem 2rem;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .pagejet-header-content {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .pagejet-logo {
-          height: 50px;
-          object-fit: contain;
-        }
-        .pagejet-nav {
-          display: flex;
-          gap: 2rem;
-          align-items: center;
-        }
-        .pagejet-nav a {
-          color: #333;
-          text-decoration: none;
-          font-weight: 500;
-          transition: color 0.3s;
-        }
-        .pagejet-nav a:hover {
-          color: ${businessData.colors.primary};
-        }
-        .pagejet-cta-button {
-          background: ${businessData.colors.primary};
-          color: white;
-          padding: 0.5rem 1.5rem;
-          border-radius: 25px;
-          text-decoration: none;
-          font-weight: 600;
-          transition: transform 0.3s;
-        }
-        .pagejet-cta-button:hover {
-          transform: translateY(-2px);
-        }
-        body {
-          padding-top: 90px;
-        }
-        
         .sellerbot-widget {
           position: fixed;
           bottom: 20px;
@@ -350,20 +297,6 @@ export class HtmlAgent {
           display: none;
         }
       </style>
-      
-      <header class="pagejet-header">
-        <div class="pagejet-header-content">
-          <img src="${logoUrl}" alt="${businessData.title}" class="pagejet-logo">
-          <nav class="pagejet-nav">
-            <a href="#sobre">Sobre</a>
-            <a href="#servicos">Serviços</a>
-            <a href="#contato">Contato</a>
-            <a href="tel:${businessData.contact.phone}" class="pagejet-cta-button">
-              ${businessData.contact.phone}
-            </a>
-          </nav>
-        </div>
-      </header>
       
       <div class="sellerbot-fab" id="chat-fab" onclick="toggleChat()">💬</div>
       <div class="sellerbot-widget" id="sellerbot">
@@ -522,7 +455,7 @@ CONTEXTO DA CONVERSA:
       </script>
     `;
     
-    return html.replace('</body>', `${headerHTML}</body>`);
+    return html.replace('</body>', `${chatHTML}</body>`);
   }
 
   private extractSectionsFromHTML(html: string): any[] {
