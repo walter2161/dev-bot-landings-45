@@ -619,7 +619,17 @@ CONTEXTO DA CONVERSA:
     
     const sectionElements = doc.querySelectorAll('section, .section, [class*="section"]');
     
+    // Mapear IDs para as âncoras do menu
+    const sectionIds = ['sobre', 'servicos', 'contato'];
+    
     sectionElements.forEach((sectionEl, index) => {
+      // Adicionar ID apropriado para as primeiras 3 seções
+      if (index < sectionIds.length) {
+        sectionEl.setAttribute('id', sectionIds[index]);
+      } else {
+        sectionEl.setAttribute('id', `section-${index}`);
+      }
+      
       if (sections[index]) {
         const section = sections[index];
         
