@@ -3,14 +3,162 @@ import { landingPageTemplates, selectTemplateForBusiness, type LandingPageTempla
 
 const PICSUM_BASE_URL = "https://picsum.photos";
 
+// Mapeamento de nichos para templates HTML
+const TEMPLATE_MAP: Record<string, string> = {
+  'delivery': '/src/assets/template/delivery.html',
+  'clinica': '/src/assets/template/clinica.html',
+  'clínica': '/src/assets/template/clinica.html',
+  'imoveis': '/src/assets/template/imoveis.html',
+  'imóveis': '/src/assets/template/imoveis.html',
+  'imobiliaria': '/src/assets/template/imoveis.html',
+  'imobiliária': '/src/assets/template/imoveis.html',
+  'pizzaria': '/src/assets/template/pizzaria.html',
+  'academia': '/src/assets/template/academia.html',
+  'salao': '/src/assets/template/salao.html',
+  'salão': '/src/assets/template/salao.html',
+  'advocacia': '/src/assets/template/advocacia.html',
+  'consultoria': '/src/assets/template/consultoria.html',
+  'ecommerce': '/src/assets/template/ecommerce.html',
+  'e-commerce': '/src/assets/template/ecommerce.html',
+  'loja': '/src/assets/template/ecommerce.html',
+  'restaurante': '/src/assets/template/restaurante.html',
+  'coach': '/src/assets/template/coach.html',
+  'coaching': '/src/assets/template/coach.html',
+  'curso': '/src/assets/template/curso.html',
+  'cursos': '/src/assets/template/curso.html',
+  'ebook': '/src/assets/template/ebook.html',
+  'e-book': '/src/assets/template/ebook.html',
+  'saas': '/src/assets/template/saas.html',
+  'software': '/src/assets/template/saas.html',
+};
+
 export class HtmlAgent {
   async generateLandingPage(businessData: BusinessContent, language: string = 'pt'): Promise<string> {
+    console.log('🎨 Gerando landing page com template HTML...');
+    
+    // Detectar o nicho e carregar o template apropriado
+    const templatePath = this.selectTemplateByNiche(businessData.title, businessData.subtitle || '');
+    console.log(`📄 Template selecionado: ${templatePath}`);
+    
+    // Carregar o template HTML
+    const templateHTML = await this.loadTemplate(templatePath);
+    
+    // Gerar URLs de imagens
     const images = await this.generateImageUrls(businessData);
-    return this.buildHTMLTemplate(businessData, images, language);
+    
+    // Personalizar o template com os dados do negócio
+    const personalizedHTML = await this.personalizeTemplate(templateHTML, businessData, images);
+    
+    return personalizedHTML;
   }
 
   async generateHTML(businessData: BusinessContent, language: string = 'pt'): Promise<string> {
     return this.generateLandingPage(businessData, language);
+  }
+
+  private selectTemplateByNiche(title: string, subtitle: string): string {
+    const combinedText = `${title} ${subtitle}`.toLowerCase();
+    
+    console.log('🔍 Analisando nicho:', combinedText);
+    
+    // Procurar por palavras-chave nos templates
+    for (const [keyword, templatePath] of Object.entries(TEMPLATE_MAP)) {
+      if (combinedText.includes(keyword)) {
+        console.log(`✅ Nicho identificado: ${keyword}`);
+        return templatePath;
+      }
+    }
+    
+    // Fallback para template padrão (restaurante)
+    console.log('⚠️ Nicho não identificado, usando template padrão');
+    return '/src/assets/template/restaurante.html';
+  }
+
+  private async loadTemplate(templatePath: string): Promise<string> {
+    try {
+      console.log(`📂 Carregando template: ${templatePath}`);
+      const response = await fetch(templatePath);
+      if (!response.ok) {
+        throw new Error(`Erro ao carregar template: ${response.statusText}`);
+      }
+      const html = await response.text();
+      console.log('✅ Template carregado com sucesso');
+      return html;
+    } catch (error) {
+      console.error('❌ Erro ao carregar template:', error);
+      // Fallback para template básico
+      return this.getBasicTemplate();
+    }
+  }
+
+  private async personalizeTemplate(
+    templateHTML: string, 
+    businessData: BusinessContent, 
+    images: any
+  ): Promise<string> {
+    console.log('🎨 Personalizando template...');
+    
+    let html = templateHTML;
+    
+    // Substituir placeholders de texto
+    html = html.replace(/\[BUSINESS_NAME\]/g, businessData.title);
+    html = html.replace(/\[BUSINESS_TITLE\]/g, businessData.title);
+    html = html.replace(/\[BUSINESS_SUBTITLE\]/g, businessData.subtitle || '');
+    html = html.replace(/\[HERO_TEXT\]/g, businessData.heroText || businessData.subtitle || '');
+    html = html.replace(/\[CTA_TEXT\]/g, businessData.ctaText || 'Entre em Contato');
+    
+    // Substituir cores
+    if (businessData.colors) {
+      html = html.replace(/#FF6B6B/gi, businessData.colors.primary);
+      html = html.replace(/#4ECDC4/gi, businessData.colors.accent);
+      html = html.replace(/rgb\(255,\s*107,\s*107\)/gi, businessData.colors.primary);
+      html = html.replace(/--primary-color:\s*[^;]+;/g, `--primary-color: ${businessData.colors.primary};`);
+      html = html.replace(/--accent-color:\s*[^;]+;/g, `--accent-color: ${businessData.colors.accent};`);
+    }
+    
+    // Substituir imagens com URLs do Pollinations
+    html = html.replace(/\[LOGO_IMAGE\]/g, images.logo);
+    html = html.replace(/\[HERO_IMAGE\]/g, images.hero);
+    html = html.replace(/\[IMAGE_1\]/g, images.motivation);
+    html = html.replace(/\[IMAGE_2\]/g, images.target);
+    html = html.replace(/\[IMAGE_3\]/g, images.method);
+    html = html.replace(/\[IMAGE_4\]/g, images.results);
+    html = html.replace(/\[IMAGE_5\]/g, images.access);
+    html = html.replace(/\[IMAGE_6\]/g, images.investment);
+    
+    // Substituir dados de contato
+    if (businessData.contact) {
+      html = html.replace(/\[PHONE\]/g, businessData.contact.phone || '(00) 0000-0000');
+      html = html.replace(/\[EMAIL\]/g, businessData.contact.email || 'contato@email.com');
+      html = html.replace(/\[ADDRESS\]/g, businessData.contact.address || 'Endereço');
+      html = html.replace(/\[WHATSAPP\]/g, businessData.contact.socialMedia?.whatsapp || '(00) 00000-0000');
+    }
+    
+    // Substituir seções de conteúdo
+    if (businessData.sections && businessData.sections.length > 0) {
+      businessData.sections.forEach((section, index) => {
+        html = html.replace(`[SECTION_${index + 1}_TITLE]`, section.title);
+        html = html.replace(`[SECTION_${index + 1}_CONTENT]`, section.content);
+      });
+    }
+    
+    console.log('✅ Template personalizado com sucesso');
+    return html;
+  }
+
+  private getBasicTemplate(): string {
+    return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[BUSINESS_NAME]</title>
+</head>
+<body>
+    <h1>[BUSINESS_NAME]</h1>
+    <p>[BUSINESS_SUBTITLE]</p>
+</body>
+</html>`;
   }
 
   private async generateImageUrls(businessData: BusinessContent): Promise<any> {
