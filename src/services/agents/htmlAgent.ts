@@ -100,6 +100,16 @@ export class HtmlAgent {
     
     let html = templateHTML;
     
+    // Injetar header do PageJet e chat IA
+    html = this.injectHeaderAndChat(html, businessData);
+    
+    // Extrair e parsear seções do HTML para sincronizar com businessData
+    const parsedSections = this.extractSectionsFromHTML(html);
+    console.log('📋 Seções extraídas do HTML:', parsedSections.length);
+    
+    // Atualizar businessData.sections com as seções reais do HTML
+    businessData.sections = parsedSections;
+    
     // Substituir placeholders de texto
     html = html.replace(/\[BUSINESS_NAME\]/g, businessData.title);
     html = html.replace(/\[BUSINESS_TITLE\]/g, businessData.title);
@@ -107,16 +117,225 @@ export class HtmlAgent {
     html = html.replace(/\[HERO_TEXT\]/g, businessData.heroText || businessData.subtitle || '');
     html = html.replace(/\[CTA_TEXT\]/g, businessData.ctaText || 'Entre em Contato');
     
-    // Substituir cores
+    // Substituir cores em todo o HTML
     if (businessData.colors) {
-      html = html.replace(/#FF6B6B/gi, businessData.colors.primary);
-      html = html.replace(/#4ECDC4/gi, businessData.colors.accent);
-      html = html.replace(/rgb\(255,\s*107,\s*107\)/gi, businessData.colors.primary);
-      html = html.replace(/--primary-color:\s*[^;]+;/g, `--primary-color: ${businessData.colors.primary};`);
-      html = html.replace(/--accent-color:\s*[^;]+;/g, `--accent-color: ${businessData.colors.accent};`);
+      html = this.replaceColorsInHTML(html, businessData.colors);
     }
     
     // Substituir imagens com URLs do Pollinations
+    html = this.replaceImagesInHTML(html, images, businessData);
+    
+    // Substituir dados de contato
+    if (businessData.contact) {
+      html = html.replace(/\[PHONE\]/g, businessData.contact.phone || '(00) 0000-0000');
+      html = html.replace(/\[EMAIL\]/g, businessData.contact.email || 'contato@email.com');
+      html = html.replace(/\[ADDRESS\]/g, businessData.contact.address || 'Endereço');
+      html = html.replace(/\[WHATSAPP\]/g, businessData.contact.socialMedia?.whatsapp || '(00) 00000-0000');
+      html = html.replace(/\[INSTAGRAM\]/g, businessData.contact.socialMedia?.instagram || '@empresa');
+      html = html.replace(/\[FACEBOOK\]/g, businessData.contact.socialMedia?.facebook || 'empresa');
+    }
+    
+    // Aplicar conteúdo das seções dinamicamente
+    html = this.applySectionContent(html, businessData.sections);
+    
+    console.log('✅ Template personalizado com sucesso');
+    return html;
+  }
+
+  private injectHeaderAndChat(html: string, businessData: BusinessContent): string {
+    // Header do PageJet (logo no topo)
+    const headerHTML = `
+      <div id="pagejet-header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.1); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="/lovable-uploads/1e8338b8-ea1c-4b94-9cda-af7e3139b22a.png" alt="PageJet Logo" style="height: 32px; width: auto;" />
+          <span style="font-weight: 600; color: #333; font-size: 14px;">${businessData.title}</span>
+        </div>
+      </div>
+      <div style="height: 52px;"></div>
+    `;
+
+    // Chat IA do Sellerbot (botão flutuante)
+    const chatHTML = `
+      <div id="sellerbot-chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">
+        <button id="sellerbot-chat-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+          💬
+        </button>
+        <div id="sellerbot-chat-window" style="display: none; position: absolute; bottom: 70px; right: 0; width: 350px; height: 500px; background: white; border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.15); flex-direction: column; overflow: hidden;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-weight: 600; font-size: 16px;">${businessData.sellerbot?.name || 'Assistente Virtual'}</div>
+              <div style="font-size: 12px; opacity: 0.9;">Online agora</div>
+            </div>
+            <button id="sellerbot-close-button" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">&times;</button>
+          </div>
+          <div id="sellerbot-messages" style="flex: 1; padding: 15px; overflow-y: auto; background: #f9fafb;">
+            <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <p style="margin: 0; font-size: 14px; line-height: 1.5;">Olá! Sou ${businessData.sellerbot?.name || 'o assistente virtual'}. Como posso ajudá-lo hoje?</p>
+            </div>
+          </div>
+          <div style="padding: 15px; border-top: 1px solid #e5e7eb; background: white;">
+            <div style="display: flex; gap: 8px;">
+              <input id="sellerbot-input" type="text" placeholder="Digite sua mensagem..." style="flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none;" />
+              <button id="sellerbot-send-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function() {
+          const businessData = ${JSON.stringify(businessData)};
+          const chatButton = document.getElementById('sellerbot-chat-button');
+          const chatWindow = document.getElementById('sellerbot-chat-window');
+          const closeButton = document.getElementById('sellerbot-close-button');
+          const sendButton = document.getElementById('sellerbot-send-button');
+          const chatInput = document.getElementById('sellerbot-input');
+          const messagesContainer = document.getElementById('sellerbot-messages');
+          let chatHistory = [];
+
+          chatButton.addEventListener('click', () => {
+            chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
+          });
+
+          closeButton.addEventListener('click', () => {
+            chatWindow.style.display = 'none';
+          });
+
+          function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = \`
+              background: \${isUser ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'white'};
+              color: \${isUser ? 'white' : '#333'};
+              padding: 12px;
+              border-radius: 8px;
+              margin-bottom: 10px;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+              max-width: 85%;
+              \${isUser ? 'margin-left: auto;' : 'margin-right: auto;'}
+            \`;
+            messageDiv.innerHTML = \`<p style="margin: 0; font-size: 14px; line-height: 1.5;">\${content}</p>\`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          }
+
+          async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            chatHistory.push({ role: 'user', content: message });
+            chatInput.value = '';
+
+            addMessage('⏳ Digitando...', false);
+
+            window.parent.postMessage({
+              type: 'SELLERBOT_CHAT',
+              message: message,
+              chatHistory: chatHistory,
+              businessData: businessData
+            }, '*');
+          }
+
+          window.addEventListener('message', (event) => {
+            if (event.data.type === 'SELLERBOT_RESPONSE') {
+              const lastMessage = messagesContainer.lastChild;
+              if (lastMessage && lastMessage.textContent.includes('⏳')) {
+                messagesContainer.removeChild(lastMessage);
+              }
+              addMessage(event.data.response, false);
+              chatHistory.push({ role: 'assistant', content: event.data.response });
+            }
+          });
+
+          sendButton.addEventListener('click', sendMessage);
+          chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+          });
+        })();
+      </script>
+    `;
+
+    // Injetar antes do fechamento do </body>
+    html = html.replace('</body>', `${headerHTML}${chatHTML}</body>`);
+    
+    return html;
+  }
+
+  private extractSectionsFromHTML(html: string): any[] {
+    const sections = [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Extrair todas as sections do HTML
+    const sectionElements = doc.querySelectorAll('section, .section, [class*="section"]');
+    
+    sectionElements.forEach((section, index) => {
+      const headings = section.querySelectorAll('h1, h2, h3');
+      const title = headings[0]?.textContent?.trim() || `Seção ${index + 1}`;
+      const paragraphs = Array.from(section.querySelectorAll('p'))
+        .map(p => p.textContent?.trim())
+        .filter(Boolean)
+        .join(' ')
+        .slice(0, 200);
+
+      sections.push({
+        id: `section-${index}`,
+        type: section.className || 'content',
+        title: title,
+        content: paragraphs || 'Conteúdo da seção',
+        order: index + 1
+      });
+    });
+
+    return sections;
+  }
+
+  private replaceColorsInHTML(html: string, colors: any): string {
+    // Substituir cores específicas comuns
+    const colorReplacements = [
+      { old: /#667eea/gi, new: colors.primary },
+      { old: /#764ba2/gi, new: colors.accent },
+      { old: /#FF6B6B/gi, new: colors.primary },
+      { old: /#4ECDC4/gi, new: colors.accent },
+      { old: /rgb\(255,\s*107,\s*107\)/gi, new: colors.primary },
+      { old: /rgb\(78,\s*205,\s*196\)/gi, new: colors.accent },
+    ];
+
+    colorReplacements.forEach(({ old, new: newColor }) => {
+      html = html.replace(old, newColor);
+    });
+
+    // Substituir variáveis CSS
+    html = html.replace(/--primary-color:\s*[^;]+;/g, `--primary-color: ${colors.primary};`);
+    html = html.replace(/--accent-color:\s*[^;]+;/g, `--accent-color: ${colors.accent};`);
+
+    return html;
+  }
+
+  private replaceImagesInHTML(html: string, images: any, businessData: BusinessContent): string {
+    // Substituir URLs do Pollinations.ai com URLs reais das imagens geradas
+    const pollinationsRegex = /https:\/\/pollinations\.ai\/p\/[^"'\s)]+/g;
+    
+    const imageUrls = [
+      images.hero,
+      images.logo,
+      images.motivation,
+      images.target,
+      images.method,
+      images.results,
+      images.access,
+      images.investment,
+      ...(businessData.images?.gallery || [])
+    ];
+
+    let imageIndex = 0;
+    html = html.replace(pollinationsRegex, () => {
+      const url = imageUrls[imageIndex % imageUrls.length];
+      imageIndex++;
+      return url;
+    });
+
+    // Substituir placeholders específicos
     html = html.replace(/\[LOGO_IMAGE\]/g, images.logo);
     html = html.replace(/\[HERO_IMAGE\]/g, images.hero);
     html = html.replace(/\[IMAGE_1\]/g, images.motivation);
@@ -125,25 +344,36 @@ export class HtmlAgent {
     html = html.replace(/\[IMAGE_4\]/g, images.results);
     html = html.replace(/\[IMAGE_5\]/g, images.access);
     html = html.replace(/\[IMAGE_6\]/g, images.investment);
-    
-    // Substituir dados de contato
-    if (businessData.contact) {
-      html = html.replace(/\[PHONE\]/g, businessData.contact.phone || '(00) 0000-0000');
-      html = html.replace(/\[EMAIL\]/g, businessData.contact.email || 'contato@email.com');
-      html = html.replace(/\[ADDRESS\]/g, businessData.contact.address || 'Endereço');
-      html = html.replace(/\[WHATSAPP\]/g, businessData.contact.socialMedia?.whatsapp || '(00) 00000-0000');
-    }
-    
-    // Substituir seções de conteúdo
-    if (businessData.sections && businessData.sections.length > 0) {
-      businessData.sections.forEach((section, index) => {
-        html = html.replace(`[SECTION_${index + 1}_TITLE]`, section.title);
-        html = html.replace(`[SECTION_${index + 1}_CONTENT]`, section.content);
-      });
-    }
-    
-    console.log('✅ Template personalizado com sucesso');
+
     return html;
+  }
+
+  private applySectionContent(html: string, sections: any[]): string {
+    // Aplicar títulos e conteúdos das seções dinamicamente
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    const sectionElements = doc.querySelectorAll('section, .section, [class*="section"]');
+    
+    sectionElements.forEach((sectionEl, index) => {
+      if (sections[index]) {
+        const section = sections[index];
+        
+        // Atualizar títulos
+        const headings = sectionEl.querySelectorAll('h1, h2, h3');
+        if (headings[0]) {
+          headings[0].textContent = section.title;
+        }
+        
+        // Atualizar primeiros parágrafos
+        const paragraphs = sectionEl.querySelectorAll('p');
+        if (paragraphs[0] && section.content) {
+          paragraphs[0].textContent = section.content;
+        }
+      }
+    });
+
+    return doc.documentElement.outerHTML;
   }
 
   private getBasicTemplate(): string {
