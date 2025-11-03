@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pizzaria Delícia - Cardápio Online</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      :root {
+          --primary: #d32f2f;
+          --secondary: #ff6b35;
+          --light: #fff8f0;
+          --dark: #3e2723;
+          --accent: #c62828;
+      }
+      body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          color: var(--dark);
+          background-color: #fef7f0;
+          overflow-x: hidden;
+      }
+      /* Cabeçalho */
+      .header {
+          background: white;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 1000;
+          padding: 15px 0;
+      }
+      .header .navbar-brand img {
+          height: 50px;
+          border-radius: 50%;
+      }
+      .navbar-nav .nav-link {
+          font-weight: 600;
+          margin: 0 10px;
+          color: var(--dark);
+          position: relative;
+      }
+      .navbar-nav .nav-link:hover {
+          color: var(--primary);
+      }
+      .navbar-nav .nav-link::after {
+          content: '';
+          position: absolute;
+          bottom: -5px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: var(--primary);
+          transition: width 0.3s;
+      }
+      .navbar-nav .nav-link:hover::after {
+          width: 100%;
+      }
+      /* Hero */
+      .hero {
+          background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://image.pollinations.ai/prompt/Delicious%20pizza%20with%20melting%20cheese%2C%20wood-fired%2C%20rustic%20table%2C%20warm%20lighting%2C%20cozy%20restaurant%20atmosphere?width=1920&height=1080&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=123456');
+          background-size: cover;
+          background-position: center;
+          color: white;
+          padding: 180px 0 100px;
+          text-align: center;
+      }
+      .section {
+          padding: 80px 0;
+      }
+      .section-title {
+          font-weight: 700;
+          margin-bottom: 40px;
+          position: relative;
+          display: inline-block;
+          color: var(--primary);
+          border-bottom: 3px solid var(--accent);
+          padding-bottom: 10px;
+      }
+      .btn-primary {
+          background: var(--primary);
+          border: none;
+          padding: 12px 30px;
+          font-weight: 600;
+          border-radius: 30px;
+          transition: all 0.3s;
+      }
+      .btn-primary:hover {
+          background: var(--accent);
+          transform: translateY(-3px);
+          box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+      }
+      .btn-outline-dark {
+          border-color: var(--dark);
+          color: var(--dark);
+          border-radius: 30px;
+          transition: all 0.3s;
+      }
+      .btn-outline-dark:hover {
+          background: var(--dark);
+          color: white;
+      }
+      /* Cardápio */
+      .menu-item {
+          background: white;
+          border-radius: 15px;
+          overflow: hidden;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s, box-shadow 0.3s;
+          margin-bottom: 30px;
+      }
+      .menu-item:hover {
+          transform: translateY(-10px);
+          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      }
+      .menu-item img {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+      }
+      .menu-item-body {
+          padding: 20px;
+          text-align: center;
+      }
+      .menu-item h4 {
+          color: var(--primary);
+          margin-bottom: 10px;
+      }
+      .menu-item .price {
+          font-weight: bold;
+          color: var(--accent);
+          font-size: 1.2rem;
+          margin: 10px 0;
+      }
+      .menu-item .ingredients {
+          font-size: 0.9rem;
+          color: #666;
+          margin-bottom: 15px;
+      }
+      /* Promoções */
+      .promo-badge {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          background: var(--secondary);
+          color: white;
+          padding: 5px 15px;
+          border-radius: 20px;
+          font-size: 0.9rem;
+          font-weight: bold;
+      }
+      /* Rodapé */
+      .footer {
+          background: var(--dark);
+          color: white;
+          padding: 40px 0;
+          text-align: center;
+      }
+      .social-icons a {
+          color: white;
+          font-size: 1.5rem;
+          margin: 0 10px;
+          transition: all 0.3s;
+      }
+      .social-icons a:hover {
+          color: var(--primary);
+      }
+      /* Botão flutuante */
+      .floating-btn {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background-color: var(--primary);
+          color: white;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+          z-index: 1000;
+          animation: pulse 2s infinite;
+      }
+      .floating-btn i {
+          font-size: 24px;
+      }
+      @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); }
+      }
+      /* Responsive */
+      @media (max-width: 768px) {
+          .hero { padding: 150px 0 80px; }
+          .section { padding: 60px 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Cabeçalho -->
+    <header class="header">
+      <nav class="container navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#home">
+          <img
+            src="https://image.pollinations.ai/prompt/Pizza%20logo%2C%20red%20and%20white%2C%20cartoon%20style%2C%20smiling%20pizza%20slice%2C%20modern%20design?width=200&height=200&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=654321"
+            alt="Pizzaria Delícia"
+          />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="#home">Início</a></li>
+            <li class="nav-item"><a class="nav-link" href="#cardapio">Cardápio</a></li>
+            <li class="nav-item"><a class="nav-link" href="#promocoes">Promoções</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contato">Contato</a></li>
+            <li class="nav-item"><a class="nav-link" href="#localizacao">Localização</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section id="home" class="hero">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-4">Pizzaria Delícia</h1>
+            <p class="lead mb-5">
+              As melhores pizzas artesanais, feitas com ingredientes frescos e muito amor. Entrega rápida e sabor
+              inesquecível!
+            </p>
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+              <a href="#cardapio" class="btn btn-primary btn-lg">Ver Cardápio</a>
+              <a href="#contato" class="btn btn-outline-light btn-lg">Peça Agora</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre -->
+    <section class="section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="section-title">Sobre Nós</h2>
+            <p class="lead">Desde 2010, servindo pizzas com paixão.</p>
+            <p>
+              Na Pizzaria Delícia, cada pizza é uma obra de arte. Usamos apenas ingredientes frescos, massa caseira e
+              queijo derretido à perfeição. Nosso forno à lenha garante o sabor autêntico que você merece.
+            </p>
+            <p>Venha nos visitar ou peça delivery. A felicidade está a apenas uma fatia de distância!</p>
+          </div>
+          <div class="col-lg-6">
+            <img
+              src="https://image.pollinations.ai/prompt/Traditional%20pizzeria%20interior%2C%20wood-fired%20oven%2C%20chef%20preparing%20pizza%2C%20cozy%20atmosphere%2C%20warm%20lighting?width=600&height=400&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=987654"
+              class="img-fluid rounded shadow"
+              alt="Nossa Pizzaria"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cardápio de Pizzas -->
+    <section id="cardapio" class="section bg-light">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title">Nossas Pizzas</h2>
+          <p class="lead">6 opções deliciosas para todos os gostos</p>
+        </div>
+        <div class="row g-4">
+          <!-- Pizza 1 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Margherita%20pizza%2C%20tomato%20sauce%2C%20fresh%20mozzarella%2C%20basil%20leaves%2C%20wood-fired%2C%20golden%20crust?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=111111"
+                alt="Pizza Margherita"
+              />
+              <div class="menu-item-body">
+                <h4>Margherita</h4>
+                <p class="ingredients">Molho de tomate, mussarela fresca, manjericão e azeite de oliva</p>
+                <div class="price">R$ 39,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Pizza 2 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Pepperoni%20pizza%2C%20lots%20of%20pepperoni%2C%20melted%20cheese%2C%20golden%20crust%2C%20delicious?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=222222"
+                alt="Pizza Pepperoni"
+              />
+              <div class="menu-item-body">
+                <h4>Pepperoni</h4>
+                <p class="ingredients">Molho de tomate, mussarela, pepperoni fatiado e orégano</p>
+                <div class="price">R$ 44,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Pizza 3 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Calabresa%20pizza%2C%20sliced%20calabresa%20sausage%2C%20onions%2C%20melted%20cheese%2C%20golden%20crust?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=333333"
+                alt="Pizza Calabresa"
+              />
+              <div class="menu-item-body">
+                <h4>Calabresa</h4>
+                <p class="ingredients">Molho de tomate, mussarela, calabresa fatiada, cebola e azeitonas</p>
+                <div class="price">R$ 42,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Pizza 4 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Frango%20com%20catupiry%20pizza%2C%20chicken%2C%20catupiry%20cheese%2C%20corn%2C%20tomato%20sauce?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=444444"
+                alt="Pizza Frango com Catupiry"
+              />
+              <div class="menu-item-body">
+                <h4>Frango com Catupiry</h4>
+                <p class="ingredients">Molho de tomate, frango desfiado, catupiry, milho e azeitonas</p>
+                <div class="price">R$ 45,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Pizza 5 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Portuguesa%20pizza%2C%20ham%2C%20eggs%2C%20onions%2C%20olives%2C%20melted%20cheese?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=555555"
+                alt="Pizza Portuguesa"
+              />
+              <div class="menu-item-body">
+                <h4>Portuguesa</h4>
+                <p class="ingredients">Molho de tomate, mussarela, presunto, ovos, cebola, azeitonas e pimentão</p>
+                <div class="price">R$ 46,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Pizza 6 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Quatro%20queijos%20pizza%2C%20mozzarella%2C%20gorgonzola%2C%20parmesan%2C%20catupiry%2C%20golden%20crust?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=666666"
+                alt="Pizza Quatro Queijos"
+              />
+              <div class="menu-item-body">
+                <h4>Quatro Queijos</h4>
+                <p class="ingredients">Molho branco, mussarela, gorgonzola, parmesão e catupiry</p>
+                <div class="price">R$ 47,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Pizza 6 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Bacon%20pizza%2C%20crispy%20bacon%2C%20melted%20cheese%2C%20onions%2C%20tomato%20sauce%2C%20golden%20crust?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=777777"
+                alt="Pizza Bacon"
+              />
+              <div class="menu-item-body">
+                <h4>Bacon</h4>
+                <p class="ingredients">Molho de tomate, mussarela, bacon crocante, cebola e azeitonas</p>
+                <div class="price">R$ 45,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bebidas -->
+    <section class="section">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title">Bebidas</h2>
+          <p class="lead">Para acompanhar sua pizza</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+          <!-- Bebida 1 -->
+          <div class="col-md-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Ice%20cold%20cola%20bottle%2C%20condensation%2C%20refreshing%2C%20dark%20background?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=888888"
+                alt="Refrigerante"
+              />
+              <div class="menu-item-body">
+                <h4>Refrigerante (Lata)</h4>
+                <p class="ingredients">Coca-Cola, Guaraná ou Sprite</p>
+                <div class="price">R$ 6,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Bebida 2 -->
+          <div class="col-md-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Cold%20beer%20bottle%2C%20condensation%2C%20golden%20liquid%2C%20refreshing?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=999999"
+                alt="Cerveja"
+              />
+              <div class="menu-item-body">
+                <h4>Cerveja (Long Neck)</h4>
+                <p class="ingredients">Brahma, Skol ou Heineken</p>
+                <div class="price">R$ 8,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Bebida 3 -->
+          <div class="col-md-4">
+            <div class="menu-item">
+              <img
+                src="https://image.pollinations.ai/prompt/Fresh%20lemonade%2C%20ice%20cubes%2C%20lemon%20slices%2C%20refreshing%2C%20summer%20drink?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=101010"
+                alt="Suco Natural"
+              />
+              <div class="menu-item-body">
+                <h4>Suco Natural</h4>
+                <p class="ingredients">Laranja, maracujá ou limonada (500ml)</p>
+                <div class="price">R$ 9,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Promoções -->
+    <section id="promocoes" class="section bg-light">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title">Promoções</h2>
+          <p class="lead">Ofertas especiais para você</p>
+        </div>
+        <div class="row g-4">
+          <!-- Promoção 1 -->
+          <div class="col-lg-4">
+            <div class="menu-item position-relative">
+              <div class="promo-badge">20% OFF</div>
+              <img
+                src="https://image.pollinations.ai/prompt/Pizza%20combo%2C%20two%20large%20pizzas%2C%20drinks%2C%20family%20meal%2C%20delicious?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=121212"
+                alt="Combo Família"
+              />
+              <div class="menu-item-body">
+                <h4>Combo Família</h4>
+                <p>2 Pizzas grandes + 1 Refrigerante (2L)</p>
+                <div class="price">
+                  <span style="text-decoration: line-through; color: #999;">R$ 110,00</span> R$ 88,00
+                </div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Promoção 2 -->
+          <div class="col-lg-4">
+            <div class="menu-item position-relative">
+              <div class="promo-badge">GRÁTIS</div>
+              <img
+                src="https://image.pollinations.ai/prompt/Pizza%20and%20beer%20combo%2C%20large%20pizza%2C%20cold%20beer%2C%20perfect%20combination?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=131313"
+                alt="Pizza + Cerveja"
+              />
+              <div class="menu-item-body">
+                <h4>Pizza + Cerveja</h4>
+                <p>1 Pizza média + 1 Cerveja (grátis)</p>
+                <div class="price">R$ 44,90</div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+          <!-- Promoção 3 -->
+          <div class="col-lg-4">
+            <div class="menu-item position-relative">
+              <div class="promo-badge">30% OFF</div>
+              <img
+                src="https://image.pollinations.ai/prompt/Student%20pizza%20combo%2C%20small%20pizza%2C%20drink%2C%20budget%20meal%2C%20delicious?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=141414"
+                alt="Combo Estudante"
+              />
+              <div class="menu-item-body">
+                <h4>Combo Estudante</h4>
+                <p>1 Pizza pequena + 1 Refrigerante</p>
+                <div class="price">
+                  <span style="text-decoration: line-through; color: #999;">R$ 35,00</span> R$ 24,50
+                </div>
+                <button class="btn btn-primary w-100">Peça Agora</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato" class="section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="section-title">Contato</h2>
+            <p class="lead">Peça agora mesmo!</p>
+            <form class="row g-3">
+              <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Seu nome" required />
+              </div>
+              <div class="col-md-6">
+                <input type="tel" class="form-control" placeholder="Seu telefone" required />
+              </div>
+              <div class="col-12">
+                <select class="form-select">
+                  <option selected>Escolha seu pedido...</option>
+                  <option>Pizza Margherita - R$ 39,90</option>
+                  <option>Pizza Pepperoni - R$ 44,90</option>
+                  <option>Pizza Calabresa - R$ 42,90</option>
+                  <option>Combo Família - R$ 88,00</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <textarea class="form-control" rows="3" placeholder="Endereço de entrega e observações"></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Enviar Pedido</button>
+              </div>
+            </form>
+          </div>
+          <div class="col-lg-6">
+            <div class="ratio ratio-16x9">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.53436033543!2d-46.65558932478147!3d-23.55051997882197!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa3fd%3A0x532e6b8fce7a9e9f!2sAv.%20Paulista%2C%201000%20-%20Bela%20Vista%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2001310-100!5e0!3m2!1spt-BR!2sbr!4v1630000000000!5m2!1spt-BR!2sbr"
+                allowfullscreen=""
+                loading="lazy"
+              ></iframe>
+            </div>
+            <div class="mt-3 text-center">
+              <h4>Ou ligue para nós:</h4>
+              <a href="tel:11999999999" class="btn btn-outline-dark btn-lg mt-2"
+                ><i class="fas fa-phone me-2"></i> (11) 99999-9999</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-4 mb-md-0">
+            <h5>Pizzaria Delícia</h5>
+            <p>As melhores pizzas da cidade, entregues quentinhas na sua casa.</p>
+            <div class="social-icons mt-3">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-whatsapp"></i></a>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 mb-md-0">
+            <h5>Horário de Funcionamento</h5>
+            <p><i class="fas fa-clock me-2"></i> Terça a Domingo: 18h - 23h</p>
+            <p><i class="fas fa-motorcycle me-2"></i> Entrega: 18h - 22h30</p>
+          </div>
+          <div class="col-md-4">
+            <h5>Formas de Pagamento</h5>
+            <p><i class="fas fa-credit-card me-2"></i> Cartão de crédito/débito</p>
+            <p><i class="fas fa-money-bill-wave me-2"></i> Dinheiro</p>
+            <p><i class="fas fa-qrcode me-2"></i> Pix</p>
+          </div>
+        </div>
+        <hr class="my-4 bg-light" />
+        <div class="text-center">
+          <p class="mb-0">&copy; 2025 Pizzaria Delícia. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Botão flutuante WhatsApp -->
+    <div class="floating-btn">
+      <a
+        href="https://wa.me/5511999999999?text=Olá!%20Gostaria%20de%20fazer%20um%20pedido"
+        target="_blank"
+        style="color: white;"
+      >
+        <i class="fab fa-whatsapp"></i>
+      </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
