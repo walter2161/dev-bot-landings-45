@@ -100,15 +100,8 @@ export class HtmlAgent {
     
     let html = templateHTML;
     
-    // Injetar header do PageJet e chat IA
+    // Apenas adicionar o chat IA (template já tem tudo)
     html = this.injectHeaderAndChat(html, businessData);
-    
-    // Extrair e parsear seções do HTML para sincronizar com businessData
-    const parsedSections = this.extractSectionsFromHTML(html);
-    console.log('📋 Seções extraídas do HTML:', parsedSections.length);
-    
-    // Atualizar businessData.sections com as seções reais do HTML
-    businessData.sections = parsedSections;
     
     // Substituir placeholders de texto
     html = html.replace(/\[BUSINESS_NAME\]/g, businessData.title);
@@ -117,13 +110,12 @@ export class HtmlAgent {
     html = html.replace(/\[HERO_TEXT\]/g, businessData.heroText || businessData.subtitle || '');
     html = html.replace(/\[CTA_TEXT\]/g, businessData.ctaText || 'Entre em Contato');
     
-    // Substituir cores em todo o HTML
+    // Substituir cores nas variáveis CSS
     if (businessData.colors) {
-      html = this.replaceColorsInHTML(html, businessData.colors);
+      html = html.replace(/--primary:\s*[^;]+;/g, `--primary: ${businessData.colors.primary};`);
+      html = html.replace(/--secondary:\s*[^;]+;/g, `--secondary: ${businessData.colors.secondary};`);
+      html = html.replace(/--accent:\s*[^;]+;/g, `--accent: ${businessData.colors.accent};`);
     }
-    
-    // Substituir imagens com URLs do Pollinations
-    html = this.replaceImagesInHTML(html, images, businessData);
     
     // Substituir dados de contato
     if (businessData.contact) {
@@ -133,12 +125,14 @@ export class HtmlAgent {
       html = html.replace(/\[WHATSAPP\]/g, businessData.contact.socialMedia?.whatsapp || '(00) 00000-0000');
       html = html.replace(/\[INSTAGRAM\]/g, businessData.contact.socialMedia?.instagram || '@empresa');
       html = html.replace(/\[FACEBOOK\]/g, businessData.contact.socialMedia?.facebook || 'empresa');
+      
+      // Substituir links de telefone (tel: e WhatsApp)
+      const phoneClean = businessData.contact.phone?.replace(/\D/g, '') || '';
+      html = html.replace(/tel:[^"'\s)]+/g, `tel:${businessData.contact.phone}`);
+      html = html.replace(/https:\/\/wa\.me\/[0-9]+/g, `https://wa.me/55${phoneClean}`);
     }
     
-    // Aplicar conteúdo das seções dinamicamente
-    html = this.applySectionContent(html, businessData.sections);
-    
-    console.log('✅ Template personalizado com sucesso');
+    console.log('✅ Template personalizado com sucesso (mantendo estrutura original)');
     return html;
   }
 
