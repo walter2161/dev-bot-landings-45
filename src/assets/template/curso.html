@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso Online - Aprenda do Zero</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 100px 0; text-align: center; }
+        header h1 { font-size: 3em; margin-bottom: 20px; }
+        header p { font-size: 1.3em; margin-bottom: 30px; }
+        .price { font-size: 2.5em; font-weight: bold; margin: 20px 0; }
+        .price span { font-size: 0.5em; text-decoration: line-through; opacity: 0.7; }
+        .cta-button { background: #fff; color: #f5576c; padding: 20px 50px; border: none; border-radius: 50px; font-size: 1.2em; cursor: pointer; font-weight: bold; }
+        section { padding: 80px 0; }
+        .benefits { background: #f8f9fa; }
+        .benefits h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .benefit-card { background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .benefit-icon { font-size: 3em; margin-bottom: 20px; }
+        .curriculum h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; }
+        .modules { display: grid; gap: 20px; }
+        .module { background: #f8f9fa; padding: 30px; border-radius: 10px; border-left: 5px solid #f5576c; }
+        .module h3 { color: #f5576c; margin-bottom: 15px; }
+        .module ul { list-style: none; padding-left: 20px; }
+        .module li:before { content: "✓ "; color: #f5576c; font-weight: bold; }
+        .instructor { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+        .instructor-content { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: center; }
+        .instructor img { width: 100%; border-radius: 10px; }
+        .bonus { background: #fff3cd; padding: 80px 0; }
+        .bonus h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #856404; }
+        .bonus-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+        .bonus-card { background: white; padding: 30px; border-radius: 10px; border: 2px solid #ffc107; }
+        .testimonials { background: #f8f9fa; }
+        .testimonials h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .testimonial { background: white; padding: 30px; border-radius: 10px; text-align: center; }
+        .testimonial img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 20px; }
+        .guarantee { background: #d4edda; padding: 60px 0; text-align: center; }
+        .guarantee h2 { color: #155724; font-size: 2.5em; margin-bottom: 20px; }
+        .faq { }
+        .faq h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; }
+        .faq-item { background: #f8f9fa; padding: 20px; margin-bottom: 15px; border-radius: 10px; }
+        .faq-item h3 { color: #f5576c; margin-bottom: 10px; }
+        .cta-section { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; text-align: center; padding: 100px 0; }
+        .cta-section h2 { font-size: 2.5em; margin-bottom: 30px; }
+        footer { background: #2c3e50; color: white; text-align: center; padding: 40px 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Domine [Habilidade] em 8 Semanas</h1>
+            <p>Do zero ao profissional com método comprovado</p>
+            <div class="price">
+                <span>R$ 997</span> R$ 497
+            </div>
+            <p>Oferta por tempo limitado!</p>
+            <button class="cta-button">Quero Começar Agora</button>
+        </div>
+    </header>
+
+    <section class="benefits">
+        <div class="container">
+            <h2>O Que Você Vai Conseguir</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">🎯</div>
+                    <h3>Resultados Práticos</h3>
+                    <p>Projetos reais desde a primeira semana</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">⏰</div>
+                    <h3>No Seu Ritmo</h3>
+                    <p>Acesso vitalício e aprenda quando quiser</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">👥</div>
+                    <h3>Comunidade Ativa</h3>
+                    <p>Suporte e networking com outros alunos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="curriculum">
+        <div class="container">
+            <h2>Conteúdo Programático</h2>
+            <div class="modules">
+                <div class="module">
+                    <h3>Módulo 1: Fundamentos</h3>
+                    <ul>
+                        <li>Introdução completa aos conceitos básicos</li>
+                        <li>Configuração do ambiente de trabalho</li>
+                        <li>Primeiro projeto prático</li>
+                    </ul>
+                </div>
+                <div class="module">
+                    <h3>Módulo 2: Intermediário</h3>
+                    <ul>
+                        <li>Técnicas avançadas</li>
+                        <li>Melhores práticas do mercado</li>
+                        <li>Projeto intermediário guiado</li>
+                    </ul>
+                </div>
+                <div class="module">
+                    <h3>Módulo 3: Avançado</h3>
+                    <ul>
+                        <li>Casos de uso complexos</li>
+                        <li>Otimização e performance</li>
+                        <li>Projeto final profissional</li>
+                    </ul>
+                </div>
+                <div class="module">
+                    <h3>Módulo 4: Profissionalização</h3>
+                    <ul>
+                        <li>Como conseguir clientes</li>
+                        <li>Precificação e propostas</li>
+                        <li>Portfolio e marketing pessoal</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="instructor">
+        <div class="container">
+            <div class="instructor-content">
+                <img src="https://pollinations.ai/p/professional-instructor-teaching" alt="Instrutor">
+                <div>
+                    <h2>Seu Instrutor</h2>
+                    <p>Olá! Sou especialista em [área] há mais de 12 anos, já ajudei mais de 5.000 alunos a transformarem suas carreiras.</p>
+                    <p>Trabalhei em empresas como Google, Microsoft e startups unicórnio. Agora dedico meu tempo a ensinar o que aprendi no mercado.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bonus">
+        <div class="container">
+            <h2>Bônus Exclusivos</h2>
+            <div class="bonus-grid">
+                <div class="bonus-card">
+                    <h3>🎁 Bônus #1: Templates Profissionais</h3>
+                    <p>Mais de 50 templates prontos para usar em seus projetos (Valor: R$ 297)</p>
+                </div>
+                <div class="bonus-card">
+                    <h3>🎁 Bônus #2: Mentoria em Grupo</h3>
+                    <p>2 sessões ao vivo por mês para tirar dúvidas (Valor: R$ 497)</p>
+                </div>
+                <div class="bonus-card">
+                    <h3>🎁 Bônus #3: E-book Exclusivo</h3>
+                    <p>Guia completo de melhores práticas (Valor: R$ 97)</p>
+                </div>
+                <div class="bonus-card">
+                    <h3>🎁 Bônus #4: Certificado</h3>
+                    <p>Certificado de conclusão reconhecido (Valor: R$ 197)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>Depoimentos dos Alunos</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <img src="https://pollinations.ai/p/happy-student-portrait-1" alt="Aluno">
+                    <p>"Em 2 meses consegui meu primeiro cliente e faturei R$ 3.000!"</p>
+                    <strong>- Ana Paula</strong>
+                </div>
+                <div class="testimonial">
+                    <img src="https://pollinations.ai/p/happy-student-portrait-2" alt="Aluno">
+                    <p>"O melhor investimento que já fiz. Mudou minha carreira completamente."</p>
+                    <strong>- Carlos Eduardo</strong>
+                </div>
+                <div class="testimonial">
+                    <img src="https://pollinations.ai/p/happy-student-portrait-3" alt="Aluno">
+                    <p>"Conteúdo super didático e prático. Recomendo muito!"</p>
+                    <strong>- Juliana Lima</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="guarantee">
+        <div class="container">
+            <h2>Garantia de 30 Dias</h2>
+            <p>Se você não ficar satisfeito, devolvemos 100% do seu dinheiro. Sem perguntas.</p>
+        </div>
+    </section>
+
+    <section class="faq">
+        <div class="container">
+            <h2>Perguntas Frequentes</h2>
+            <div class="faq-item">
+                <h3>Por quanto tempo tenho acesso?</h3>
+                <p>Acesso vitalício! Assista quantas vezes quiser, para sempre.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Preciso de conhecimento prévio?</h3>
+                <p>Não! O curso começa do zero e leva você até o nível profissional.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Quanto tempo por dia preciso dedicar?</h3>
+                <p>Recomendamos 1-2 horas por dia, mas você pode ir no seu próprio ritmo.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Comece Sua Transformação Hoje</h2>
+            <div class="price">R$ 497</div>
+            <p>Parcelamento em até 12x sem juros</p>
+            <button class="cta-button">Garantir Minha Vaga Agora</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Curso Online. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
