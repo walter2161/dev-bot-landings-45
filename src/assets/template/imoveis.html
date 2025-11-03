@@ -4,162 +4,341 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imóveis Prime - Seu Lar dos Sonhos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        header { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://pollinations.ai/p/luxury-modern-house-exterior-sunset'); background-size: cover; background-position: center; color: white; padding: 150px 0; text-align: center; }
-        header h1 { font-size: 4em; margin-bottom: 20px; }
-        header p { font-size: 1.4em; margin-bottom: 30px; }
-        .cta-button { background: #e74c3c; color: white; padding: 18px 50px; border: none; border-radius: 5px; font-size: 1.2em; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-        .cta-button:hover { background: #c0392b; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        section { padding: 80px 0; }
-        .search { background: #f8f9fa; }
-        .search h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e74c3c; }
-        .search-form { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 15px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        .search-form select, .search-form input { padding: 15px; border: 2px solid #ddd; border-radius: 5px; font-size: 1em; }
-        .featured { }
-        .featured h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e74c3c; }
-        .properties-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-        .property-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .property-card:hover { transform: translateY(-10px); }
-        .property-card img { width: 100%; height: 250px; object-fit: cover; }
-        .property-info { padding: 25px; }
-        .property-price { color: #e74c3c; font-size: 1.8em; font-weight: bold; margin-bottom: 10px; }
-        .property-details { display: flex; gap: 20px; margin: 15px 0; color: #666; }
-        .property-badge { position: absolute; top: 15px; left: 15px; background: #e74c3c; color: white; padding: 5px 15px; border-radius: 5px; font-size: 0.9em; font-weight: bold; }
-        .services { background: #f8f9fa; }
-        .services h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e74c3c; }
-        .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
-        .service-card { background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .service-icon { font-size: 3em; margin-bottom: 20px; }
-        .neighborhoods { }
-        .neighborhoods h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e74c3c; }
-        .neighborhoods-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .neighborhood-card { position: relative; height: 200px; border-radius: 10px; overflow: hidden; cursor: pointer; }
-        .neighborhood-card img { width: 100%; height: 100%; object-fit: cover; }
-        .neighborhood-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; padding: 20px; }
-        .testimonials { background: #f8f9fa; }
-        .testimonials h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #e74c3c; }
-        .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-        .testimonial { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .cta-section { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; text-align: center; }
-        .cta-section h2 { font-size: 2.8em; margin-bottom: 30px; }
-        footer { background: #2c3e50; color: white; text-align: center; padding: 40px 0; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Cabeçalho */
+        header {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://image.pollinations.ai/prompt/luxury-modern-house-exterior-sunset?width=1920&height=600&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=123456');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 180px 0 100px;
+            text-align: center;
+            position: relative;
+        }
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        .header-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 0;
+            z-index: 1000;
+        }
+        .header-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        .logo img {
+            height: 50px;
+            margin-right: 10px;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-menu a:hover {
+            color: #e74c3c;
+        }
+        /* Botões */
+        .cta-button {
+            background: #e74c3c;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .cta-button:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        /* Seções */
+        section {
+            padding: 80px 0;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: #e74c3c;
+        }
+        /* Busca */
+        .search {
+            background: #f8f9fa;
+        }
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) auto;
+            gap: 15px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .search-form select,
+        .search-form input {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        /* Imóveis */
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .property-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .property-card:hover {
+            transform: translateY(-10px);
+        }
+        .property-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .property-info {
+            padding: 25px;
+        }
+        .property-price {
+            color: #e74c3c;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .property-details {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            color: #666;
+        }
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        /* Serviços */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .service-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #e74c3c;
+        }
+        /* Bairros */
+        .neighborhoods-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .neighborhood-card {
+            position: relative;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .neighborhood-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .neighborhood-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 20px;
+        }
+        /* Depoimentos */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .testimonial {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        /* CTA */
+        .cta-section {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            text-align: center;
+        }
+        /* Rodapé */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+            .properties-grid,
+            .services-grid,
+            .neighborhoods-grid,
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <header>
+    <!-- Cabeçalho com Logo e Menu -->
+    <header class="header-nav">
         <div class="container">
-            <h1>Imóveis Prime</h1>
-            <p>Encontre o lar perfeito para você e sua família</p>
-            <button class="cta-button">Ver Imóveis</button>
+            <div class="logo">
+                <img src="https://image.pollinations.ai/prompt/modern-real-estate-logo-red-and-white-house-icon?width=200&height=100&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=654321" alt="Imóveis Prime">
+                Imóveis Prime
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#search">Buscar</a></li>
+                    <li><a href="#featured">Destaques</a></li>
+                    <li><a href="#services">Serviços</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
-    <section class="search">
+    <!-- Hero -->
+    <header id="home">
+        <div class="container header-content">
+            <h1>Imóveis Prime</h1>
+            <p>Encontre o lar perfeito para você e sua família</p>
+            <button class="cta-button" onclick="document.querySelector('#search').scrollIntoView({behavior: 'smooth'})">Ver Imóveis</button>
+        </div>
+    </header>
+
+    <!-- Busca -->
+    <section id="search" class="search">
         <div class="container">
-            <h2>Busque Seu Imóvel Ideal</h2>
+            <h2 class="section-title">Busque Seu Imóvel Ideal</h2>
             <div class="search-form">
-                <select>
-                    <option>Tipo de Imóvel</option>
-                    <option>Casa</option>
-                    <option>Apartamento</option>
-                    <option>Terreno</option>
-                    <option>Comercial</option>
+                <select id="property-type">
+                    <option value="">Tipo de Imóvel</option>
+                    <option value="apartamento">Apartamento</option>
+                    <option value="casa">Casa</option>
+                    <option value="terreno">Terreno</option>
+                    <option value="comercial">Comercial</option>
                 </select>
-                <select>
-                    <option>Bairro</option>
-                    <option>Centro</option>
-                    <option>Zona Sul</option>
-                    <option>Zona Norte</option>
+                <select id="neighborhood">
+                    <option value="">Bairro</option>
+                    <option value="Jardins">Jardins</option>
+                    <option value="Vila Mariana">Vila Mariana</option>
+                    <option value="Alphaville">Alphaville</option>
+                    <option value="Morumbi">Morumbi</option>
+                    <option value="Pinheiros">Pinheiros</option>
                 </select>
-                <input type="number" placeholder="Quartos">
-                <input type="text" placeholder="Preço máximo">
-                <button class="cta-button">Buscar</button>
+                <input type="number" id="bedrooms" placeholder="Quartos" min="1">
+                <input type="text" id="max-price" placeholder="Preço máximo (R$)">
+                <button class="cta-button" onclick="filterProperties()">Buscar</button>
             </div>
         </div>
     </section>
 
-    <section class="featured">
+    <!-- Imóveis em Destaque -->
+    <section id="featured" class="featured">
         <div class="container">
-            <h2>Imóveis em Destaque</h2>
-            <div class="properties-grid">
-                <div class="property-card">
-                    <div style="position: relative;">
-                        <span class="property-badge">Novo</span>
-                        <img src="https://pollinations.ai/p/modern-apartment-living-room-luxury" alt="Apartamento">
-                    </div>
-                    <div class="property-info">
-                        <div class="property-price">R$ 850.000</div>
-                        <h3>Apartamento Moderno</h3>
-                        <p>Bairro Jardins - São Paulo</p>
-                        <div class="property-details">
-                            <span>🛏️ 3 quartos</span>
-                            <span>🚗 2 vagas</span>
-                            <span>📐 120m²</span>
-                        </div>
-                        <button class="cta-button" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
-                    </div>
-                </div>
-                <div class="property-card">
-                    <div style="position: relative;">
-                        <img src="https://pollinations.ai/p/beautiful-house-with-garden-pool" alt="Casa">
-                    </div>
-                    <div class="property-info">
-                        <div class="property-price">R$ 1.200.000</div>
-                        <h3>Casa com Piscina</h3>
-                        <p>Condomínio Alphaville</p>
-                        <div class="property-details">
-                            <span>🛏️ 4 quartos</span>
-                            <span>🚗 3 vagas</span>
-                            <span>📐 280m²</span>
-                        </div>
-                        <button class="cta-button" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
-                    </div>
-                </div>
-                <div class="property-card">
-                    <div style="position: relative;">
-                        <span class="property-badge">Oportunidade</span>
-                        <img src="https://pollinations.ai/p/cozy-apartment-bedroom-view" alt="Apartamento">
-                    </div>
-                    <div class="property-info">
-                        <div class="property-price">R$ 450.000</div>
-                        <h3>Apto. Aconchegante</h3>
-                        <p>Vila Mariana - São Paulo</p>
-                        <div class="property-details">
-                            <span>🛏️ 2 quartos</span>
-                            <span>🚗 1 vaga</span>
-                            <span>📐 65m²</span>
-                        </div>
-                        <button class="cta-button" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
-                    </div>
-                </div>
+            <h2 class="section-title">Imóveis em Destaque</h2>
+            <div class="properties-grid" id="properties-container">
+                <!-- Imóveis serão inseridos aqui pelo JavaScript -->
             </div>
         </div>
     </section>
 
+    <!-- Serviços -->
     <section class="services">
         <div class="container">
-            <h2>Nossos Serviços</h2>
+            <h2 class="section-title">Nossos Serviços</h2>
             <div class="services-grid">
                 <div class="service-card">
-                    <div class="service-icon">🏠</div>
+                    <div class="service-icon"><i class="fas fa-home"></i></div>
                     <h3>Compra</h3>
                     <p>Imóveis selecionados</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">🔑</div>
+                    <div class="service-icon"><i class="fas fa-key"></i></div>
                     <h3>Venda</h3>
                     <p>Venda rápida e segura</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">📋</div>
+                    <div class="service-icon"><i class="fas fa-file-contract"></i></div>
                     <h3>Aluguel</h3>
                     <p>Gestão completa</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">💼</div>
+                    <div class="service-icon"><i class="fas fa-handshake"></i></div>
                     <h3>Consultoria</h3>
                     <p>Assessoria especializada</p>
                 </div>
@@ -167,33 +346,34 @@
         </div>
     </section>
 
+    <!-- Bairros -->
     <section class="neighborhoods">
         <div class="container">
-            <h2>Bairros Populares</h2>
+            <h2 class="section-title">Bairros Populares</h2>
             <div class="neighborhoods-grid">
-                <div class="neighborhood-card">
-                    <img src="https://pollinations.ai/p/jardins-neighborhood-sao-paulo" alt="Jardins">
+                <div class="neighborhood-card" onclick="filterByNeighborhood('Jardins')">
+                    <img src="https://image.pollinations.ai/prompt/jardins-neighborhood-sao-paulo?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=111111" alt="Jardins">
                     <div class="neighborhood-overlay">
                         <h3>Jardins</h3>
                         <p>120 imóveis</p>
                     </div>
                 </div>
-                <div class="neighborhood-card">
-                    <img src="https://pollinations.ai/p/vila-madalena-neighborhood" alt="Vila Madalena">
+                <div class="neighborhood-card" onclick="filterByNeighborhood('Vila Mariana')">
+                    <img src="https://image.pollinations.ai/prompt/vila-mariana-neighborhood-sao-paulo?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=222222" alt="Vila Madalena">
                     <div class="neighborhood-overlay">
-                        <h3>Vila Madalena</h3>
+                        <h3>Vila Mariana</h3>
                         <p>85 imóveis</p>
                     </div>
                 </div>
-                <div class="neighborhood-card">
-                    <img src="https://pollinations.ai/p/morumbi-neighborhood-luxury" alt="Morumbi">
+                <div class="neighborhood-card" onclick="filterByNeighborhood('Alphaville')">
+                    <img src="https://image.pollinations.ai/prompt/alphaville-neighborhood-luxury?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=333333" alt="Morumbi">
                     <div class="neighborhood-overlay">
-                        <h3>Morumbi</h3>
+                        <h3>Alphaville</h3>
                         <p>95 imóveis</p>
                     </div>
                 </div>
-                <div class="neighborhood-card">
-                    <img src="https://pollinations.ai/p/pinheiros-neighborhood-modern" alt="Pinheiros">
+                <div class="neighborhood-card" onclick="filterByNeighborhood('Pinheiros')">
+                    <img src="https://image.pollinations.ai/prompt/pinheiros-neighborhood-modern?width=400&height=300&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=444444" alt="Pinheiros">
                     <div class="neighborhood-overlay">
                         <h3>Pinheiros</h3>
                         <p>110 imóveis</p>
@@ -203,9 +383,10 @@
         </div>
     </section>
 
+    <!-- Depoimentos -->
     <section class="testimonials">
         <div class="container">
-            <h2>O Que Dizem Nossos Clientes</h2>
+            <h2 class="section-title">O Que Dizem Nossos Clientes</h2>
             <div class="testimonial-grid">
                 <div class="testimonial">
                     <p>"Encontrei meu apartamento dos sonhos com a ajuda da equipe. Atendimento impecável!"</p>
@@ -223,7 +404,8 @@
         </div>
     </section>
 
-    <section class="cta-section">
+    <!-- CTA -->
+    <section id="contact" class="cta-section">
         <div class="container">
             <h2>Pronto Para Encontrar Seu Imóvel?</h2>
             <p style="font-size: 1.2em; margin-bottom: 30px;">Entre em contato conosco hoje mesmo</p>
@@ -231,10 +413,155 @@
         </div>
     </section>
 
+    <!-- Rodapé -->
     <footer>
         <div class="container">
-            <p>&copy; 2024 Imóveis Prime. Todos os direitos reservados. CRECI 12345-J</p>
+            <p>© 2024 Imóveis Prime. Todos os direitos reservados. CRECI 12345-J</p>
         </div>
     </footer>
+
+    <script>
+        // Dados dos imóveis
+        const properties = [
+            {
+                id: 1,
+                type: "apartamento",
+                neighborhood: "Jardins",
+                bedrooms: 3,
+                price: 850000,
+                title: "Apartamento Moderno",
+                location: "Bairro Jardins - São Paulo",
+                image: "https://image.pollinations.ai/prompt/modern-apartment-living-room-luxury?width=600&height=400&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=101010",
+                badge: "Novo",
+                details: ["🛏️ 3 quartos", "🚗 2 vagas", "📐 120m²"]
+            },
+            {
+                id: 2,
+                type: "casa",
+                neighborhood: "Alphaville",
+                bedrooms: 4,
+                price: 1200000,
+                title: "Casa com Piscina",
+                location: "Condomínio Alphaville",
+                image: "https://image.pollinations.ai/prompt/beautiful-house-with-garden-pool?width=600&height=400&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=202020",
+                details: ["🛏️ 4 quartos", "🚗 3 vagas", "📐 280m²"]
+            },
+            {
+                id: 3,
+                type: "apartamento",
+                neighborhood: "Vila Mariana",
+                bedrooms: 2,
+                price: 450000,
+                title: "Apto. Aconchegante",
+                location: "Vila Mariana - São Paulo",
+                image: "https://image.pollinations.ai/prompt/cozy-apartment-bedroom-view?width=600&height=400&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=303030",
+                badge: "Oportunidade",
+                details: ["🛏️ 2 quartos", "🚗 1 vaga", "📐 65m²"]
+            },
+            {
+                id: 4,
+                type: "casa",
+                neighborhood: "Morumbi",
+                bedrooms: 5,
+                price: 2500000,
+                title: "Mansão Luxuosa",
+                location: "Morumbi - São Paulo",
+                image: "https://image.pollinations.ai/prompt/luxury-mansion-modern-architecture?width=600&height=400&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=404040",
+                details: ["🛏️ 5 quartos", "🚗 4 vagas", "📐 500m²"]
+            },
+            {
+                id: 5,
+                type: "apartamento",
+                neighborhood: "Pinheiros",
+                bedrooms: 1,
+                price: 350000,
+                title: "Studio Compacto",
+                location: "Pinheiros - São Paulo",
+                image: "https://image.pollinations.ai/prompt/modern-studio-apartment-small?width=600&height=400&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=505050",
+                details: ["🛏️ 1 quarto", "🚗 1 vaga", "📐 45m²"]
+            },
+            {
+                id: 6,
+                type: "terreno",
+                neighborhood: "Alphaville",
+                bedrooms: 0,
+                price: 800000,
+                title: "Terreno Residencial",
+                location: "Alphaville - Lote 12",
+                image: "https://image.pollinations.ai/prompt/residential-land-green-grass-trees?width=600&height=400&model=analog-diffusion&nologo=true&enhance=true&safe=true&seed=606060",
+                details: ["📐 500m²", "🌳 Área arborizada"]
+            }
+        ];
+
+        // Função para renderizar os imóveis
+        function renderProperties(propertiesToRender) {
+            const container = document.getElementById('properties-container');
+            container.innerHTML = '';
+
+            if (propertiesToRender.length === 0) {
+                container.innerHTML = '<div class="col-12"><p style="text-align: center; grid-column: 1 / -1;">Nenhum imóvel encontrado com os filtros selecionados.</p></div>';
+                return;
+            }
+
+            propertiesToRender.forEach(property => {
+                const propertyCard = document.createElement('div');
+                propertyCard.className = 'property-card';
+                propertyCard.innerHTML = `
+                    <div style="position: relative;">
+                        ${property.badge ? `<span class="property-badge">${property.badge}</span>` : ''}
+                        <img src="${property.image}" alt="${property.title}">
+                    </div>
+                    <div class="property-info">
+                        <div class="property-price">R$ ${property.price.toLocaleString()}</div>
+                        <h3>${property.title}</h3>
+                        <p>${property.location}</p>
+                        <div class="property-details">
+                            ${property.details.map(detail => `<span>${detail}</span>`).join('')}
+                        </div>
+                        <button class="cta-button" style="width: 100%; margin-top: 15px;">Ver Detalhes</button>
+                    </div>
+                `;
+                container.appendChild(propertyCard);
+            });
+        }
+
+        // Função para filtrar imóveis
+        function filterProperties() {
+            const type = document.getElementById('property-type').value;
+            const neighborhood = document.getElementById('neighborhood').value;
+            const bedrooms = document.getElementById('bedrooms').value;
+            const maxPrice = document.getElementById('max-price').value;
+
+            let filteredProperties = [...properties];
+
+            if (type) {
+                filteredProperties = filteredProperties.filter(p => p.type === type);
+            }
+            if (neighborhood) {
+                filteredProperties = filteredProperties.filter(p => p.neighborhood === neighborhood);
+            }
+            if (bedrooms) {
+                filteredProperties = filteredProperties.filter(p => p.bedrooms >= parseInt(bedrooms));
+            }
+            if (maxPrice) {
+                const price = parseFloat(maxPrice.replace(/\D/g, ''));
+                filteredProperties = filteredProperties.filter(p => p.price <= price);
+            }
+
+            renderProperties(filteredProperties);
+        }
+
+        // Função para filtrar por bairro
+        function filterByNeighborhood(neighborhood) {
+            document.getElementById('neighborhood').value = neighborhood;
+            filterProperties();
+            document.querySelector('#featured').scrollIntoView({behavior: 'smooth'});
+        }
+
+        // Renderizar todos os imóveis ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProperties(properties);
+        });
+    </script>
 </body>
 </html>
