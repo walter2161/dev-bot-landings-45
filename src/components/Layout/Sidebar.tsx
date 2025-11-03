@@ -332,10 +332,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
 
         {activeTab === "chatbot" && (
-          <div className="space-y-4">
-            <h3 className="font-medium text-foreground">PageJet IA - Gerador de Landing Page</h3>
+          <div className="flex flex-col h-full -m-4 p-4">
+            <h3 className="font-medium text-foreground mb-4">PageJet IA - Gerador de Landing Page</h3>
             
-            <div className={`${isMobile ? 'h-[50vh] mobile-chat' : 'h-[calc(100vh-280px)]'} bg-gradient-card rounded-lg border border-border/50`}>
+            <div className={`${isMobile ? 'h-[50vh] mobile-chat' : 'flex-1'} bg-gradient-card rounded-lg border border-border/50`}>
               <SmartChat 
                 onLandingPageGenerated={handleLandingPageGeneratedInternal}
         briefingPrompt={businessData ? `Negócio gerado: ${businessData.title}` : undefined}
