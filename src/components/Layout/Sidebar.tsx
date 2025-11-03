@@ -33,7 +33,7 @@ import {
   RefreshCw,
   Bot,
   LogOut,
-  RotateCcw
+  Trash2
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -241,7 +241,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 className="p-2 h-8 w-8"
                 title="Reiniciar Projeto"
               >
-                <RotateCcw className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" />
               </Button>
               <Button
                 variant="ghost"
@@ -367,19 +367,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             onLandingPageGenerated={handleLandingPageGeneratedInternal}
           />
         )}
-      </div>
-
-      {/* Update Button */}
-      <div className="p-4 border-t border-border">
-        <Button 
-          variant="hero" 
-          className="w-full"
-          onClick={handleUpdateLandingPage}
-          disabled={!businessData}
-        >
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Atualizar Landing Page
-        </Button>
       </div>
 
     </aside>
