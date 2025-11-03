@@ -613,7 +613,7 @@ CONTEXTO DA CONVERSA:
   }
 
   private applySectionContent(html: string, sections: any[]): string {
-    // Aplicar títulos e conteúdos das seções dinamicamente
+    // APENAS adicionar IDs às seções, SEM sobrescrever o conteúdo original do template
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     
@@ -630,21 +630,7 @@ CONTEXTO DA CONVERSA:
         sectionEl.setAttribute('id', `section-${index}`);
       }
       
-      if (sections[index]) {
-        const section = sections[index];
-        
-        // Atualizar títulos
-        const headings = sectionEl.querySelectorAll('h1, h2, h3');
-        if (headings[0]) {
-          headings[0].textContent = section.title;
-        }
-        
-        // Atualizar primeiros parágrafos
-        const paragraphs = sectionEl.querySelectorAll('p');
-        if (paragraphs[0] && section.content) {
-          paragraphs[0].textContent = section.content;
-        }
-      }
+      // NÃO sobrescrever títulos e conteúdos - manter o conteúdo original do template
     });
 
     return doc.documentElement.outerHTML;
