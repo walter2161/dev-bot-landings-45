@@ -297,7 +297,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      <div className={`p-4 space-y-4 ${isMobile ? 'max-h-[calc(85vh-120px)] mobile-scroll' : 'max-h-[calc(100vh-200px)]'} overflow-y-auto`}>
+      <div className={`p-4 space-y-4 ${isMobile ? 'max-h-[calc(85vh-120px)] mobile-scroll' : 'max-h-[calc(100vh-130px)]'} overflow-y-auto`}>
         {activeTab === "briefing" && (
           <BriefingTab onLandingPageGenerated={onLandingPageGenerated} />
         )}
@@ -335,7 +335,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="space-y-4">
             <h3 className="font-medium text-foreground">PageJet IA - Gerador de Landing Page</h3>
             
-            <div className={`${isMobile ? 'h-[50vh] mobile-chat' : 'h-[400px]'} bg-gradient-card rounded-lg border border-border/50`}>
+            <div className={`${isMobile ? 'h-[50vh] mobile-chat' : 'h-[calc(100vh-280px)]'} bg-gradient-card rounded-lg border border-border/50`}>
               <SmartChat 
                 onLandingPageGenerated={handleLandingPageGeneratedInternal}
         briefingPrompt={businessData ? `Negócio gerado: ${businessData.title}` : undefined}

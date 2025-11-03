@@ -143,122 +143,386 @@ export class HtmlAgent {
   }
 
   private injectHeaderAndChat(html: string, businessData: BusinessContent): string {
-    // Header do PageJet (logo no topo)
+    const logoUrl = businessData.images.logo || 'https://pollinations.ai/p/modern-business-logo';
+    
     const headerHTML = `
-      <div id="pagejet-header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.1); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <img src="/lovable-uploads/1e8338b8-ea1c-4b94-9cda-af7e3139b22a.png" alt="PageJet Logo" style="height: 32px; width: auto;" />
-          <span style="font-weight: 600; color: #333; font-size: 14px;">${businessData.title}</span>
+      <style>
+        .pagejet-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          z-index: 1000;
+          padding: 1rem 2rem;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .pagejet-header-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .pagejet-logo {
+          height: 50px;
+          object-fit: contain;
+        }
+        .pagejet-nav {
+          display: flex;
+          gap: 2rem;
+          align-items: center;
+        }
+        .pagejet-nav a {
+          color: #333;
+          text-decoration: none;
+          font-weight: 500;
+          transition: color 0.3s;
+        }
+        .pagejet-nav a:hover {
+          color: ${businessData.colors.primary};
+        }
+        .pagejet-cta-button {
+          background: ${businessData.colors.primary};
+          color: white;
+          padding: 0.5rem 1.5rem;
+          border-radius: 25px;
+          text-decoration: none;
+          font-weight: 600;
+          transition: transform 0.3s;
+        }
+        .pagejet-cta-button:hover {
+          transform: translateY(-2px);
+        }
+        body {
+          padding-top: 90px;
+        }
+        
+        .sellerbot-widget {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          width: 380px;
+          height: 550px;
+          background: white;
+          border-radius: 15px;
+          box-shadow: 0 5px 30px rgba(0,0,0,0.2);
+          display: none;
+          flex-direction: column;
+          z-index: 1001;
+        }
+        .sellerbot-widget.open { display: flex; }
+        .sellerbot-header {
+          background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary});
+          color: white;
+          padding: 20px;
+          border-radius: 15px 15px 0 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .sellerbot-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: white;
+          color: ${businessData.colors.primary};
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          margin-right: 10px;
+        }
+        .sellerbot-header-info {
+          display: flex;
+          align-items: center;
+          flex: 1;
+        }
+        .sellerbot-messages {
+          flex: 1;
+          overflow-y: auto;
+          padding: 20px;
+          background: #f8f9fa;
+        }
+        .sellerbot-message {
+          margin-bottom: 15px;
+          padding: 12px 16px;
+          border-radius: 15px;
+          max-width: 85%;
+          animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .sellerbot-message.user {
+          background: ${businessData.colors.primary};
+          color: white;
+          margin-left: auto;
+          border-bottom-right-radius: 5px;
+        }
+        .sellerbot-message.bot {
+          background: white;
+          color: #333;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          border-bottom-left-radius: 5px;
+        }
+        .sellerbot-typing {
+          display: none;
+          padding: 12px 16px;
+          background: white;
+          border-radius: 15px;
+          width: fit-content;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .sellerbot-typing.active { display: block; }
+        .sellerbot-typing span {
+          height: 8px;
+          width: 8px;
+          background: #666;
+          border-radius: 50%;
+          display: inline-block;
+          margin: 0 2px;
+          animation: typing 1.4s infinite;
+        }
+        .sellerbot-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .sellerbot-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+          0%, 60%, 100% { transform: translateY(0); }
+          30% { transform: translateY(-10px); }
+        }
+        .sellerbot-input {
+          display: flex;
+          padding: 15px;
+          border-top: 1px solid #e0e0e0;
+          background: white;
+          border-radius: 0 0 15px 15px;
+        }
+        .sellerbot-input input {
+          flex: 1;
+          padding: 12px 16px;
+          border: 1px solid #e0e0e0;
+          border-radius: 25px;
+          margin-right: 10px;
+          font-size: 14px;
+          outline: none;
+          transition: border 0.3s;
+        }
+        .sellerbot-input input:focus {
+          border-color: ${businessData.colors.primary};
+        }
+        .sellerbot-input button {
+          background: ${businessData.colors.primary};
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 25px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: background 0.3s;
+        }
+        .sellerbot-input button:hover {
+          background: ${businessData.colors.secondary};
+        }
+        .sellerbot-fab {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, ${businessData.colors.primary}, ${businessData.colors.secondary});
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+          color: white;
+          font-size: 28px;
+          z-index: 1000;
+          transition: transform 0.3s;
+        }
+        .sellerbot-fab:hover {
+          transform: scale(1.1);
+        }
+        .sellerbot-fab.hidden {
+          display: none;
+        }
+      </style>
+      
+      <header class="pagejet-header">
+        <div class="pagejet-header-content">
+          <img src="${logoUrl}" alt="${businessData.title}" class="pagejet-logo">
+          <nav class="pagejet-nav">
+            <a href="#sobre">Sobre</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#contato">Contato</a>
+            <a href="tel:${businessData.contact.phone}" class="pagejet-cta-button">
+              ${businessData.contact.phone}
+            </a>
+          </nav>
         </div>
-      </div>
-      <div style="height: 52px;"></div>
-    `;
-
-    // Chat IA do Sellerbot (botão flutuante)
-    const chatHTML = `
-      <div id="sellerbot-chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">
-        <button id="sellerbot-chat-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-          💬
-        </button>
-        <div id="sellerbot-chat-window" style="display: none; position: absolute; bottom: 70px; right: 0; width: 350px; height: 500px; background: white; border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.15); flex-direction: column; overflow: hidden;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
+      </header>
+      
+      <div class="sellerbot-fab" id="chat-fab" onclick="toggleChat()">💬</div>
+      <div class="sellerbot-widget" id="sellerbot">
+        <div class="sellerbot-header">
+          <div class="sellerbot-header-info">
+            <div class="sellerbot-avatar">${businessData.sellerbot.name.charAt(0)}</div>
             <div>
-              <div style="font-weight: 600; font-size: 16px;">${businessData.sellerbot?.name || 'Assistente Virtual'}</div>
-              <div style="font-size: 12px; opacity: 0.9;">Online agora</div>
-            </div>
-            <button id="sellerbot-close-button" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">&times;</button>
-          </div>
-          <div id="sellerbot-messages" style="flex: 1; padding: 15px; overflow-y: auto; background: #f9fafb;">
-            <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-              <p style="margin: 0; font-size: 14px; line-height: 1.5;">Olá! Sou ${businessData.sellerbot?.name || 'o assistente virtual'}. Como posso ajudá-lo hoje?</p>
+              <strong>${businessData.sellerbot.name}</strong><br>
+              <small>✓ Online agora</small>
             </div>
           </div>
-          <div style="padding: 15px; border-top: 1px solid #e5e7eb; background: white;">
-            <div style="display: flex; gap: 8px;">
-              <input id="sellerbot-input" type="text" placeholder="Digite sua mensagem..." style="flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none;" />
-              <button id="sellerbot-send-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">Enviar</button>
-            </div>
+          <button onclick="toggleChat()" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;padding:0;width:30px;height:30px;">×</button>
+        </div>
+        <div class="sellerbot-messages" id="chat-messages">
+          <div class="sellerbot-message bot">
+            👋 Olá! Sou ${businessData.sellerbot.name} da ${businessData.title}. Como posso ajudar você hoje?
           </div>
         </div>
+        <div class="sellerbot-input">
+          <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
+          <button onclick="sendMessage()">Enviar</button>
+        </div>
       </div>
-
+      
       <script>
-        (function() {
-          const businessData = ${JSON.stringify(businessData)};
-          const chatButton = document.getElementById('sellerbot-chat-button');
-          const chatWindow = document.getElementById('sellerbot-chat-window');
-          const closeButton = document.getElementById('sellerbot-close-button');
-          const sendButton = document.getElementById('sellerbot-send-button');
-          const chatInput = document.getElementById('sellerbot-input');
-          const messagesContainer = document.getElementById('sellerbot-messages');
-          let chatHistory = [];
+        const MISTRAL_API_KEY = 'aynCSftAcQBOlxmtmpJqVzco8K4aaTDQ';
+        const chatHistory = [];
+        
+        const businessInfo = {
+          name: '${businessData.title}',
+          description: '${businessData.subtitle}',
+          services: '${businessData.heroText}',
+          email: '${businessData.contact.email}',
+          phone: '${businessData.contact.phone}',
+          address: '${businessData.contact.address}',
+          sellerbotName: '${businessData.sellerbot.name}',
+          sellerbotPersonality: '${businessData.sellerbot.personality}'
+        };
+        
+        function toggleChat() {
+          const widget = document.getElementById('sellerbot');
+          const fab = document.getElementById('chat-fab');
+          widget.classList.toggle('open');
+          fab.classList.toggle('hidden');
+        }
+        
+        async function sendMessage() {
+          const input = document.getElementById('chat-input');
+          const messages = document.getElementById('chat-messages');
+          const message = input.value.trim();
+          
+          if (!message) return;
+          
+          const userMsg = document.createElement('div');
+          userMsg.className = 'sellerbot-message user';
+          userMsg.textContent = message;
+          messages.appendChild(userMsg);
+          
+          chatHistory.push({ role: 'user', content: message });
+          
+          input.value = '';
+          messages.scrollTop = messages.scrollHeight;
+          
+          const typing = document.createElement('div');
+          typing.className = 'sellerbot-typing active';
+          typing.innerHTML = '<span></span><span></span><span></span>';
+          messages.appendChild(typing);
+          messages.scrollTop = messages.scrollHeight;
+          
+          try {
+            const conversationContext = chatHistory.slice(-6).map(m => m.role + ': ' + m.content).join('\\n');
+            
+            const systemPrompt = \`Você é \${businessInfo.sellerbotName}, um assistente virtual especializado em \${businessInfo.name}.
 
-          chatButton.addEventListener('click', () => {
-            chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
-          });
+INFORMAÇÕES DO NEGÓCIO:
+- Empresa: \${businessInfo.name}
+- Descrição: \${businessInfo.description}
+- Serviços: \${businessInfo.services}
+- Contato:
+  * Email: \${businessInfo.email}
+  * Telefone: \${businessInfo.phone}
+  * Endereço: \${businessInfo.address}
 
-          closeButton.addEventListener('click', () => {
-            chatWindow.style.display = 'none';
-          });
+PERSONALIDADE: \${businessInfo.sellerbotPersonality}
 
-          function addMessage(content, isUser = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.style.cssText = \`
-              background: \${isUser ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'white'};
-              color: \${isUser ? 'white' : '#333'};
-              padding: 12px;
-              border-radius: 8px;
-              margin-bottom: 10px;
-              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-              max-width: 85%;
-              \${isUser ? 'margin-left: auto;' : 'margin-right: auto;'}
-            \`;
-            messageDiv.innerHTML = \`<p style="margin: 0; font-size: 14px; line-height: 1.5;">\${content}</p>\`;
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-          }
+INSTRUÇÕES:
+- Seja amigável, profissional e prestativo
+- Use as informações do negócio para responder
+- Mantenha respostas concisas (máximo 150 palavras)
+- Use emojis quando apropriado
 
-          async function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
+CONTEXTO DA CONVERSA:
+\${conversationContext}\`;
 
-            addMessage(message, true);
-            chatHistory.push({ role: 'user', content: message });
-            chatInput.value = '';
-
-            addMessage('⏳ Digitando...', false);
-
-            window.parent.postMessage({
-              type: 'SELLERBOT_CHAT',
-              message: message,
-              chatHistory: chatHistory,
-              businessData: businessData
-            }, '*');
-          }
-
-          window.addEventListener('message', (event) => {
-            if (event.data.type === 'SELLERBOT_RESPONSE') {
-              const lastMessage = messagesContainer.lastChild;
-              if (lastMessage && lastMessage.textContent.includes('⏳')) {
-                messagesContainer.removeChild(lastMessage);
-              }
-              addMessage(event.data.response, false);
-              chatHistory.push({ role: 'assistant', content: event.data.response });
+            const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': \`Bearer \${MISTRAL_API_KEY}\`
+              },
+              body: JSON.stringify({
+                model: 'mistral-large-latest',
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: message }
+                ],
+                temperature: 0.7,
+                max_tokens: 300
+              })
+            });
+            
+            typing.remove();
+            
+            if (response.ok) {
+              const data = await response.json();
+              const botResponse = data.choices[0].message.content;
+              
+              chatHistory.push({ role: 'assistant', content: botResponse });
+              
+              const botMsg = document.createElement('div');
+              botMsg.className = 'sellerbot-message bot';
+              botMsg.textContent = botResponse;
+              messages.appendChild(botMsg);
+            } else {
+              throw new Error('API Error');
             }
-          });
-
-          sendButton.addEventListener('click', sendMessage);
-          chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-          });
-        })();
+          } catch (error) {
+            typing.remove();
+            
+            const botMsg = document.createElement('div');
+            botMsg.className = 'sellerbot-message bot';
+            botMsg.textContent = getFallbackResponse(message);
+            messages.appendChild(botMsg);
+          }
+          
+          messages.scrollTop = messages.scrollHeight;
+        }
+        
+        function getFallbackResponse(message) {
+          const lower = message.toLowerCase();
+          if (lower.includes('preço') || lower.includes('valor')) {
+            return \`💰 Entre em contato conosco para consultar valores: \${businessInfo.phone}\`;
+          }
+          if (lower.includes('serviço') || lower.includes('produto')) {
+            return \`🛍️ \${businessInfo.services}\`;
+          }
+          if (lower.includes('contato') || lower.includes('telefone')) {
+            return \`📞 Entre em contato:\\n📧 \${businessInfo.email}\\n📱 \${businessInfo.phone}\\n📍 \${businessInfo.address}\`;
+          }
+          return \`👋 Obrigado pela mensagem! Como posso ajudar você com \${businessInfo.name}?\`;
+        }
+        
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') sendMessage();
+        });
       </script>
     `;
-
-    // Injetar antes do fechamento do </body>
-    html = html.replace('</body>', `${headerHTML}${chatHTML}</body>`);
     
-    return html;
+    return html.replace('</body>', `${headerHTML}</body>`);
   }
 
   private extractSectionsFromHTML(html: string): any[] {
