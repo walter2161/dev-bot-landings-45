@@ -31,12 +31,23 @@ import {
   Eye,
   FileText,
   RefreshCw,
-  Bot
+  Bot,
+  LogOut,
+  RotateCcw
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { LogOut } from "lucide-react";
 import { AuthService } from "@/services/authService";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface SidebarProps {
   onLandingPageGenerated: (html: string, data: BusinessContent) => void;
@@ -80,6 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [internalActiveTab, setInternalActiveTab] = useState("chatbot");
   const { t, language } = useLanguage();
+  const [showResetDialog, setShowResetDialog] = useState(false);
   
   const activeTab = externalActiveTab || internalActiveTab;
   const setActiveTab = externalSetActiveTab || setInternalActiveTab;
@@ -125,6 +137,37 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  const handleResetProject = () => {
+    // Limpar todos os estados
+    setBusinessData(undefined);
+    setBriefingData({
+      businessTheme: "",
+      businessName: "",
+      businessType: "",
+      description: "",
+      targetAudience: "",
+      mainGoal: "",
+      keyServices: "",
+      contactInfo: "",
+      whatsapp: "",
+      address: "",
+      specialOffers: "",
+      customLogo: null
+    });
+    
+    // Notificar o componente pai para limpar o preview
+    onLandingPageGenerated('', undefined as any);
+    
+    // Disparar evento para limpar o chat
+    window.dispatchEvent(new CustomEvent('reset-chat'));
+    
+    // Voltar para a aba do chat
+    setActiveTab("chatbot");
+    
+    setShowResetDialog(false);
+    toast.success('Projeto reiniciado! Comece uma nova landing page.');
+  };
+
   const tabs = [
     { id: "chatbot", label: "Chat", icon: MessageCircle },
     { id: "briefing", label: "Briefing", icon: FileText },
@@ -165,6 +208,23 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside className={`${isMobile ? 'w-full' : 'w-80'} ${!isMobile && 'border-r'} border-border bg-card/50 backdrop-blur`}>
+      <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reiniciar Projeto?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja reiniciar? Isso irá limpar a landing page atual e o histórico do chat. Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleResetProject}>
+              Sim, Reiniciar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {!isMobile && (
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
@@ -173,17 +233,29 @@ const Sidebar: React.FC<SidebarProps> = ({
               alt="PageJet" 
               className="h-8 object-contain"
             />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                AuthService.logout();
-                onLogout();
-              }}
-              className="p-2 h-8 w-8"
-            >
-              <LogOut className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowResetDialog(true)}
+                className="p-2 h-8 w-8"
+                title="Reiniciar Projeto"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  AuthService.logout();
+                  onLogout();
+                }}
+                className="p-2 h-8 w-8"
+                title="Sair"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
           
           <div className="flex gap-0.5 bg-muted p-1 rounded-lg">

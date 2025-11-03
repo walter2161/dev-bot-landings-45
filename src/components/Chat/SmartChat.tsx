@@ -28,6 +28,19 @@ const SmartChat: React.FC<SmartChatProps> = ({ onLandingPageGenerated, briefingP
   const [inputMessage, setInputMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Listen for reset events
+  React.useEffect(() => {
+    const handleReset = () => {
+      setMessages([]);
+      setInputMessage('');
+    };
+
+    window.addEventListener('reset-chat', handleReset);
+    return () => {
+      window.removeEventListener('reset-chat', handleReset);
+    };
+  }, []);
+
   // Listen for auto-generation events
   React.useEffect(() => {
     const handleAutoGenerate = (event: CustomEvent) => {
